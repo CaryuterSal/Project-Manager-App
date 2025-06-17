@@ -1,0 +1,7 @@
+
+services:
+  app:
+    image: caryuter16/project-manager-app
+    env_file:
+      .env
+

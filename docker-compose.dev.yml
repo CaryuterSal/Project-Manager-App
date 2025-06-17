@@ -1,0 +1,35 @@
+services:
+  app:
+    build: .
+    depends_on:
+      mysql:
+        condition: service_healthy
+    environment:
+      DB_PORT: '3308'
+    volumes:
+      - ~/.m2:/root/.m2
+    profiles:
+      - 'dev'
+
+  mysql:
+    image: mysql:8
+    restart: always
+    healthcheck:
+      test: [ "CMD", "mysqladmin" ,"ping", "-h", "localhost" ]
+      timeout: 5s
+      retries: 10
+    ports:
+      - "3308:3306"
+    env_file:
+      .env
+    volumes:
+      - db_data
+      - ./scripts/sql/schema.sql:/docker-entrypoint-initdb.d/1.sql
+      - ./scripts/sql/insert_dummy_data.sql:/docker-entrypoint-initdb.d/2.sql
+    profiles:
+      - 'dev'
+
+volumes:
+   db:
+   cache:
+    driver: local
