@@ -11,6 +11,8 @@ module dev.builder {
     requires java.sql;
     requires jakarta.validation;
     requires org.jetbrains.annotations;
+    requires org.apache.tika.core;
+    requires com.healthmarketscience.jackcess;
 
     opens dev.builder to javafx.fxml;
     opens dev.builder.auth.application.controller to javafx.fxml;
