@@ -233,6 +233,7 @@ CREATE TABLE IF NOT EXISTS `task` (
                                       `created_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
                                       `started_at` TIMESTAMP NULL,
                                       `finished_at` TIMESTAMP NULL,
+                                      `deadline` TIMESTAMP NOT NULL,
                                       PRIMARY KEY (`id`),
                                       CONSTRAINT `tsk_clr_fk`
                                           FOREIGN KEY (`clr_name`)
@@ -296,9 +297,7 @@ CREATE TABLE IF NOT EXISTS `student_board` (
                                                        ON UPDATE NO ACTION)
     ENGINE = InnoDB;
 
-CREATE UNIQUE INDEX `sdt_id_UNIQUE` ON `student_board` (`sdt_id` ASC) VISIBLE;
-
-CREATE UNIQUE INDEX `brd_id_UNIQUE` ON `student_board` (`brd_id` ASC) VISIBLE;
+CREATE UNIQUE INDEX `sdt_id_UNIQUE` ON `student_board` (`sdt_id` ASC, `brd_id` ASC);
 
 
 -- -----------------------------------------------------
@@ -348,6 +347,78 @@ CREATE TABLE IF NOT EXISTS `stage_task` (
 CREATE UNIQUE INDEX `order_UNIQUE` ON `stage_task` (`order` ASC, `bse_sge_name` ASC) VISIBLE;
 
 CREATE INDEX `stk_bse_fk_idx` ON `stage_task` (`bse_sge_name` ASC, `bse_bad_id` ASC) VISIBLE;
+
+
+-- -----------------------------------------------------
+-- Table `file`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `file` (
+                                      `id` BINARY(16) NOT NULL,
+                                      `name` VARCHAR(45) NOT NULL,
+                                      `mimetype` VARCHAR(16) NOT NULL,
+                                      PRIMARY KEY (`id`))
+    ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `task_cover`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `task_cover` (
+                                            `id` BINARY(16) NOT NULL,
+                                            `tsk_id` BINARY(16) NOT NULL,
+                                            PRIMARY KEY (`id`),
+                                            CONSTRAINT `tie_tsk_fk`
+                                                FOREIGN KEY (`tsk_id`)
+                                                    REFERENCES `task` (`id`)
+                                                    ON DELETE NO ACTION
+                                                    ON UPDATE NO ACTION,
+                                            CONSTRAINT `tie_fle_fk`
+                                                FOREIGN KEY (`id`)
+                                                    REFERENCES `file` (`id`)
+                                                    ON DELETE NO ACTION
+                                                    ON UPDATE NO ACTION)
+    ENGINE = InnoDB;
+
+CREATE INDEX `tie_tsk_fk_idx` ON `task_cover` (`tsk_id` ASC) VISIBLE;
+
+CREATE UNIQUE INDEX `tsk_id_UNIQUE` ON `task_cover` (`tsk_id` ASC) VISIBLE;
+
+
+-- -----------------------------------------------------
+-- Table `task_attachment`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `task_attachment` (
+                                                 `id` BINARY(16) NOT NULL,
+                                                 `tsk_id` BINARY(16) NOT NULL,
+                                                 PRIMARY KEY (`id`),
+                                                 CONSTRAINT `tat_tsk_fk`
+                                                     FOREIGN KEY (`tsk_id`)
+                                                         REFERENCES `task` (`id`)
+                                                         ON DELETE NO ACTION
+                                                         ON UPDATE NO ACTION,
+                                                 CONSTRAINT `tat_fle_fk`
+                                                     FOREIGN KEY (`id`)
+                                                         REFERENCES `file` (`id`)
+                                                         ON DELETE NO ACTION
+                                                         ON UPDATE NO ACTION)
+    ENGINE = InnoDB;
+
+CREATE INDEX `tat_tsk_fk_idx` ON `task_attachment` (`tsk_id` ASC) VISIBLE;
+
+
+-- -----------------------------------------------------
+-- Table `file_source`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `file_source` (
+                                             `id` BINARY(16) NOT NULL,
+                                             `source` BLOB NOT NULL,
+                                             PRIMARY KEY (`id`),
+                                             CONSTRAINT `fse_fle_fk`
+                                                 FOREIGN KEY (`id`)
+                                                     REFERENCES `file` (`id`)
+                                                     ON DELETE NO ACTION
+                                                     ON UPDATE NO ACTION)
+    ENGINE = InnoDB;
 
 
 SET SQL_MODE=@OLD_SQL_MODE;
