@@ -1,24 +1,63 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.scene.text.*?>
+<?import java.lang.*?>
+<?import javafx.scene.image.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1">
-   <top>
-      <AnchorPane prefHeight="117.0" prefWidth="600.0" BorderPane.alignment="CENTER">
+<Pane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="1024.0" prefWidth="1440.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
+   <children>
+      <ImageView fitHeight="150.0" fitWidth="200.0" layoutX="590.0" layoutY="75.0" pickOnBounds="true" preserveRatio="true" />
+      <ImageView fitHeight="208.0" fitWidth="214.0" layoutX="512.0" layoutY="-4.0">
+         <image>
+            <Image url="@../assets/images/logo.png" />
+
+         </image>
+      </ImageView>
+      <Label layoutX="64.0" layoutY="67.0" text="Maestros">
+         <font>
+            <Font name="System Bold" size="38.0" />
+         </font>
+      </Label>
+      <Label layoutX="665.0" layoutY="69.0" text="Kedu">
+         <font>
+            <Font name="System Bold" size="38.0" />
+         </font>
+      </Label>
+      <ImageView fitHeight="150.0" fitWidth="200.0" layoutX="1115.0" layoutY="39.0" pickOnBounds="true" preserveRatio="true" />
+      <ImageView fitHeight="34.0" fitWidth="36.0" layoutX="1229.0" layoutY="47.0">
+         <image>
+            <Image url="@../assets/images/user-icon.png" />
+         </image>
+      </ImageView>
+      <Label layoutX="1277.0" layoutY="47.0" text="Usuario1234">
+         <font>
+            <Font size="25.0" />
+         </font>
+      </Label>
+      <TextField layoutX="29.0" layoutY="140.0" prefHeight="49.0" prefWidth="282.0" promptText="Buscar">
+         <font>
+            <Font size="29.0" />
+         </font>
+      </TextField>
+      <Button layoutX="1195.0" layoutY="109.0" mnemonicParsing="false" prefHeight="43.0" prefWidth="224.0" style="-fx-background-color: black" text="AGREGAR" textFill="WHITE">
+         <font>
+            <Font name="System Bold" size="24.0" />
+         </font>
+      </Button>
+      <Pane layoutX="22.0" layoutY="230.0" prefHeight="778.0" prefWidth="1402.0" style="-fx-background-color: #f4f4f4">
          <children>
-            <Label layoutX="32.0" layoutY="24.0" text="Maestros" />
-            <Label layoutX="504.0" layoutY="33.0" text="Usuario1234" />
-            <Button layoutX="521.0" layoutY="59.0" mnemonicParsing="false" text="Agregar" />
-            <TextField layoutX="22.0" layoutY="59.0" />
-         </children></AnchorPane>
-   </top>
-   <center>
-      <AnchorPane prefHeight="297.0" prefWidth="600.0" BorderPane.alignment="CENTER">
-         <children>
-            <Button layoutX="237.0" layoutY="128.0" mnemonicParsing="false" text="Comenzar a Agregar" />
-            <Label layoutX="231.0" layoutY="104.0" text="Aún no hay maestros aquí" />
-         </children>
-      </AnchorPane>
-   </center>
-</BorderPane>
+            <Label layoutX="532.0" layoutY="333.0" text="Aún no hay maestros aquí">
+               <font>
+                  <Font name="System Bold" size="30.0" />
+               </font>
+            </Label>
+            <Button layoutX="509.0" layoutY="395.0" mnemonicParsing="false" prefHeight="51.0" prefWidth="425.0" style="-fx-background-color: black" text="COMENZAR A AGREGAR" textFill="WHITE">
+               <font>
+                  <Font name="System Bold" size="25.0" />
+               </font>
+            </Button>
+         </children></Pane>
+   </children>
+</Pane>

@@ -10,24 +10,33 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.control.Button?>
 
-<Pane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
+<Pane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="1024.0" prefWidth="1440.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
    <children>
-      <ImageView fitHeight="124.0" fitWidth="117.0" layoutX="-6.0" layoutY="-13.0" pickOnBounds="true" preserveRatio="true">
+      <ImageView fitHeight="184.0" fitWidth="192.0" layoutX="-7.0" layoutY="-4.0" pickOnBounds="true" preserveRatio="true">
          <image>
-            <Image url="@images/logoKedu-removebg-preview.png" />
+            <Image url="@../assets/images/logo.png" />
          </image>
       </ImageView>
-      <Label layoutX="76.0" layoutY="35.0" text="Kedu">
+      <Label layoutX="126.0" layoutY="60.0" text="Kedu">
          <font>
-            <Font name="System Bold" size="15.0" />
+            <Font name="System Bold" size="36.0" />
          </font>
       </Label>
-      <PasswordField layoutX="149.0" layoutY="216.0" prefHeight="31.0" prefWidth="309.0" promptText="Contraseña" />
-      <TextField layoutX="149.0" layoutY="169.0" prefHeight="31.0" prefWidth="309.0" promptText="Correo" />
-      <Button layoutX="151.0" layoutY="256.0" mnemonicParsing="false" prefHeight="31.0" prefWidth="309.0" style="-fx-background-color: black" text="Iniciar sesión" textFill="WHITE" />
-      <Label layoutX="230.0" layoutY="122.0" text="Bienvenido">
+      <PasswordField layoutX="440.0" layoutY="493.0" prefHeight="54.0" prefWidth="530.0" promptText="Contraseña">
          <font>
-            <Font name="System Bold" size="27.0" />
+            <Font size="24.0" />
+         </font></PasswordField>
+      <TextField layoutX="440.0" layoutY="416.0" prefHeight="55.0" prefWidth="530.0" promptText="Correo">
+         <font>
+            <Font size="24.0" />
+         </font></TextField>
+      <Button layoutX="440.0" layoutY="570.0" mnemonicParsing="false" prefHeight="48.0" prefWidth="529.0" style="-fx-background-color: black" text="Iniciar sesión" textFill="WHITE">
+         <font>
+            <Font size="24.0" />
+         </font></Button>
+      <Label layoutX="600.0" layoutY="344.0" text="Bienvenido">
+         <font>
+            <Font name="System Bold" size="45.0" />
          </font>
       </Label>
    </children>
