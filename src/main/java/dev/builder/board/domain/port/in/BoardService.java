@@ -1,4 +1,6 @@
 package dev.builder.board.domain.port.in;
 
-public interface BoardService {
+import dev.builder.core.domain.ApplicationService;
+
+public interface BoardService extends ApplicationService {
 }
