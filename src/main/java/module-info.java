@@ -16,4 +16,6 @@ module dev.builder {
     opens dev.builder.auth.application.controller to javafx.fxml;
     opens dev.builder.usermanagement.application.controller to javafx.fxml;
     opens dev.builder.board.application.controller to javafx.fxml;
+
+    exports dev.builder to javafx.graphics;
 }
