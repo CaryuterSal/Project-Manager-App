@@ -3,21 +3,10 @@ package dev.builder.usermanagement.domain.model;
 import java.time.LocalDateTime;
 import java.util.UUID;
 import java.util.regex.Pattern;
-import java.util.UUID;
 
 public class User {
 
-    private final UserId id;
-
-    public User(UserId id) {
-        this.id = id;
-    }
-
-
-    public record UserId(UUID id) {}
-
-
-
+    //Se crearon Variables
 
         private UUID id;
         private String email;
@@ -29,10 +18,11 @@ public class User {
         protected static final Pattern EMAIL = Pattern.compile("^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$");
         protected static final Pattern PASSWORD = Pattern.compile("^(?=.[a-z])(?=.[A-Z])(?=.*\\d).{5,}$");
 
-        public AppUser() {
+
+        public User(UserId id) {
         }
 
-        public AppUser(UUID id, String email, String password, boolean active, LocalDateTime createdAt, LocalDateTime updateAT) {
+        public User(UUID id, String email, String password, boolean active, LocalDateTime createdAt, LocalDateTime updateAT) {
             this.id = id;
             this.email = email;
             this.password = password;
@@ -41,7 +31,7 @@ public class User {
             this.updatedAt = updateAT;
         }
 
-        public AppUser(UUID id, String email, String password, boolean active) {
+        public User(UUID id, String email, String password, boolean active) {
             if (!EMAIL.matcher(email).matches()) {
                 throw new IllegalArgumentException("Ivalid email format");
             }
@@ -54,7 +44,7 @@ public class User {
             this.password = password;
             this.active = active;
         }
-        public String getId() {
+        public UUID getId() {
             return id;
         }
 
@@ -103,4 +93,6 @@ public class User {
         }
 
 
+    public static class UserId {
+    }
 }
