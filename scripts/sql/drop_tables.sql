@@ -1,38 +1,25 @@
+USE kedu_project_manager;
 
-DROP TABLE IF EXISTS `kedu_project_manager`.`timestamps` ;
+DROP TABLE IF EXISTS `task_asignee`;
+DROP TABLE IF EXISTS `stage_task`;
+DROP TABLE IF EXISTS `task_cover`;
+DROP TABLE IF EXISTS `task_attachment`;
+DROP TABLE IF EXISTS `file_source`;
+DROP TABLE IF EXISTS `student_board`;
+DROP TABLE IF EXISTS `board_stage`;
+DROP TABLE IF EXISTS `task`;
+DROP TABLE IF EXISTS `board`;
+DROP TABLE IF EXISTS `student`;
+DROP TABLE IF EXISTS `quarter_group`;
+DROP TABLE IF EXISTS `manager`;
+DROP TABLE IF EXISTS `admin`;
+DROP TABLE IF EXISTS `app_user`;
+DROP TABLE IF EXISTS `email`;
+DROP TABLE IF EXISTS `academic_group`;
+DROP TABLE IF EXISTS `academic_quarter`;
+DROP TABLE IF EXISTS `color`;
+DROP TABLE IF EXISTS `stage`;
+DROP TABLE IF EXISTS `file`;
 
-DROP TABLE IF EXISTS `kedu_project_manager`.`timestamps_1` ;
-
-DROP TABLE IF EXISTS `kedu_project_manager`.`task_asignee` ;
-
-DROP TABLE IF EXISTS `kedu_project_manager`.`stage_task`;
-
-DROP TABLE IF EXISTS `kedu_project_manager`.`board_stage` ;
-
-DROP TABLE IF EXISTS `kedu_project_manager`.`task` ;
-
-DROP TABLE IF EXISTS `kedu_project_manager`.`color` ;
-
-DROP TABLE IF EXISTS `kedu_project_manager`.`stage` ;
-
-DROP TABLE IF EXISTS `kedu_project_manager`.`student_board` ;
-
-DROP TABLE IF EXISTS `kedu_project_manager`.`board` ;
-
-DROP TABLE IF EXISTS `kedu_project_manager`.`user` ;
-
-DROP TABLE IF EXISTS `kedu_project_manager`.`student` ;
-
-DROP TABLE IF EXISTS `kedu_project_manager`.`quarter_group` ;
-
-DROP TABLE IF EXISTS `kedu_project_manager`.`academic_quarter` ;
-
-DROP TABLE IF EXISTS `kedu_project_manager`.`academic_group` ;
-
-DROP TABLE IF EXISTS `kedu_project_manager`.`manager` ;
-
-DROP TABLE IF EXISTS `kedu_project_manager`.`admin` ;
-
-DROP TABLE IF EXISTS `kedu_project_manager`.`app_user` ;
-
-DROP TABLE IF EXISTS `kedu_project_manager`.`email` ;
+DROP TABLE IF EXISTS `timestamps`;
+DROP TABLE IF EXISTS `timestamps_1`;

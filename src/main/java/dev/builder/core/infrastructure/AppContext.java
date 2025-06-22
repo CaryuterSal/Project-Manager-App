@@ -1,4 +1,4 @@
-package dev.builder.core;
+package dev.builder.core.infrastructure;
 
 /**
  * Punto de entrada común que construye los componentes de la aplicación.

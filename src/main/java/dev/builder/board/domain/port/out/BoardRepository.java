@@ -1,4 +1,7 @@
 package dev.builder.board.domain.port.out;
 
-public interface BoardRepository {
+import dev.builder.board.domain.model.Board;
+import dev.builder.core.domain.CrudRepository;
+
+public interface BoardRepository extends CrudRepository<Board, Board.Id> {
 }
