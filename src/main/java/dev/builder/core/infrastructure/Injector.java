@@ -1,4 +1,4 @@
-package dev.builder.core;
+package dev.builder.core.infrastructure;
 
 /**
  * Encargado de la inyección de dependencias.
