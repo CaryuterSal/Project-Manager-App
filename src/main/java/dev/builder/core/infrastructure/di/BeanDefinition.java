@@ -1,10 +1,10 @@
 package dev.builder.core.infrastructure.di;
 
-abstract class BeanDefinition<T> {
+class BeanDefinition<T> {
     private final Class<T> type;
-    private final Provider<T> provider;
+    private final Provider<? extends T> provider;
 
-    public BeanDefinition(Class<T> type, Provider<T> provider) {
+    public BeanDefinition(Class<T> type, Provider<? extends T> provider) {
         this.type = type;
         this.provider = provider;
     }
@@ -13,7 +13,7 @@ abstract class BeanDefinition<T> {
         return type;
     }
 
-    public Provider<T> getProvider() {
+    public Provider<? extends T> getProvider() {
         return provider;
     }
 }

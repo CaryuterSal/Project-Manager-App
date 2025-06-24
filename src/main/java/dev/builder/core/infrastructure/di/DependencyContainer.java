@@ -16,12 +16,24 @@ public interface DependencyContainer {
     <T> @Nullable T getInstance(Class<T> clazz);
 
     /**
+     * Obtiene la instancia con sus dependencias inyectadas e inicializado para el nombre específico de bean
+     * @param beanName el nombre de bean
+     * @return la instancia del bean
+     * @param <T> el tipo de bean
+     */
+    <T> @Nullable T getInstance(String beanName);
+
+    /**
      * @param clazz el tipo de bean
      * @return true si el tipo es {@link BeanScope#SINGLETON}
      */
-    default boolean isSingleton(Class<?> clazz){
-        return true;
-    }
+    boolean isSingleton(Class<?> clazz);
+
+    /**
+     * @param beanName el nombre del bean
+     * @return true si el tipo es {@link BeanScope#SINGLETON}
+     */
+    boolean isSingleton(String beanName);
 
     /**
      * Registra un nuevo {@code Bean} con {@link BeanScope#PROTOTYPE} como tipo.
