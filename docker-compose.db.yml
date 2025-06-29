@@ -1,15 +1,4 @@
 services:
-  app:
-    build: .
-    depends_on:
-      oracle-db:
-        condition: service_healthy
-    environment:
-      DB_PORT: '1521'
-    volumes:
-      - ~/.m2:/root/.m2
-    profiles:
-      - 'dev'
   oracle-db:
     image: container-registry.oracle.com/database/express:latest
     container_name: oracle-ex

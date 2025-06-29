@@ -1,0 +1,75 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<Table class="oracle.dbtools.crest.model.design.relational.Table" directorySegmentName="seg_0" id="1FBC162A-0358-E402-A5E6-D8BB0C65A139" name="FILE">
+<createdBy>caryuter</createdBy>
+<createdTime>2025-06-27 18:53:28 UTC</createdTime>
+<generatorID>F2392159-42E6-2BD0-1318-A0E8EC27C12E</generatorID>
+<ownerDesignName>project-manager-db-design</ownerDesignName>
+<ordsAlias>files</ordsAlias>
+<abbreviation>fle</abbreviation>
+<allowColumnReorder>false</allowColumnReorder>
+<existDependencyGenerateInDDl>true</existDependencyGenerateInDDl>
+<parsed>true</parsed>
+<columns itemClass="oracle.dbtools.crest.model.design.relational.Column">
+<Column name="id" id="43050FDA-ED93-3581-3007-1DE5BD4E6D8E">
+<createdBy>caryuter</createdBy>
+<createdTime>2025-06-27 18:53:28 UTC</createdTime>
+<generatorID>4C9946A0-30D9-1C1F-F046-CA0E0AFC0483</generatorID>
+<ownerDesignName>project-manager-db-design</ownerDesignName>
+<useDomainConstraints>false</useDomainConstraints>
+<use>1</use>
+<logicalDatatype>LogDes-4BABEC65-108B-2A3C-F7C4-84AC47D292B0@LOGDT10040</logicalDatatype>
+<dataTypeSize>16</dataTypeSize>
+<ownDataTypeParameters>16,,</ownDataTypeParameters>
+<autoIncrementCycle>false</autoIncrementCycle>
+</Column>
+<Column name="name" id="BEC7B59E-BEC2-F72A-9EFC-A24CB10077A5">
+<createdBy>caryuter</createdBy>
+<createdTime>2025-06-27 18:53:28 UTC</createdTime>
+<generatorID>96C239BF-D4AF-F64C-F5FE-E5BB1CAF923C</generatorID>
+<ownerDesignName>project-manager-db-design</ownerDesignName>
+<useDomainConstraints>false</useDomainConstraints>
+<use>1</use>
+<logicalDatatype>LOGDT024</logicalDatatype>
+<dataTypeSize>63</dataTypeSize>
+<ownDataTypeParameters>63,,</ownDataTypeParameters>
+<autoIncrementCycle>false</autoIncrementCycle>
+</Column>
+<Column name="mimetype" id="7A2F927A-957B-0DB9-67BD-EC1972AA8496">
+<createdBy>caryuter</createdBy>
+<createdTime>2025-06-27 18:53:28 UTC</createdTime>
+<generatorID>928AAFBE-0AD2-F356-EF47-6CEB700F5B0D</generatorID>
+<ownerDesignName>project-manager-db-design</ownerDesignName>
+<useDomainConstraints>false</useDomainConstraints>
+<use>1</use>
+<logicalDatatype>LOGDT024</logicalDatatype>
+<dataTypeSize>31 CHAR</dataTypeSize>
+<ownDataTypeParameters>31 CHAR,,</ownDataTypeParameters>
+<autoIncrementCycle>false</autoIncrementCycle>
+</Column>
+<Column name="purpose" id="4495E991-8C72-1958-CC05-BF5024E96C2D">
+<createdBy>caryuter</createdBy>
+<createdTime>2025-06-27 22:34:44 UTC</createdTime>
+<ownerDesignName>project-manager-db-design</ownerDesignName>
+<useDomainConstraints>false</useDomainConstraints>
+<use>1</use>
+<logicalDatatype>LOGDT024</logicalDatatype>
+<dataTypeSize>15</dataTypeSize>
+<ownDataTypeParameters>15,,</ownDataTypeParameters>
+<autoIncrementCycle>false</autoIncrementCycle>
+</Column>
+</columns>
+<indexes itemClass="oracle.dbtools.crest.model.design.relational.Index">
+<ind_PK_UK id="5613C854-F10B-261E-92D1-9BB05BEA9F39" name="FILES_PK">
+<createdBy>caryuter</createdBy>
+<createdTime>2025-06-27 18:53:28 UTC</createdTime>
+<generatorID>11443F50-8FFE-32D0-E86A-DCBEF688952D</generatorID>
+<ownerDesignName>project-manager-db-design</ownerDesignName>
+<pk>true</pk>
+<indexState>Primary Constraint</indexState>
+<isSurrogateKey>false</isSurrogateKey>
+<indexColumnUsage>
+<colUsage columnID="43050FDA-ED93-3581-3007-1DE5BD4E6D8E"/>
+</indexColumnUsage>
+</ind_PK_UK>
+</indexes>
+</Table>
