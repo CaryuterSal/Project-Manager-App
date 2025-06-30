@@ -13,6 +13,7 @@ module dev.builder {
     requires org.jetbrains.annotations;
     requires org.apache.tika.core;
     requires com.healthmarketscience.jackcess;
+    requires java.xml.crypto;
 
     opens dev.builder to javafx.fxml;
     opens dev.builder.auth.application.controller to javafx.fxml;

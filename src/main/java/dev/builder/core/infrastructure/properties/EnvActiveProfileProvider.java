@@ -2,12 +2,12 @@ package dev.builder.core.infrastructure.properties;
 
 import java.util.Optional;
 
-public class SystemActiveProfileProvider implements ActiveProfileProvider {
+public class EnvActiveProfileProvider implements ActiveProfileProvider {
 
     private final String activeProfile;
 
-    public SystemActiveProfileProvider() {
-        activeProfile = System.getProperty(PropertiesNamespaces.PROPERTIES_PROFILE_NAMESPACE);
+    public EnvActiveProfileProvider() {
+        activeProfile = System.getenv(PropertiesNamespaces.ENV_PROFILE_NAMESPACE);
     }
 
     @Override
