@@ -1,0 +1,96 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<Entity class="oracle.dbtools.crest.model.design.logical.Entity" directorySegmentName="seg_0" id="1B08FE9C-C661-1252-4EEF-FF57C1D88A20" name="STAGE TASKS">
+<createdBy>caryuter</createdBy>
+<createdTime>2025-06-27 18:13:29 UTC</createdTime>
+<ownerDesignName>project-manager-db-design</ownerDesignName>
+<engineerTo>
+<item key="AB23647E-F000-19A5-FCDD-7AB0199D0662" value="true"/>
+</engineerTo>
+<adequatelyNormalized>NO</adequatelyNormalized>
+<expectedVolumes>0</expectedVolumes>
+<fwdEngineeringStrategyName>Single Table</fwdEngineeringStrategyName>
+<growthPercent>0</growthPercent>
+<growthType>Year</growthType>
+<maxVolumes>9999999</maxVolumes>
+<minVolumes>0</minVolumes>
+<normalForm>Third</normalForm>
+<shortName>stk</shortName>
+<attributes itemClass="oracle.dbtools.crest.model.design.logical.Attribute">
+<Attribute name="Order" id="74C1F4C3-28D9-495C-5FBF-42BCFE3C3EA9">
+<createdBy>caryuter</createdBy>
+<createdTime>2025-06-27 18:19:02 UTC</createdTime>
+<ownerDesignName>project-manager-db-design</ownerDesignName>
+<engineerTo>
+<item key="AB23647E-F000-19A5-FCDD-7AB0199D0662" value="true"/>
+</engineerTo>
+<useDomainConstraints>false</useDomainConstraints>
+<use>1</use>
+<logicalDatatype>LOGDT026</logicalDatatype>
+<dataTypePrecision>10</dataTypePrecision>
+<dataTypeScale>4</dataTypeScale>
+<ownDataTypeParameters>,10,4</ownDataTypeParameters>
+</Attribute>
+<Attribute name="Email" id="52F88471-2681-D866-BC18-606130F2B9D6">
+<createdBy>caryuter</createdBy>
+<createdTime>2025-06-27 18:39:02 UTC</createdTime>
+<generatorID>E03228F5-7636-C02F-9B28-87347E49BF13</generatorID>
+<ownerDesignName>project-manager-db-design</ownerDesignName>
+<engineerTo>
+<item key="AB23647E-F000-19A5-FCDD-7AB0199D0662" value="true"/>
+</engineerTo>
+<referedAttribute>18167F3B-535A-7305-233F-7AB2227128A1</referedAttribute>
+<useDomainConstraints>false</useDomainConstraints>
+<use>1</use>
+<logicalDatatype>LOGDT024</logicalDatatype>
+<dataTypeSize>63 CHAR</dataTypeSize>
+<ownDataTypeParameters>,,</ownDataTypeParameters>
+</Attribute>
+<Attribute name="Name" id="97263751-28A8-D200-DE23-6954B22EFDC5">
+<createdBy>caryuter</createdBy>
+<createdTime>2025-06-27 18:39:02 UTC</createdTime>
+<generatorID>E03228F5-7636-C02F-9B28-87347E49BF13</generatorID>
+<ownerDesignName>project-manager-db-design</ownerDesignName>
+<engineerTo>
+<item key="AB23647E-F000-19A5-FCDD-7AB0199D0662" value="true"/>
+</engineerTo>
+<referedAttribute>A55A308C-F1F0-425F-5A6D-35E3E46D4134</referedAttribute>
+<useDomainConstraints>false</useDomainConstraints>
+<use>1</use>
+<logicalDatatype>LOGDT024</logicalDatatype>
+<dataTypeSize>15 CHAR</dataTypeSize>
+<ownDataTypeParameters>,,</ownDataTypeParameters>
+</Attribute>
+<Attribute name="Id" id="BB198042-4F32-87F5-2EDC-261F38053A44">
+<createdBy>caryuter</createdBy>
+<createdTime>2025-06-27 18:39:42 UTC</createdTime>
+<generatorID>717F43CF-4C87-42AA-1EBB-C8857B32AD07</generatorID>
+<ownerDesignName>project-manager-db-design</ownerDesignName>
+<engineerTo>
+<item key="AB23647E-F000-19A5-FCDD-7AB0199D0662" value="true"/>
+</engineerTo>
+<referedAttribute>F26B77F1-CE8B-0BE7-B219-2E86C1C012F7</referedAttribute>
+<useDomainConstraints>false</useDomainConstraints>
+<use>1</use>
+<logicalDatatype>LogDes-4BABEC65-108B-2A3C-F7C4-84AC47D292B0@LOGDT10040</logicalDatatype>
+<dataTypeSize>16</dataTypeSize>
+<ownDataTypeParameters>,,</ownDataTypeParameters>
+</Attribute>
+</attributes>
+<identifiers itemClass="oracle.dbtools.crest.model.design.logical.CandidateKey">
+<identifier id="5E06339C-4DA3-BE49-5249-2FA7E23C2444" name="STAGE TASK PK">
+<createdBy>caryuter</createdBy>
+<createdTime>2025-06-27 18:14:11 UTC</createdTime>
+<ownerDesignName>project-manager-db-design</ownerDesignName>
+<shouldEngineer>false</shouldEngineer>
+<engineerTo>
+<item key="AB23647E-F000-19A5-FCDD-7AB0199D0662" value="false"/>
+</engineerTo>
+<pk>true</pk>
+<usedAttributes>
+<attributeRef>52F88471-2681-D866-BC18-606130F2B9D6</attributeRef>
+<attributeRef>97263751-28A8-D200-DE23-6954B22EFDC5</attributeRef>
+<attributeRef>BB198042-4F32-87F5-2EDC-261F38053A44</attributeRef>
+</usedAttributes>
+</identifier>
+</identifiers>
+</Entity>

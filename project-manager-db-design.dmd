@@ -1,0 +1,8 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<OSDM_Design class="oracle.dbtools.crest.model.design.Design" name="project-manager-db-design" id="BC6A740A-F0E6-C43E-6605-F4C276467A78" version="3.5">
+<createdBy>caryuter</createdBy>
+<createdTime>2025-06-27 17:17:28 UTC</createdTime>
+<ownerDesignName>project-manager-db-design</ownerDesignName>
+<capitalNames>false</capitalNames>
+<designId>BC6A740A-F0E6-C43E-6605-F4C276467A78</designId>
+</OSDM_Design>
