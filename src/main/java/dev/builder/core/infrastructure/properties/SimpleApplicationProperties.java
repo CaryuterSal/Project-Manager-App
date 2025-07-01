@@ -1,23 +1,16 @@
 package dev.builder.core.infrastructure.properties;
 
-import jakarta.validation.Valid;
-import jakarta.validation.Validator;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
-import javax.xml.crypto.URIReferenceException;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.net.URL;
-import java.util.Locale;
+import java.util.Optional;
 import java.util.Properties;
-import java.util.ResourceBundle;
-import java.util.logging.Level;
 import java.util.logging.Logger;
-import java.util.spi.LocaleNameProvider;
 
 public class SimpleApplicationProperties implements ApplicationProperties {
 
@@ -36,15 +29,14 @@ public class SimpleApplicationProperties implements ApplicationProperties {
     private void loadProperties(){
         try {
             URL propertiesURL = loadDefaultPropertiesResource();
-            applicationProperties.load(new FileInputStream(new File(propertiesURL.toURI())));
-            activeProfileProvider.getActiveProfile();
+            if(propertiesURL != null) {
+                applicationProperties.load(new FileInputStream(new File(propertiesURL.toURI())));
+                activeProfileProvider.getActiveProfile();
+            }
+            Optional<String> activeProfile = activeProfileProvider.getActiveProfile();
+            activeProfile.ifPresent(s -> overrideProperties(loadPropertiesResource(s)));
         } catch (URISyntaxException | IOException ignored){
         }
-    }
-
-    //TODO: real fix without method signature
-    private void setDefaultProperties(@NotNull URL propertiesResource) throws URISyntaxException, IOException {
-        applicationProperties.load(new FileInputStream(new File(propertiesResource.toURI())));
     }
 
     private void overrideProperties(@NotNull  URL propertiesResource){
@@ -53,7 +45,7 @@ public class SimpleApplicationProperties implements ApplicationProperties {
     }
 
     private URL loadPropertiesResource(String profile){
-        String filename = PropertiesNamespaces.MODULE_CONTEXT_PATH + PropertiesNamespaces.FILE_PREFIX + profile + PropertiesNamespaces.FILE_POSTFIX
+        String filename = PropertiesNamespaces.MODULE_CONTEXT_PATH + PropertiesNamespaces.FILE_PREFIX + profile + PropertiesNamespaces.FILE_POSTFIX;
         return checkResource(filename, getClass().getResource(filename));
     }
 
@@ -64,28 +56,16 @@ public class SimpleApplicationProperties implements ApplicationProperties {
     }
 
     private URL loadDefaultPropertiesResource(){
-        String filename = PropertiesNamespaces.MODULE_CONTEXT_PATH + PropertiesNamespaces.FILE_PREFIX + PropertiesNamespaces.FILE_POSTFIX
-        return checkResource(filename, getClass().getResource(filename));
+        String filename = PropertiesNamespaces.MODULE_CONTEXT_PATH + PropertiesNamespaces.FILE_PREFIX + PropertiesNamespaces.FILE_POSTFIX;
+        return getClass().getResource(filename);
 
     }
 
-    @Override
-    public String getAdminPassword() {
-        return "";
-    }
 
     @Override
-    public String geDbtUrl() {
-        return "";
-    }
-
-    @Override
-    public String getDbUsername() {
-        return "";
-    }
-
-    @Override
-    public String getDbPassword() {
-        return "";
+    public String getDbUrl() {
+        String prop = applicationProperties.getProperty(PropertiesNamespaces.DataSource.DB_URL);
+        if(prop == null) throw new IllegalStateException(PropertiesNamespaces.DataSource.DB_URL + " not found");
+        return prop;
     }
 }

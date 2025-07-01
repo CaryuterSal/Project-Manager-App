@@ -10,6 +10,8 @@ public class PropertiesNamespaces {
         static final String  DB_URL = "db.url";
     }
 
+    static final String LOCALE_DEFAULT="locale.default";
+
     static final String ENV_PROFILE_NAMESPACE = "KEDU_PROFILE";
     static final String PROPERTIES_PROFILE_NAMESPACE = "env.profile";
 }

@@ -1,4 +1,4 @@
 package dev.builder.core.infrastructure.properties;
 
-public interface ApplicationProperties extends DataSourceProperties{
+public interface ApplicationProperties extends DataSourcePropertiesHolder {
 }
