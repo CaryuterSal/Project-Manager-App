@@ -6,38 +6,69 @@
 <?import java.lang.*?>
 <?import javafx.scene.layout.*?>
 <?import javafx.geometry.Insets?>
-<?import javafx.scene.control.Label?>
-<?import javafx.scene.layout.VBox?>
-<?import javafx.scene.control.Button?>
 
 <Pane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="1024.0" prefWidth="1440.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
    <children>
-      <ImageView fitHeight="184.0" fitWidth="192.0" layoutX="-7.0" layoutY="-4.0" pickOnBounds="true" preserveRatio="true">
-         <image>
-            <Image url="@../assets/images/logo.png" />
-         </image>
-      </ImageView>
-      <Label layoutX="126.0" layoutY="60.0" text="Kedu">
-         <font>
-            <Font name="System Bold" size="36.0" />
-         </font>
-      </Label>
-      <PasswordField layoutX="440.0" layoutY="493.0" prefHeight="54.0" prefWidth="530.0" promptText="Contraseña">
-         <font>
-            <Font size="24.0" />
-         </font></PasswordField>
-      <TextField layoutX="440.0" layoutY="416.0" prefHeight="55.0" prefWidth="530.0" promptText="Correo">
-         <font>
-            <Font size="24.0" />
-         </font></TextField>
-      <Button layoutX="440.0" layoutY="570.0" mnemonicParsing="false" prefHeight="48.0" prefWidth="529.0" style="-fx-background-color: black" text="Iniciar sesión" textFill="WHITE">
-         <font>
-            <Font size="24.0" />
-         </font></Button>
-      <Label layoutX="600.0" layoutY="344.0" text="Bienvenido">
-         <font>
-            <Font name="System Bold" size="45.0" />
-         </font>
-      </Label>
+
+      <HBox layoutX="-7.0" layoutY="-4.0">
+         <children>
+            <ImageView fitHeight="184.0" fitWidth="192.0" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@../assets/images/logo.png" />
+               </image>
+            </ImageView>
+         </children>
+      </HBox>
+
+      <VBox layoutX="126.0" layoutY="60.0">
+         <children>
+            <Label text="Kedu">
+               <font>
+                  <Font name="System Bold" size="36.0" />
+               </font>
+            </Label>
+         </children>
+      </VBox>
+
+      <VBox layoutX="440.0" layoutY="416.0">
+         <children>
+            <TextField prefHeight="55.0" prefWidth="530.0" promptText="Correo">
+               <font>
+                  <Font size="24.0" />
+               </font>
+            </TextField>
+         </children>
+      </VBox>
+
+      <VBox layoutX="440.0" layoutY="493.0">
+         <children>
+            <PasswordField prefHeight="54.0" prefWidth="530.0" promptText="Contraseña">
+               <font>
+                  <Font size="24.0" />
+               </font>
+            </PasswordField>
+         </children>
+      </VBox>
+
+      <VBox layoutX="440.0" layoutY="570.0">
+         <children>
+            <Button mnemonicParsing="false" prefHeight="48.0" prefWidth="529.0" style="-fx-background-color: black" text="Iniciar sesión" textFill="WHITE">
+               <font>
+                  <Font size="24.0" />
+               </font>
+            </Button>
+         </children>
+      </VBox>
+
+      <VBox layoutX="600.0" layoutY="344.0">
+         <children>
+            <Label text="Bienvenido">
+               <font>
+                  <Font name="System Bold" size="45.0" />
+               </font>
+            </Label>
+         </children>
+      </VBox>
+
    </children>
 </Pane>
