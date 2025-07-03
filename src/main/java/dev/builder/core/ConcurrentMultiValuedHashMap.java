@@ -22,6 +22,14 @@ public class ConcurrentMultiValuedHashMap<K,V> {
         );
     }
 
+    public List<V> values(){
+        return map.values().stream().flatMap(Set::stream).toList();
+    }
+
+    public Set<K> keySet(){
+        return map.keySet();
+    }
+
     public V put(final K key, final V value) {
         map.computeIfAbsent(key, k -> ConcurrentHashMap.newKeySet())
                 .add(value);
@@ -40,4 +48,11 @@ public class ConcurrentMultiValuedHashMap<K,V> {
         return !valueSet.isEmpty() && valueSet.contains(value);
     }
 
+    public boolean containsKey(K type) {
+        return map.containsKey(type);
+    }
+
+    public void clear(){
+        map.clear();
+    }
 }

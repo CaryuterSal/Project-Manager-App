@@ -1,4 +1,4 @@
-package dev.builder.core.infrastructure.di;
+package dev.builder.core.infrastructure.di.exception;
 
 import org.jetbrains.annotations.NotNull;
 
