@@ -1,5 +1,6 @@
-package dev.builder.core.infrastructure.di.definition.context;
+package dev.builder.core.infrastructure.di.definition;
 
+import java.util.Objects;
 import java.util.function.Supplier;
 
 public class SingletonBeanDefinition<T> extends BeanDefinition<T> {
@@ -25,5 +26,22 @@ public class SingletonBeanDefinition<T> extends BeanDefinition<T> {
 
     public InstantiationMode getInstantiationMode() {
         return instantiationMode;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (o == null || getClass() != o.getClass()) return false;
+        if (!super.equals(o)) return false;
+
+        SingletonBeanDefinition<?> that = (SingletonBeanDefinition<?>) o;
+        return Objects.equals(instance, that.instance) && getInstantiationMode() == that.getInstantiationMode();
+    }
+
+    @Override
+    public int hashCode() {
+        int result = super.hashCode();
+        result = 31 * result + Objects.hashCode(instance);
+        result = 31 * result + getInstantiationMode().hashCode();
+        return result;
     }
 }

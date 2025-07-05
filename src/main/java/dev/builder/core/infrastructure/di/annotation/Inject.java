@@ -1,4 +1,4 @@
-package dev.builder.core.infrastructure.di;
+package dev.builder.core.infrastructure.di.annotation;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

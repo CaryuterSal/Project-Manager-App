@@ -1,4 +1,4 @@
-package dev.builder.core.infrastructure.di.definition.context;
+package dev.builder.core.infrastructure.di.definition;
 public enum BeanScope {
     SINGLETON(SingletonBeanDefinition.class),
     PROTOTYPE(BeanDefinition.class);

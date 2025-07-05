@@ -1,4 +1,4 @@
-package dev.builder.core.infrastructure.di.definition.context;
+package dev.builder.core.infrastructure.di.definition;
 
 /**
  * Única forma de construcción válida para {@link BeanRegistrationConfiguration}.
@@ -50,15 +50,15 @@ public class BeanRegistrationBuilder<T> implements FirstStep<T>, OptionalConfigS
     }
 
     @Override
-    public BeanNameStep<T> eager() {
+    public OptionalConfigStep<T> eager() {
         this.instantiationMode = InstantiationMode.EAGER;
-        return endBuilder;
+        return this;
     }
 
     @Override
-    public BeanNameStep<T> lazy() {
+    public OptionalConfigStep<T> lazy() {
         this.instantiationMode = InstantiationMode.LAZY;
-        return endBuilder;
+        return this;
     }
 
     @Override

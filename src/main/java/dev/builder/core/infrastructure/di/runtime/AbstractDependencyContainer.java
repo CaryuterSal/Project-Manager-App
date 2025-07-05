@@ -1,11 +1,14 @@
-package dev.builder.core.infrastructure.di;
+package dev.builder.core.infrastructure.di.runtime;
 
 import dev.builder.core.ConcurrentMultiValuedHashMap;
-import dev.builder.core.infrastructure.di.definition.context.*;
+import dev.builder.core.infrastructure.di.definition.BeanDefinition;
+import dev.builder.core.infrastructure.di.definition.BeanRegistrationConfiguration;
+import dev.builder.core.infrastructure.di.definition.InstantiationMode;
+import dev.builder.core.infrastructure.di.definition.SingletonBeanDefinition;
 import dev.builder.core.infrastructure.di.exception.BeanNotFoundException;
+import dev.builder.core.infrastructure.di.exception.ConstructorNotFoundException;
 import dev.builder.core.infrastructure.di.exception.UncertainBeanRetrievalException;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
@@ -13,10 +16,9 @@ import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.function.Supplier;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-abstract class AbstractDependencyContainer implements DependencyContainer{
+abstract class AbstractDependencyContainer implements DependencyContainer {
 
     /**
      * Mantiene las referencias a beans como clave valor, siendo la clave el nombre registrado para el bean
@@ -27,24 +29,34 @@ abstract class AbstractDependencyContainer implements DependencyContainer{
      */
     protected final ConcurrentMultiValuedHashMap<Class<?>, BeanDefinition<?>> registryByType = new ConcurrentMultiValuedHashMap<>();
 
+    /**
+     * @throws BeanNotFoundException si no se encuentra el bean
+     * @throws UncertainBeanRetrievalException si hay más de un bean registrado para dicha clase
+     */
     @Override
-    public <T> @Nullable T getInstance(Class<T> clazz) {
+    public <T> T getInstance(Class<T> clazz) {
         return getInstance(getBeanDefinition(clazz));
     }
 
+    /**
+     * @throws BeanNotFoundException si no se encuentra el bean
+     */
     @Override
-    public <T> @Nullable T getInstance(String beanName) {
+    public <T> T getInstance(String beanName) {
         return getInstance(getBeanDefinition(beanName));
     }
 
-    protected <T> T getInstance(BeanDefinition<T> beanDefinition) {
-        if(beanDefinition instanceof SingletonBeanDefinition<T>){
-            return  ((SingletonBeanDefinition<T>) beanDefinition).getBean();
-        } else {
-            return beanDefinition.getSupplier().get();
-        }
+    /**
+     * @throws BeanNotFoundException si no se encuentra el bean
+     */
+    protected <T> T getInstance(@NotNull BeanDefinition<T> beanDefinition) {
+        return beanDefinition.getBean();
     }
 
+    /**
+     * @throws BeanNotFoundException si no se encuentra el bean
+     * @throws UncertainBeanRetrievalException si hay más de un bean registrado para dicha clase
+     */
     @SuppressWarnings("unchecked")
     protected <T> BeanDefinition<T> getBeanDefinition(Class<T> clazz){
         Set<? extends BeanDefinition<?>> relatedBeans = registryByType.get(clazz);
@@ -54,6 +66,13 @@ abstract class AbstractDependencyContainer implements DependencyContainer{
     }
 
 
+    /**
+     * Busca en el registro del contenedor un bean con un determinado nombre
+     * @param beanName el nombre del bean
+     * @throws BeanNotFoundException si no hay bean para dicho nombre
+     * @return el bean
+     * @param <T> el tipo del bean
+     */
     @SuppressWarnings("unchecked")
     protected <T> BeanDefinition<T> getBeanDefinition(String beanName){
         BeanDefinition<T> bean = (BeanDefinition<T>) registryByName.get(beanName);
@@ -71,19 +90,43 @@ abstract class AbstractDependencyContainer implements DependencyContainer{
         return getBeanDefinition(beanName) instanceof SingletonBeanDefinition;
     }
 
+    /**
+     * @throws NullPointerException si la configuración es nula
+     * @throws ConstructorNotFoundException si la clase target no tiene al menos un constructor visible (público)
+     */
     @Override
     public <T> boolean register(final BeanRegistrationConfiguration<T> config) {
         if(config == null) throw new NullPointerException("config is null");
         final Constructor<T> constructor = getMostSuitableConstructor(config.clazz());
-        if(constructor == null) throw new IllegalArgumentException("No suitable constructor found for " + config.clazz());
 
-        BeanDefinition<T> beanDefinition = toBeanDefinition(config, constructor);
+        boolean registered = registerAllAssignableTypes(config, constructor);
 
-        boolean registered = registerBeanDefinition(beanDefinition);
         config.instatiationMode().ifPresentOrElse(mode -> {
             if(mode == InstantiationMode.EAGER) getInstance(config.clazz());
         }, () -> getInstance(config.clazz()));
 
+        return registered;
+    }
+
+    /**
+     * Registra un bean para la configuración y constructor especificados para todos los tipos a los que es asignable, recursivamente
+     * <ul>
+     *     <li>Interfaces</li>
+     *     <li>Clases padre</li>
+     * </ul>
+     * @param config la configuración de creación
+     * @param constructor el constructor del bean
+     * @return si se agregó al menos un registro para el bean
+     * @param <T> el tipo del bean
+     */
+    protected <T> boolean registerAllAssignableTypes(BeanRegistrationConfiguration<T> config, Constructor<T> constructor) {
+        BeanDefinition<T> beanDefinition = toBeanDefinition(config, constructor);
+        boolean registered = false;
+        for(Class<?> assignableType: getAllAssignableTypes(config.clazz())) {
+            if(registerBeanDefinition(assignableType, beanDefinition)){
+                registered = true;
+            };
+        }
         return registered;
     }
 
@@ -95,14 +138,16 @@ abstract class AbstractDependencyContainer implements DependencyContainer{
      * @return la definición de bean SIN REGISTRAR
      * @param <T> el tipo del bean
      */
-    private <T> @NotNull BeanDefinition<T> toBeanDefinition(@NotNull BeanRegistrationConfiguration<T> config, Constructor<T> constructor) {
+    protected <T> @NotNull BeanDefinition<T> toBeanDefinition(@NotNull BeanRegistrationConfiguration<T> config, Constructor<T> constructor) {
 
         String beanName = config.beanName().orElse(generateBeanName(config.clazz()));
 
         Supplier<T> beanCreator = () -> {
             try {
-                T instance = constructor.newInstance(getBeanDefinitionsForConstructorParams(constructor));
-                if(config.initCustomizer().isPresent()) config.initCustomizer().get().apply(instance);
+                List<? extends BeanDefinition<?>> paramBeans = getBeanDefinitionsForConstructorParams(constructor);
+                Object[] paramInstances = paramBeans.stream().map(BeanDefinition::getBean).toArray();
+                T instance = constructor.newInstance((Object[]) paramInstances);
+                if(config.initCustomizer().isPresent()) config.initCustomizer().get().accept(instance);
                 return instance;
             } catch (InstantiationException | IllegalAccessException | InvocationTargetException e) {
                 throw new RuntimeException(e);
@@ -132,7 +177,7 @@ abstract class AbstractDependencyContainer implements DependencyContainer{
      * @return el nombre generado del bean
      */
     private @NotNull String generateBeanName(@NotNull Class<?> clazz) {
-        String className = clazz.getName();
+        String className = clazz.getSimpleName();
         char firstLetter = className.charAt(0);
         return Character.toLowerCase(firstLetter) + className.substring(1);
     }
@@ -147,7 +192,14 @@ abstract class AbstractDependencyContainer implements DependencyContainer{
     @SuppressWarnings("unchecked")
     protected <T> Constructor<T> getMostSuitableConstructor(@NotNull Class<T> clazz){
         Constructor<?>[] constructors = clazz.getDeclaredConstructors();
-        if(constructors.length == 0) return null;
+        if(constructors.length == 0) {
+            try {
+                return clazz.getConstructor();
+            } catch (NoSuchMethodException e) {
+                throw new ConstructorNotFoundException(clazz.getName());
+            }
+        };
+
         Constructor<?> constructor = Stream.of(constructors)
                 .max(Comparator.comparingInt(Constructor::getParameterCount))
                 .get();
@@ -162,18 +214,40 @@ abstract class AbstractDependencyContainer implements DependencyContainer{
      * @return verdadero si el bean es nuevo, false si ya existía
      * @param <T> El tipo del bean
      */
-    private synchronized <T> boolean registerBeanDefinition(@NotNull BeanDefinition<T> beanDefinition){
-        if(registryByName.containsKey(beanDefinition.getBeanName())){
+    protected synchronized <T> boolean registerBeanDefinition(Class<?> implType, @NotNull BeanDefinition<T> beanDefinition){
+        if(registryByType.containsMapping(implType, beanDefinition)){
             return false;
         }
         registryByName.putIfAbsent(beanDefinition.getBeanName(), beanDefinition);
-        registryByType.put(beanDefinition.getType(), beanDefinition);
+        registryByType.put(implType, beanDefinition);
         return true;
     }
 
-    @Override
-    public void scanPackage(String packageName) throws UnsupportedOperationException{
-        throw new UnsupportedOperationException("not yet");
+    /**
+     * Recorre todas las clases e interfaces que implementa un tipo.
+     * De utilidad a la hora de registrar los beans, ya que esto permite
+     * obtener un bean por medio de sus superclases o interfaces
+     * @param clazz la clase del bean
+     * @return una lista con el bean, las interfaces que implementa y superclases
+     */
+    protected @NotNull Set<Class<?>> getAllAssignableTypes(Class<?> clazz) {
+        Set<Class<?>> types = new HashSet<>();
+        Queue<Class<?>> queue = new ArrayDeque<>();
+        queue.add(clazz);
+        while (!queue.isEmpty()) {
+            Class<?> current = queue.poll();
+            types.add(current);
+            Class<?> superclass = current.getSuperclass();
+            if (superclass != null && superclass != Object.class && types.add(superclass)) {
+                queue.add(superclass);
+            }
+            for (Class<?> iface : current.getInterfaces()) {
+                if (types.add(iface)) {
+                    queue.add(iface);
+                }
+            }
+        }
+        return types;
     }
 
     @Override
@@ -193,6 +267,11 @@ abstract class AbstractDependencyContainer implements DependencyContainer{
     }
 
     @Override
+    public boolean isRegistered(String beanName) {
+        return registryByName.containsKey(beanName);
+    }
+
+    @Override
     public synchronized void clear() {
         registryByType.clear();
         registryByName.clear();
@@ -200,11 +279,11 @@ abstract class AbstractDependencyContainer implements DependencyContainer{
 
     @Override
     public Set<Class<?>> getRegisteredTypes() {
-        return registryByType.keySet();
+        return Collections.unmodifiableSet(registryByType.keySet());
     }
 
     @Override
     public Set<String> getRegisteredBeanNames() {
-        return registryByName.keySet();
+        return Collections.unmodifiableSet(registryByName.keySet());
     }
 }

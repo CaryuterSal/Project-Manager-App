@@ -15,6 +15,7 @@ module dev.builder {
     requires com.healthmarketscience.jackcess;
     requires java.xml.crypto;
     requires org.apache.commons.collections4;
+    requires com.fasterxml.jackson.databind;
 
     opens dev.builder to javafx.fxml;
     opens dev.builder.auth.application.controller to javafx.fxml;

@@ -1,4 +1,6 @@
-package dev.builder.core.infrastructure.di;
+package dev.builder.core.infrastructure.di.annotation;
+
+import dev.builder.core.infrastructure.di.definition.InstantiationMode;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -11,4 +13,6 @@ import java.lang.annotation.Target;
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
 public @interface Singleton {
+    public String name() default "";
+    public InstantiationMode mode() default InstantiationMode.EAGER;
 }

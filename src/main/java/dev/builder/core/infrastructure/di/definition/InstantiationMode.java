@@ -1,4 +1,4 @@
-package dev.builder.core.infrastructure.di.definition.context;
+package dev.builder.core.infrastructure.di.definition;
 
 /**
  * Define cuál es el comportamiento en el que un bean {@link BeanScope#SINGLETON} se instancia

@@ -1,9 +1,7 @@
-package dev.builder.core.infrastructure.di;
+package dev.builder.core.infrastructure.di.runtime;
 
-import dev.builder.core.infrastructure.di.definition.context.BeanRegistrationConfiguration;
-import dev.builder.core.infrastructure.di.definition.context.BeanScope;
-import dev.builder.core.infrastructure.di.definition.context.InitCustomizer;
-import dev.builder.core.infrastructure.di.definition.context.InstantiationMode;
+import dev.builder.core.infrastructure.di.definition.BeanRegistrationConfiguration;
+import dev.builder.core.infrastructure.di.definition.BeanScope;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Set;
@@ -64,6 +62,12 @@ public interface DependencyContainer {
      * @return true si el bean está registrado en el contenedor
      */
     boolean isRegistered(Class<?> type);
+
+    /**
+     * @param beanName el nombre del bean
+     * @return true si el bean está registrado en el contenedor
+     */
+    boolean isRegistered(String beanName);
 
     /**
      * Elimina los beans registrados del contenedor de dependencias

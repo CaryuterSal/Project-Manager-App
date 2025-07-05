@@ -1,4 +1,4 @@
-package dev.builder.core.infrastructure.di.definition.context;
+package dev.builder.core.infrastructure.di.definition;
 
 public interface OptionalConfigStep<T> extends BuildStep<T> {
     BeanNameStep<T> initCustomizer(InitCustomizer<T> initCustomizer);

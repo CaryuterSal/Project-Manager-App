@@ -1,6 +1,7 @@
-package dev.builder.core.infrastructure.di.definition.context;
+package dev.builder.core.infrastructure.di.definition;
 
 import java.util.function.BinaryOperator;
+import java.util.function.Consumer;
 import java.util.function.UnaryOperator;
 
 /**
@@ -8,5 +9,5 @@ import java.util.function.UnaryOperator;
  * @param <T> tipo del bean
  */
 @FunctionalInterface
-public interface InitCustomizer<T> extends UnaryOperator<T> {
+public interface InitCustomizer<T> extends Consumer<T> {
 }
