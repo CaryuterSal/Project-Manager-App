@@ -12,6 +12,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Modifier;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
@@ -42,8 +43,8 @@ abstract class AbstractDependencyContainer implements DependencyContainer {
      * @throws BeanNotFoundException si no se encuentra el bean
      */
     @Override
-    public <T> T getInstance(String beanName) {
-        return getInstance(getBeanDefinition(beanName));
+    public <T> T getInstance(Class<T> clazz, String beanName) {
+        return getInstance(getBeanDefinition(clazz, beanName));
     }
 
     /**
@@ -70,24 +71,65 @@ abstract class AbstractDependencyContainer implements DependencyContainer {
      * Busca en el registro del contenedor un bean con un determinado nombre
      * @param beanName el nombre del bean
      * @throws BeanNotFoundException si no hay bean para dicho nombre
+     * @throws ClassCastException si el bean con dicho nombre no es del tipo que se especifica
      * @return el bean
      * @param <T> el tipo del bean
      */
-    @SuppressWarnings("unchecked")
-    protected <T> BeanDefinition<T> getBeanDefinition(String beanName){
-        BeanDefinition<T> bean = (BeanDefinition<T>) registryByName.get(beanName);
-        if(bean == null) throw new BeanNotFoundException(beanName);
-        return bean;
+    protected <T> BeanDefinition<T> getBeanDefinition(@NotNull Class<T> clazz, String beanName){
+        BeanDefinition<?> rawBean =  getBeanDefinition(beanName);
+        if(!clazz.isAssignableFrom(rawBean.getType())){
+            throw new ClassCastException("Bean '" + beanName + "' is not of type " + clazz.getName());
+        }
+
+        @SuppressWarnings("unchecked")
+        BeanDefinition<T> typedBean = (BeanDefinition<T>) rawBean;
+        return typedBean;
+    }
+
+    /**
+     * Busca en el registro del contenedor un bean con un determinado nombre.
+     * </br>
+     * NO ES TYPE SAFE
+     * @param beanName el nombre del bean
+     * @throws BeanNotFoundException si no hay bean para dicho nombre
+     * @return el bean
+     */
+    protected BeanDefinition<?> getBeanDefinition(String beanName){
+        BeanDefinition<?> rawBean =  registryByName.get(beanName);
+        if(rawBean == null) throw new BeanNotFoundException(beanName);
+        return rawBean;
     }
 
     @Override
     public boolean isSingleton(Class<?> clazz) {
-        return getBeanDefinition(clazz) instanceof SingletonBeanDefinition;
+        return isSingleton(getBeanDefinition(clazz));
     }
 
     @Override
     public boolean isSingleton(String beanName) {
-        return getBeanDefinition(beanName) instanceof SingletonBeanDefinition;
+        return isSingleton(getBeanDefinition(beanName));
+    }
+
+    protected boolean isSingleton(BeanDefinition<?> beanDefinition) {
+        return beanDefinition instanceof SingletonBeanDefinition;
+    }
+
+    @Override
+    public InstantiationMode getInstantiationMode(Class<?> clazz) {
+        BeanDefinition<?> bean = getBeanDefinition(clazz);
+        if(!isSingleton(bean)) throw new BeanNotFoundException("Bean with class '" + clazz + "' is not singleton, hence, does not have instantiation mode");
+
+        SingletonBeanDefinition<?> singletonBeanDefinition = (SingletonBeanDefinition<?>) bean;
+        return singletonBeanDefinition.getInstantiationMode();
+    }
+
+    @Override
+    public InstantiationMode getInstantiationMode(String beanName) {
+        BeanDefinition<?> bean = getBeanDefinition(beanName);
+        if(!isSingleton(bean)) throw new BeanNotFoundException("Bean '" + beanName + "' is not singleton, hence, does not have instantiation mode");
+
+        SingletonBeanDefinition<?> singletonBeanDefinition = (SingletonBeanDefinition<?>) bean;
+        return singletonBeanDefinition.getInstantiationMode();
     }
 
     /**
@@ -106,6 +148,22 @@ abstract class AbstractDependencyContainer implements DependencyContainer {
         }, () -> getInstance(config.clazz()));
 
         return registered;
+    }
+
+    @Override
+    public <T> boolean register(Class<T> clazz) {
+        return register(createDefaultRegistrationConfiguration(clazz));
+    }
+
+    /**
+     * Crea la configuración de creación por defecto para un nuevo bean.
+     * @param clazz la clase del bean a registrar
+     * @return la configuración de registro del bean
+     * @param <T> el tipo del bean
+     */
+    protected <T> BeanRegistrationConfiguration<T> createDefaultRegistrationConfiguration(Class<T> clazz){
+        return BeanRegistrationConfiguration.builder(clazz)
+                .asLazySingleton().build();
     }
 
     /**
@@ -192,15 +250,20 @@ abstract class AbstractDependencyContainer implements DependencyContainer {
     @SuppressWarnings("unchecked")
     protected <T> Constructor<T> getMostSuitableConstructor(@NotNull Class<T> clazz){
         Constructor<?>[] constructors = clazz.getDeclaredConstructors();
-        if(constructors.length == 0) {
+        Constructor<?>[] notPrivateConstructors = Arrays.stream(constructors)
+                .filter(constructor -> !Modifier.isPrivate(constructor.getModifiers()))
+                .toArray(Constructor[]::new);
+        if(notPrivateConstructors.length == 0) {
             try {
-                return clazz.getConstructor();
+                Constructor<T> constructor =  clazz.getConstructor();
+                if(Modifier.isPrivate(constructor.getModifiers())) return null;
+                return constructor;
             } catch (NoSuchMethodException e) {
                 throw new ConstructorNotFoundException(clazz.getName());
             }
         };
 
-        Constructor<?> constructor = Stream.of(constructors)
+        Constructor<?> constructor = Stream.of(notPrivateConstructors)
                 .max(Comparator.comparingInt(Constructor::getParameterCount))
                 .get();
         constructor.setAccessible(true);

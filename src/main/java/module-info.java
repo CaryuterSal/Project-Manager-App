@@ -16,6 +16,7 @@ module dev.builder {
     requires java.xml.crypto;
     requires org.apache.commons.collections4;
     requires com.fasterxml.jackson.databind;
+    requires org.hibernate.validator;
 
     opens dev.builder to javafx.fxml;
     opens dev.builder.auth.application.controller to javafx.fxml;

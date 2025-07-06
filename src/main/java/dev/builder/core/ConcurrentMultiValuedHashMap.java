@@ -16,6 +16,10 @@ public class ConcurrentMultiValuedHashMap<K,V> {
         return map;
     }
 
+    public Set<Map.Entry<K,Set<V>>> entrySet() {
+        return map.entrySet();
+    }
+
     public Set<V> get(final K key) {
         return Collections.unmodifiableSet(
                 map.computeIfAbsent(key, k -> ConcurrentHashMap.newKeySet())
@@ -45,7 +49,7 @@ public class ConcurrentMultiValuedHashMap<K,V> {
 
     public boolean containsMapping(final Object key, final Object value) {
         Set<V> valueSet = map.get(key);
-        return !valueSet.isEmpty() && valueSet.contains(value);
+        return valueSet != null && !valueSet.isEmpty() && valueSet.contains(value);
     }
 
     public boolean containsKey(K type) {
