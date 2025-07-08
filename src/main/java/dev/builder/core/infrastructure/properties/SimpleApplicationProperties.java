@@ -1,48 +1,42 @@
 package dev.builder.core.infrastructure.properties;
 
-import jakarta.validation.Valid;
-import jakarta.validation.Validator;
+import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.net.URL;
-import java.util.Locale;
+import java.util.Optional;
 import java.util.Properties;
-import java.util.ResourceBundle;
-import java.util.logging.Level;
 import java.util.logging.Logger;
-import java.util.spi.LocaleNameProvider;
 
-public class SimpleApplicationProperties implements DataSourceProperties, AdminProperties {
+public class SimpleApplicationProperties implements ApplicationProperties {
 
 
-    private final ActiveProfileProvider  activeProfileProvider;
+    private final ActiveProfileProvider activeProfileProvider;
 
     private static Properties applicationProperties = new Properties();
     private static final Logger logger = Logger.getLogger(SimpleApplicationProperties.class.getSimpleName());
 
 
-    //TODO: real fix without method signature
-    public SimpleApplicationProperties(ActiveProfileProvider activeProfileProvider) throws URISyntaxException, IOException {
+    public SimpleApplicationProperties(@NotNull ActiveProfileProvider activeProfileProvider){
         this.activeProfileProvider = activeProfileProvider;
-        try {
-            URL propertiesURL = loadDefaultPropertiesResource();
-            if (propertiesURL != null) {
-                applicationProperties.load(new FileInputStream(new File(propertiesURL.toURI())));
-            }
-        } finally {
-
-        }
-        activeProfileProvider.getActiveProfile();
+        loadProperties();
     }
 
-    //TODO: real fix without method signature
-    private void setDefaultProperties(@NotNull URL propertiesResource) throws URISyntaxException, IOException {
-        applicationProperties.load(new FileInputStream(new File(propertiesResource.toURI())));
+    private void loadProperties(){
+        try {
+            URL propertiesURL = loadDefaultPropertiesResource();
+            if(propertiesURL != null) {
+                applicationProperties.load(new FileInputStream(new File(propertiesURL.toURI())));
+                activeProfileProvider.getActiveProfile();
+            }
+            Optional<String> activeProfile = activeProfileProvider.getActiveProfile();
+            activeProfile.ifPresent(s -> overrideProperties(loadPropertiesResource(s)));
+        } catch (URISyntaxException | IOException ignored){
+        }
     }
 
     private void overrideProperties(@NotNull  URL propertiesResource){
@@ -50,38 +44,28 @@ public class SimpleApplicationProperties implements DataSourceProperties, AdminP
         applicationProperties = new Properties(applicationProperties);
     }
 
-    //TODO: return real default properties
-    private URL loadDefaultPropertiesResource(){
-        URL resource = getClass().getResource(PropertiesNamespaces.MODULE_CONTEXT_PATH + PropertiesNamespaces.FILE_PREFIX + PropertiesNamespaces.FILE_POSTFIX);
+    private URL loadPropertiesResource(String profile){
+        String filename = PropertiesNamespaces.MODULE_CONTEXT_PATH + PropertiesNamespaces.FILE_PREFIX + profile + PropertiesNamespaces.FILE_POSTFIX;
+        return checkResource(filename, getClass().getResource(filename));
+    }
+
+    @Contract("_, null -> fail; _, !null -> param2")
+    private @NotNull URL checkResource(String filename, URL resource){
+        if(resource == null) throw new IllegalStateException(filename + " not found");
         return resource;
     }
 
-    private URL loadPropertiesResource(String profile){
-        return getClass().getResource(PropertiesNamespaces.MODULE_CONTEXT_PATH + PropertiesNamespaces.FILE_PREFIX + profile + PropertiesNamespaces.FILE_POSTFIX);
+    private URL loadDefaultPropertiesResource(){
+        String filename = PropertiesNamespaces.MODULE_CONTEXT_PATH + PropertiesNamespaces.FILE_PREFIX + PropertiesNamespaces.FILE_POSTFIX;
+        return getClass().getResource(filename);
+
     }
 
-    @Override
-    public String getAdminUsername() {
-        return applicationProperties.getProperty(PropertiesNamespaces.Admin.ADMIN_USERNAME);
-    }
 
     @Override
-    public String getAdminPassword() {
-        return "";
-    }
-
-    @Override
-    public String geDbtUrl() {
-        return "";
-    }
-
-    @Override
-    public String getDbUsername() {
-        return "";
-    }
-
-    @Override
-    public String getDbPassword() {
-        return "";
+    public String getDbUrl() {
+        String prop = applicationProperties.getProperty(PropertiesNamespaces.DataSource.DB_URL);
+        if(prop == null) throw new IllegalStateException(PropertiesNamespaces.DataSource.DB_URL + " not found");
+        return prop;
     }
 }

@@ -4,11 +4,10 @@ import java.util.Optional;
 
 public class SystemActiveProfileProvider implements ActiveProfileProvider {
 
-    static final String profilePropertyNamespace = "profile";
     private final String activeProfile;
 
     public SystemActiveProfileProvider() {
-        activeProfile = System.getProperty(profilePropertyNamespace);
+        activeProfile = System.getProperty(PropertiesNamespaces.PROPERTIES_PROFILE_NAMESPACE);
     }
 
     @Override
