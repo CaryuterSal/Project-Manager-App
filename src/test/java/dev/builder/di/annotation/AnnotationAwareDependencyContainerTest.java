@@ -214,4 +214,19 @@ public class AnnotationAwareDependencyContainerTest {
         container.scanPackage("dev.builder.di.scanner.mock");
         assertEquals(Set.of(MockBean.class, MockSingleton.class, InnerSingleton.class, InnerSingleton.InnerInnerSingleton.class, MoreInnerBean.class), container.getRegisteredTypes());
     }
+
+    @Test
+    void test_bean_annotated_bean_is_lazy(){
+        container.register(PublicConstructorBean.class);
+    }
+
+    @Test
+    void test_public_constructor_bean(){
+        container.register(PublicConstructorBean.class);
+        container.register(FooClass.class);
+        PublicConstructorBean publicConstructorBean = container.getInstance(PublicConstructorBean.class);
+        assertNotNull(publicConstructorBean);
+        assertNotNull(publicConstructorBean.getFooClass());
+        assertThat(publicConstructorBean.getFooClass()).isNotNull();
+    }
 }

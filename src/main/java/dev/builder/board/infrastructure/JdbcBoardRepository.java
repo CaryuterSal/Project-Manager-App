@@ -2,13 +2,22 @@ package dev.builder.board.infrastructure;
 
 import dev.builder.board.domain.model.Board;
 import dev.builder.board.domain.port.out.BoardRepository;
+import dev.builder.core.infrastructure.di.annotation.Bean;
 
+import java.util.List;
 import java.util.Optional;
 
+@Bean
 public class JdbcBoardRepository implements BoardRepository {
+
     @Override
     public Optional<Board> findById(Board.Id id) {
         return Optional.empty();
+    }
+
+    @Override
+    public List<Board> findAll() {
+        return List.of();
     }
 
     @Override
@@ -24,6 +33,11 @@ public class JdbcBoardRepository implements BoardRepository {
     @Override
     public Board save(Board aggregateRoot) {
         return null;
+    }
+
+    @Override
+    public boolean existsById(Board.Id id) {
+        return false;
     }
 
     @Override
