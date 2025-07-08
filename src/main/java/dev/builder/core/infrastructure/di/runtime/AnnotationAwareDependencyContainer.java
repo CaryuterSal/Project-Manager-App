@@ -55,12 +55,12 @@ public class AnnotationAwareDependencyContainer extends AbstractDependencyContai
             if(BeanAnnotationAccessors.isAnnotatedEager(clazz)){
                 configStep = BeanRegistrationConfiguration.builder(clazz).asEagerSingleton();
             } else {
-                BeanRegistrationConfiguration.builder(clazz).asLazySingleton();
+                configStep = BeanRegistrationConfiguration.builder(clazz).asLazySingleton();
             }
         } else if(BeanAnnotationAccessors.isAnnotatedBean(clazz)){
-            BeanRegistrationConfiguration.builder(clazz).asLazySingleton();
+            configStep = BeanRegistrationConfiguration.builder(clazz).asLazySingleton();
         } else {
-            BeanRegistrationConfiguration.builder(clazz).prototype();
+            configStep = BeanRegistrationConfiguration.builder(clazz).prototype();
         }
 
         BeanRegistrationConfiguration<T> config;

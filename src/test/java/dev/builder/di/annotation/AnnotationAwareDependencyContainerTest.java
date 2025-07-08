@@ -223,5 +223,10 @@ public class AnnotationAwareDependencyContainerTest {
     @Test
     void test_public_constructor_bean(){
         container.register(PublicConstructorBean.class);
+        container.register(FooClass.class);
+        PublicConstructorBean publicConstructorBean = container.getInstance(PublicConstructorBean.class);
+        assertNotNull(publicConstructorBean);
+        assertNotNull(publicConstructorBean.getFooClass());
+        assertThat(publicConstructorBean.getFooClass()).isNotNull();
     }
 }
