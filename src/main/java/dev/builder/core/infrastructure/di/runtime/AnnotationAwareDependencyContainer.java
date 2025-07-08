@@ -1,25 +1,23 @@
 package dev.builder.core.infrastructure.di.runtime;
 
-import dev.builder.core.infrastructure.di.annotation.Bean;
-import dev.builder.core.infrastructure.di.annotation.Inject;
-import dev.builder.core.infrastructure.di.annotation.Lazy;
-import dev.builder.core.infrastructure.di.annotation.Singleton;
+import dev.builder.core.infrastructure.di.annotation.*;
+import dev.builder.core.infrastructure.di.constructor.AnnotationConstructorResolver;
+import dev.builder.core.infrastructure.di.constructor.ConstructorResolver;
+import dev.builder.core.infrastructure.di.constructor.FaillingConstructorResolver;
 import dev.builder.core.infrastructure.di.definition.*;
 import dev.builder.core.infrastructure.di.exception.BeanNotFoundException;
-import dev.builder.core.infrastructure.di.exception.UnsupportedFieldInjectionException;
-import org.hibernate.validator.internal.metadata.raw.BeanConfiguration;
 import org.jetbrains.annotations.NotNull;
 
 import java.lang.reflect.*;
 import java.util.*;
-import java.util.stream.Collectors;
 
 public class AnnotationAwareDependencyContainer extends AbstractDependencyContainer{
 
-    private static volatile AnnotationAwareDependencyContainer INSTANCE;
-
     private AnnotationAwareDependencyContainer() {}
 
+    private static class InstanceHolder{
+        private static final AnnotationAwareDependencyContainer INSTANCE = new AnnotationAwareDependencyContainer();
+    }
     /**
      * Getter de la clase usando el patrón <a href=https://refactoring.guru/es/design-patterns/singleton>Singleton</a>.
      * </br>
@@ -27,14 +25,7 @@ public class AnnotationAwareDependencyContainer extends AbstractDependencyContai
      * @return La instancia de la clase
      */
     public static AnnotationAwareDependencyContainer getInstance(){
-        if(INSTANCE == null){
-            synchronized (AnnotationAwareDependencyContainer.class){
-                if(INSTANCE == null){
-                    INSTANCE = new AnnotationAwareDependencyContainer();
-                }
-            }
-        }
-        return INSTANCE;
+        return InstanceHolder.INSTANCE;
     }
 
     /**
@@ -43,10 +34,8 @@ public class AnnotationAwareDependencyContainer extends AbstractDependencyContai
      */
     @Override
     public void scanPackage(String packageName) {
-        PackageScanner packageScanner = new PackageScanner(packageName);
-        Set<Class<?>> packageClasses = packageScanner.scan();
-        packageClasses.stream()
-                .filter(AnnotationAwareDependencyContainer::isAnnotatedBean)
+        BeanPackageScanner beanPackageScanner = new BeanPackageScanner(packageName);
+        beanPackageScanner.scan()
                 .forEach(this::register);
     }
     /**
@@ -129,177 +118,9 @@ public class AnnotationAwareDependencyContainer extends AbstractDependencyContai
      * @param <T> el tipo de la clase.
      */
     @Override
-    @SuppressWarnings("unchecked")
-    protected <T> Constructor<T> getMostSuitableConstructor(@NotNull Class<T> clazz) {
-        Constructor<?>[] constructors = clazz.getDeclaredConstructors();
-        if (constructors.length == 0) return null;
-
-        List<Constructor<?>> orderedConstructors = getOrderedPublicConstructors(constructors);
-        List<Constructor<?>> annotatedConstructors = getInjectAnnotatedConstructors(orderedConstructors);
-
-        if (annotatedConstructors.size() == 1) {
-            return (Constructor<T>) annotatedConstructors.getFirst();
-        }
-
-        return (Constructor<T>) orderedConstructors.stream()
-                .filter(c -> !annotatedConstructors.contains(c))
-                .filter(c -> getAnnotatedParamCount(c) == 0)
-                .max(Comparator.comparingInt(this::getAnnotatedParamCount))
-                .orElseGet(() -> super.getMostSuitableConstructor(clazz));
-    }
-
-
-    /**
-     * Ordena la lista de constructores de mayor a menor en base a su número de parámetros,
-     * filtrándolos, dejando solo aquellos que son públicos.
-     * @param constructors el arreglo de constructores
-     * @return lista ordenada de constructores
-     */
-    private List<Constructor<?>> getOrderedPublicConstructors(Constructor<?>[] constructors) {
-        Comparator<Constructor<?>> comparator =  Comparator.comparing(Constructor::getParameterCount);
-        comparator = comparator.reversed();
-        return Arrays.stream(constructors)
-                .filter(c -> Modifier.isPublic(c.getModifiers()))
-                .sorted(comparator)
-                .toList();
-    }
-
-    /**
-     * Filtra una lista de constructores para aquellos que tengan la anotación {@link Inject}
-     * @param constructors la lista de constructores
-     * @return lista filtrada de constructores
-     */
-    private List<Constructor<?>> getInjectAnnotatedConstructors(@NotNull List<Constructor<?>> constructors) {
-        return constructors.stream()
-                .filter(AnnotationAwareDependencyContainer::isAnnotatedInjectConstructor)
-                .toList();
-    }
-
-    /**
-     * Obtiene el número de parámetros del constructor
-     * @param constructor el constructor target. No puede ser {@code null}
-     * @return la cantidad de parámetros, {@code 0} si no tiene ninguno
-     */
-    protected int getAnnotatedParamCount(@NotNull Constructor<?> constructor){
-        return getInjectableParams(constructor).size();
-    }
-
-    protected List<Parameter> getInjectableParams(@NotNull Constructor<?> constructor){
-        Parameter[] params = constructor.getParameters();
-        return Arrays.stream(params)
-                .filter(AnnotationAwareDependencyContainer::isAnnotatedInjectParam)
-                .toList();
-    }
-
-    /**
-     * Busca los campos que están anotados con {@link Inject} en una clase
-     * @param clazz la clase target
-     * @return los campos anotados, o un set vacío si no tiene ninguno
-     */
-    private @NotNull Set<Field> getAnnotatedFields(@NotNull Class<?> clazz){
-        Set<Field> annotatedFields = new HashSet<>();
-        for(Field field : clazz.getDeclaredFields()){
-            if(isAnnotatedInjectField(field)){
-                int modifiers = field.getModifiers();
-                if(Modifier.isFinal(modifiers)) throw new UnsupportedFieldInjectionException("Cannot inject final fields");
-                if(Modifier.isStatic(modifiers)) throw new UnsupportedFieldInjectionException("Cannot inject static fields");
-                if(Modifier.isTransient(modifiers)) throw new UnsupportedFieldInjectionException("Cannot inject transient fields");
-                annotatedFields.add(field);
-            }
-        }
-        return annotatedFields;
-    }
-
-    /**
-     * Determina si una clase tiene la anotación {@link Bean} o {@link Singleton}
-     * @param clazz la clase target
-     * @return verdadero si tiene la anotación, falso si no
-     */
-    public static boolean isAnnotatedBean(Class<?> clazz) {
-        Class<?> beanclass = Objects.requireNonNull(clazz, "clazz cannot be null");
-        return beanclass.isAnnotationPresent(Bean.class) || beanclass.isAnnotationPresent(Singleton.class);
-    }
-
-    public static boolean isBeanAnnotationPresent(Class<?> clazz){
-        return Objects.requireNonNull(clazz).isAnnotationPresent(Bean.class);
-    }
-    /**
-     * Determina si una clase tiene la anotación {@link Singleton} o si tiene la {@link Bean} como singleton
-     * @param clazz la clase target
-     * @return verdadero si tiene la anotación, falso si no
-     */
-    private static boolean isAnnotatedSingleton(Class<?> clazz) {
-        if(isBeanAnnotationPresent(clazz)) {
-            Bean annotation = clazz.getAnnotation(Bean.class);
-            return annotation.singleton();
-        } else {
-            return clazz.isAnnotationPresent(Singleton.class);
-        }
-    }
-
-    /**
-     * Determina si un bean debe siempre se debe instance do como Lazy,
-     * según el modo de {@link Singleton} o {@link Bean}, y si está presente la anotación {@link Lazy}
-     * @param clazz la clase target
-     * @return verdadero si es Lazy
-     */
-    private static boolean isAnnotatedLazy(Class<?> clazz) {
-        if(isBeanAnnotationPresent(clazz)) {
-            return clazz.getAnnotation(Bean.class).mode().equals(InstantiationMode.LAZY);
-        } else if(isAnnotatedSingleton(clazz)) {
-            return clazz.getAnnotation(Singleton.class).mode().equals(InstantiationMode.LAZY);
-        } else {
-            return clazz.isAnnotationPresent(Lazy.class);
-        }
-    }
-
-    /**
-     * Determina si un constructor tiene la anotación {@link Inject}
-     * @param constructor el constructor target
-     * @return verdadero si tiene la anotación, falso si no
-     */
-    private static boolean isAnnotatedInjectConstructor(Constructor<?> constructor){
-        return Objects.requireNonNull(constructor, "constructor cannot be null").isAnnotationPresent(Inject.class);
-    }
-
-    /**
-     * Determina si un campo de clase tiene la anotación {@link Inject}
-     * @param field el campo de clase target
-     * @return verdadero si tiene la anotación, falso si no
-     */
-    private static boolean isAnnotatedInjectField(Field field) {
-        return Objects.requireNonNull(field, "field cannot be null").isAnnotationPresent(Inject.class);
-    }
-
-    /**
-     * Determina si un parámetro tiene la anotación {@link Inject}
-     * @param param el parámetro target
-     * @return verdadero si tiene la anotación, falso si no
-     */
-    private static boolean isAnnotatedInjectParam(Parameter param) {
-        return Objects.requireNonNull(param, "param cannot be null").isAnnotationPresent(Inject.class);
-    }
-
-    /**
-     * Determina si un método tiene la anotación {@link Inject}
-     * @param method el método target
-     * @return verdadero si tiene la anotación, falso si no
-     */
-    private static boolean isAnnotatedInjectMethod(Method method) {
-        return Objects.requireNonNull(method, "method cannot be null").isAnnotationPresent(Inject.class);
-    }
-
-    /**
-     * Extrae el nombre de bean de una clase anotada
-     * @param clazz la clase target
-     * @return el nombre de bean, o un optional vacío si no se declara en las anotaciones
-     */
-    private static Optional<String> extractAnnotatedBeanName(Class<?> clazz) {
-        if(isBeanAnnotationPresent(clazz)) {
-            return Optional.ofNullable(clazz.getAnnotation(Bean.class).name());
-        } else if(isAnnotatedSingleton(clazz)) {
-            return Optional.ofNullable(clazz.getAnnotation(Singleton.class).name());
-        }
-        return Optional.empty();
+    protected <T> ConstructorResolver<T> getConstructorResolver() {
+        return new FaillingConstructorResolver<>(
+                new AnnotationConstructorResolver<>()
+        );
     }
 }

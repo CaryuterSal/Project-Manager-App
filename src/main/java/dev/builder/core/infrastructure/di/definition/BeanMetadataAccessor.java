@@ -1,7 +1,4 @@
-package dev.builder.core.infrastructure.di.runtime;
-
-import dev.builder.core.infrastructure.di.definition.BeanScope;
-import dev.builder.core.infrastructure.di.definition.InstantiationMode;
+package dev.builder.core.infrastructure.di.definition;
 
 public interface BeanMetadataAccessor {
     /**

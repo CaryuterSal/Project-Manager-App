@@ -139,15 +139,21 @@ abstract class AbstractDependencyContainer implements DependencyContainer {
     @Override
     public <T> boolean register(final BeanRegistrationConfiguration<T> config) {
         if(config == null) throw new NullPointerException("config is null");
-        final Constructor<T> constructor = getMostSuitableConstructor(config.clazz());
-
+        @SuppressWarnings("unchecked")
+        Constructor<T> constructor = ((ConstructorResolver<T>)getConstructorResolver()).resolve(config.clazz());
         boolean registered = registerAllAssignableTypes(config, constructor);
 
-        config.instatiationMode().ifPresentOrElse(mode -> {
+        config.instatiationMode().ifPresent(mode -> {
             if(mode == InstantiationMode.EAGER) getInstance(config.clazz());
-        }, () -> getInstance(config.clazz()));
+        });
 
         return registered;
+    }
+
+    protected <T> ConstructorResolver<T> getConstructorResolver() {
+        return new FaillingConstructorResolver<>(
+                new ParameterCountConstructorResolver<>()
+        );
     }
 
     @Override
@@ -238,36 +244,6 @@ abstract class AbstractDependencyContainer implements DependencyContainer {
         String className = clazz.getSimpleName();
         char firstLetter = className.charAt(0);
         return Character.toLowerCase(firstLetter) + className.substring(1);
-    }
-
-    /**
-     * Encuentra el constructor con más parámetros de cierta clase, lo que lo hace el más correcto para inyección de dependencias.
-     * Este es completamente accesible
-     * @param clazz la clase target
-     * @return El mejor candidato de constructor, o {@code null} si ninguno existe
-     * @param <T> el tipo de la clase target
-     */
-    @SuppressWarnings("unchecked")
-    protected <T> Constructor<T> getMostSuitableConstructor(@NotNull Class<T> clazz){
-        Constructor<?>[] constructors = clazz.getDeclaredConstructors();
-        Constructor<?>[] notPrivateConstructors = Arrays.stream(constructors)
-                .filter(constructor -> !Modifier.isPrivate(constructor.getModifiers()))
-                .toArray(Constructor[]::new);
-        if(notPrivateConstructors.length == 0) {
-            try {
-                Constructor<T> constructor =  clazz.getConstructor();
-                if(Modifier.isPrivate(constructor.getModifiers())) return null;
-                return constructor;
-            } catch (NoSuchMethodException e) {
-                throw new ConstructorNotFoundException(clazz.getName());
-            }
-        };
-
-        Constructor<?> constructor = Stream.of(notPrivateConstructors)
-                .max(Comparator.comparingInt(Constructor::getParameterCount))
-                .get();
-        constructor.setAccessible(true);
-        return (Constructor<T>) constructor;
     }
 
     /**
