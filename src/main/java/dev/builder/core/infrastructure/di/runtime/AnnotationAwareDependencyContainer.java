@@ -52,14 +52,14 @@ public class AnnotationAwareDependencyContainer extends AbstractDependencyContai
     @Override
     protected <T> BeanRegistrationConfiguration<T> createDefaultRegistrationConfiguration(Class<T> clazz) {
 
-        OptionalConfigStep<T> configStep = isAnnotatedSingleton(clazz)
-                ? (isAnnotatedLazy(clazz)
-                ? BeanRegistrationConfiguration.builder(clazz).asLazySingleton()
-                : BeanRegistrationConfiguration.builder(clazz).asEagerSingleton())
+        OptionalConfigStep<T> configStep = BeanAnnotationAccessors.isAnnotatedSingleton(clazz)
+                ? (BeanAnnotationAccessors.isAnnotatedEager(clazz)
+                ? BeanRegistrationConfiguration.builder(clazz).asEagerSingleton()
+                : BeanRegistrationConfiguration.builder(clazz).asLazySingleton())
                 : BeanRegistrationConfiguration.builder(clazz).prototype();
 
         BeanRegistrationConfiguration<T> config;
-        Optional<String> beanName = extractAnnotatedBeanName(clazz);
+        Optional<String> beanName = BeanAnnotationAccessors.extractAnnotatedBeanName(clazz);
         if (beanName.isPresent()) {
             config =  configStep.withName(beanName.get()).build();
         } else {
@@ -79,7 +79,7 @@ public class AnnotationAwareDependencyContainer extends AbstractDependencyContai
      * @throws BeanNotFoundException si alguno de los campos no tiene un bean resoluble en el contenedor de dependencias
      */
     private <T> @NotNull BeanRegistrationConfiguration<T> addFieldInjectConfig(@NotNull BeanRegistrationConfiguration<T> sourceConfig){
-        Set<Field> injectableFields = getAnnotatedFields(sourceConfig.clazz());
+        Set<Field> injectableFields = BeanAnnotationAccessors.getAnnotatedFields(sourceConfig.clazz());
         if(injectableFields.isEmpty()) return sourceConfig;
 
         InitCustomizer<T> injectFieldsCustomizer = bean -> {
@@ -103,20 +103,6 @@ public class AnnotationAwareDependencyContainer extends AbstractDependencyContai
         }
     }
 
-    /**
-     * Escoge el mejor constructor candidato para la inyección de dependencias para la determinada clase.
-     * La estrategia que se sigue es la siguiente:
-     * </br>
-     * <ol>
-     * <li>Si no hay ningún constructor se devuelve nulo </li>
-     * <li>Si hay constructores anotados con {@link Inject} se escoge el que tenga más parámetros</li>
-     * <li>Si no, si hay constructores con parámetros anotados con {@link Inject} se escoge el que tenga más parámetros</li>
-     * <li>Si no, se escoge el constructor con más parámetros, o el constructor vacío</li>
-     * </ol>
-     * @param clazz la clase target
-     * @return el constructor más viable según la estrategia, o {@code null} si la clase no tiene constructor (Ej. es una interface o anotación)
-     * @param <T> el tipo de la clase.
-     */
     @Override
     protected <T> ConstructorResolver<T> getConstructorResolver() {
         return new FaillingConstructorResolver<>(

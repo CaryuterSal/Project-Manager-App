@@ -2,10 +2,13 @@ package dev.builder.core.infrastructure.di.runtime;
 
 public class DefaultDependencyContainer extends AbstractDependencyContainer {
 
-    private static DefaultDependencyContainer INSTANCE;
-
     private DefaultDependencyContainer() {
     }
+
+    private static final class InstanceHolder {
+        private static final DefaultDependencyContainer INSTANCE = new DefaultDependencyContainer();
+    }
+
     /**
      * Getter de la clase usando el patrón <a href=https://refactoring.guru/es/design-patterns/singleton>Singleton</a>.
      * </br>
@@ -13,14 +16,7 @@ public class DefaultDependencyContainer extends AbstractDependencyContainer {
      * @return La instancia de la clase
      */
     public static DefaultDependencyContainer getInstance(){
-        if(INSTANCE == null){
-            synchronized (AnnotationAwareDependencyContainer.class){
-                if(INSTANCE == null){
-                    INSTANCE = new DefaultDependencyContainer();
-                }
-            }
-        }
-        return INSTANCE;
+        return InstanceHolder.INSTANCE;
     }
 
     /**

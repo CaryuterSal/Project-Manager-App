@@ -1,10 +1,12 @@
 package dev.builder.core.infrastructure.di.runtime;
 
 import dev.builder.core.ConcurrentMultiValuedHashMap;
-import dev.builder.core.infrastructure.di.definition.BeanDefinition;
-import dev.builder.core.infrastructure.di.definition.BeanRegistrationConfiguration;
-import dev.builder.core.infrastructure.di.definition.InstantiationMode;
-import dev.builder.core.infrastructure.di.definition.SingletonBeanDefinition;
+import dev.builder.core.infrastructure.di.annotation.Eager;
+import dev.builder.core.infrastructure.di.constructor.ConstructorResolver;
+import dev.builder.core.infrastructure.di.constructor.FaillingConstructorResolver;
+import dev.builder.core.infrastructure.di.constructor.NoParamConstructorChooser;
+import dev.builder.core.infrastructure.di.constructor.ParameterCountConstructorResolver;
+import dev.builder.core.infrastructure.di.definition.*;
 import dev.builder.core.infrastructure.di.exception.BeanNotFoundException;
 import dev.builder.core.infrastructure.di.exception.ConstructorNotFoundException;
 import dev.builder.core.infrastructure.di.exception.UncertainBeanRetrievalException;
@@ -12,12 +14,10 @@ import org.jetbrains.annotations.NotNull;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Modifier;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.function.Supplier;
-import java.util.stream.Stream;
 
 abstract class AbstractDependencyContainer implements DependencyContainer {
 
@@ -291,12 +291,8 @@ abstract class AbstractDependencyContainer implements DependencyContainer {
 
     @Override
     public void initialize() {
-        for(BeanDefinition<?> beanDefinition : registryByName.values()){
-            if(beanDefinition instanceof SingletonBeanDefinition<?>){
-                if(((SingletonBeanDefinition<?>) beanDefinition).getInstantiationMode().equals(InstantiationMode.LAZY)){
-                    beanDefinition.getBean();
-                }
-            }
+        for(Map.Entry<String, BeanDefinition<?>> entry : registryByName.entrySet()) {
+            getInstance(entry.getValue().getType(), entry.getKey());
         }
     }
 
