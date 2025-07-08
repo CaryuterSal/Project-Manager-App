@@ -7,8 +7,9 @@ import dev.builder.core.infrastructure.di.annotation.Inject;
 @Bean
 public class BoardApplicationService implements BoardService {
 
-    private BoardService boardService;
+    private final BoardService boardService;
 
+    @Inject
     public BoardApplicationService(BoardService boardService) {
         this.boardService = boardService;
     }
