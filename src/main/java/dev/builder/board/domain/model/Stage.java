@@ -264,7 +264,7 @@ public class Stage extends AggregateRoot<Stage.Id> {
      */
     public enum StageState implements ValueObject {
 
-        TODO(false),
+        TO_DO(false),
         IN_PROGRESS(false),
         DONE(true);
 
@@ -291,7 +291,7 @@ public class Stage extends AggregateRoot<Stage.Id> {
          */
         @Override
         public String toString() {
-            return this.name().toLowerCase().replaceAll("_", " ");
+            return this.name().toLowerCase();
         }
     }
 }

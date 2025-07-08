@@ -1,0 +1,137 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<Table class="oracle.dbtools.crest.model.design.relational.Table" directorySegmentName="seg_0" id="E64D6229-5DF5-5597-CE61-67C2F5C6AD34" name="TASK">
+<createdBy>caryuter</createdBy>
+<createdTime>2025-06-27 18:53:28 UTC</createdTime>
+<generatorID>C12F77A4-DF3F-0CC1-C9E1-1629D461517D</generatorID>
+<ownerDesignName>project-manager-db-design</ownerDesignName>
+<ordsAlias>tasks</ordsAlias>
+<abbreviation>tks</abbreviation>
+<allowColumnReorder>false</allowColumnReorder>
+<existDependencyGenerateInDDl>true</existDependencyGenerateInDDl>
+<parsed>true</parsed>
+<columns itemClass="oracle.dbtools.crest.model.design.relational.Column">
+<Column name="id" id="1DC42F8B-EDA9-DE8A-B4AB-254AABA6B94B">
+<createdBy>caryuter</createdBy>
+<createdTime>2025-06-27 18:53:28 UTC</createdTime>
+<generatorID>F26B77F1-CE8B-0BE7-B219-2E86C1C012F7</generatorID>
+<ownerDesignName>project-manager-db-design</ownerDesignName>
+<useDomainConstraints>false</useDomainConstraints>
+<use>1</use>
+<logicalDatatype>LogDes-4BABEC65-108B-2A3C-F7C4-84AC47D292B0@LOGDT10040</logicalDatatype>
+<dataTypeSize>16</dataTypeSize>
+<ownDataTypeParameters>16,,</ownDataTypeParameters>
+<autoIncrementCycle>false</autoIncrementCycle>
+</Column>
+<Column name="title" id="1B70E50E-18FC-0A27-D53C-7B8F3E3CD9D8">
+<createdBy>caryuter</createdBy>
+<createdTime>2025-06-27 18:53:28 UTC</createdTime>
+<generatorID>D776F2BC-C524-9580-BF8D-D30072018E71</generatorID>
+<ownerDesignName>project-manager-db-design</ownerDesignName>
+<useDomainConstraints>false</useDomainConstraints>
+<use>1</use>
+<logicalDatatype>LOGDT024</logicalDatatype>
+<dataTypeSize>63</dataTypeSize>
+<ownDataTypeParameters>63,,</ownDataTypeParameters>
+<autoIncrementCycle>false</autoIncrementCycle>
+</Column>
+<Column name="description" id="78A69D4A-2499-4C6A-72A6-4E352FC52211">
+<createdBy>caryuter</createdBy>
+<createdTime>2025-06-27 18:53:28 UTC</createdTime>
+<generatorID>47B4D005-E4FE-7809-9493-62CF447EBEA5</generatorID>
+<ownerDesignName>project-manager-db-design</ownerDesignName>
+<useDomainConstraints>false</useDomainConstraints>
+<use>1</use>
+<logicalDatatype>LOGDT024</logicalDatatype>
+<dataTypeSize>255</dataTypeSize>
+<ownDataTypeParameters>255,,</ownDataTypeParameters>
+<autoIncrementCycle>false</autoIncrementCycle>
+</Column>
+<Column name="created_at" id="BAC593A0-EBE7-13D9-CCFC-7135DA212CC3">
+<createdBy>caryuter</createdBy>
+<createdTime>2025-06-27 18:53:28 UTC</createdTime>
+<generatorID>271B584C-2B30-FCD0-3BB8-EF9ABE5B4A71</generatorID>
+<ownerDesignName>project-manager-db-design</ownerDesignName>
+<useDomainConstraints>false</useDomainConstraints>
+<use>1</use>
+<logicalDatatype>LOGDT046</logicalDatatype>
+<ownDataTypeParameters>,,</ownDataTypeParameters>
+<autoIncrementCycle>false</autoIncrementCycle>
+</Column>
+<Column name="started_at" id="4512A5A5-13FB-E82C-F275-7FFB0F9997DB">
+<createdBy>caryuter</createdBy>
+<createdTime>2025-06-27 18:53:28 UTC</createdTime>
+<generatorID>29EB1D17-B138-F310-2EC3-22CBAA4FE312</generatorID>
+<ownerDesignName>project-manager-db-design</ownerDesignName>
+<nullsAllowed>true</nullsAllowed>
+<useDomainConstraints>false</useDomainConstraints>
+<use>1</use>
+<logicalDatatype>LOGDT046</logicalDatatype>
+<ownDataTypeParameters>,,</ownDataTypeParameters>
+<autoIncrementCycle>false</autoIncrementCycle>
+</Column>
+<Column name="finished_at" id="426D3CAA-730C-A924-16F4-7073EE8D7115">
+<createdBy>caryuter</createdBy>
+<createdTime>2025-06-27 18:53:28 UTC</createdTime>
+<generatorID>0C8DD004-F0DB-A7C6-1242-E80D74338B4E</generatorID>
+<ownerDesignName>project-manager-db-design</ownerDesignName>
+<nullsAllowed>true</nullsAllowed>
+<useDomainConstraints>false</useDomainConstraints>
+<use>1</use>
+<logicalDatatype>LOGDT046</logicalDatatype>
+<ownDataTypeParameters>,,</ownDataTypeParameters>
+<autoIncrementCycle>false</autoIncrementCycle>
+</Column>
+<Column name="deadline" id="D1B093F8-1F16-EEC1-A7A1-C9C8EB5338DE">
+<createdBy>caryuter</createdBy>
+<createdTime>2025-06-27 18:53:28 UTC</createdTime>
+<generatorID>DD8F16D0-E569-2EF1-C527-87865C76069F</generatorID>
+<ownerDesignName>project-manager-db-design</ownerDesignName>
+<useDomainConstraints>false</useDomainConstraints>
+<use>1</use>
+<logicalDatatype>LOGDT046</logicalDatatype>
+<ownDataTypeParameters>,,</ownDataTypeParameters>
+<autoIncrementCycle>false</autoIncrementCycle>
+</Column>
+<Column name="clr_name" id="2A9D9170-D951-432B-3ABA-467B92F529E1">
+<createdBy>caryuter</createdBy>
+<createdTime>2025-06-27 18:53:28 UTC</createdTime>
+<generatorID>50091730-C63B-77D9-74B7-1E784E6CA464</generatorID>
+<ownerDesignName>project-manager-db-design</ownerDesignName>
+<useDomainConstraints>false</useDomainConstraints>
+<use>1</use>
+<logicalDatatype>LOGDT024</logicalDatatype>
+<dataTypeSize>15</dataTypeSize>
+<ownDataTypeParameters>,,</ownDataTypeParameters>
+<previousColumn>false</previousColumn>
+<autoIncrementCycle>false</autoIncrementCycle>
+<associations>
+<colAssociation fkAssociation="8B87A2D2-C7DF-4EE4-5D87-BDB0B7B170A9" referredColumn="364036B0-31BA-2DCC-2364-D27E737DA8DB"/>
+</associations>
+</Column>
+</columns>
+<indexes itemClass="oracle.dbtools.crest.model.design.relational.Index">
+<ind_PK_UK id="20AA4259-C266-F98C-B9EF-BF9550EFCD90" name="TASKS_PK">
+<createdBy>caryuter</createdBy>
+<createdTime>2025-06-27 18:53:28 UTC</createdTime>
+<generatorID>2FFBF0CC-F8F1-5FB4-24E4-C0609E8100EC</generatorID>
+<ownerDesignName>project-manager-db-design</ownerDesignName>
+<pk>true</pk>
+<indexState>Primary Constraint</indexState>
+<isSurrogateKey>false</isSurrogateKey>
+<indexColumnUsage>
+<colUsage columnID="1DC42F8B-EDA9-DE8A-B4AB-254AABA6B94B"/>
+</indexColumnUsage>
+</ind_PK_UK>
+<ind_PK_UK id="55E57A49-B6D6-5CF2-0A33-193ED3923971" name="TASKS_COLORS_FK">
+<createdBy>caryuter</createdBy>
+<createdTime>2025-06-27 18:53:28 UTC</createdTime>
+<generatorID>A81C9274-8618-F5EF-B734-C87F79A6AE53</generatorID>
+<ownerDesignName>project-manager-db-design</ownerDesignName>
+<indexState>Foreign Key</indexState>
+<isSurrogateKey>false</isSurrogateKey>
+<indexColumnUsage>
+<colUsage columnID="2A9D9170-D951-432B-3ABA-467B92F529E1"/>
+</indexColumnUsage>
+</ind_PK_UK>
+</indexes>
+</Table>

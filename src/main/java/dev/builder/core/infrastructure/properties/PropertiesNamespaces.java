@@ -6,15 +6,12 @@ public class PropertiesNamespaces {
     static final String FILE_PREFIX = "application";
     static final String FILE_POSTFIX = ".properties";
 
-    static class Admin{
-        static final String ADMIN_PASSWORD = "admin.password";
-        static final String ADMIN_USERNAME= "admin.username";
-    }
-
     static class DataSource{
-
         static final String  DB_URL = "db.url";
-        static final String  DB_USERNAME = "db.username";
-        static final String  DB_PASSWORD = "db.password";
     }
+
+    static final String LOCALE_DEFAULT="locale.default";
+
+    static final String ENV_PROFILE_NAMESPACE = "KEDU_PROFILE";
+    static final String PROPERTIES_PROFILE_NAMESPACE = "env.profile";
 }

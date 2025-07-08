@@ -1,16 +1,43 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.scene.text.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.image.*?>
+<?import java.lang.*?>
+<?import javafx.scene.layout.*?>
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.layout.VBox?>
-
 <?import javafx.scene.control.Button?>
-<VBox alignment="CENTER" spacing="20.0" xmlns:fx="http://javafx.com/fxml"
-      fx:controller="dev.caryuter.plantilla.HelloController">
-    <padding>
-        <Insets bottom="20.0" left="20.0" right="20.0" top="20.0"/>
-    </padding>
 
-    <Label fx:id="welcomeText"/>
-    <Button text="Hello!" onAction="#onHelloButtonClick"/>
-</VBox>
+<Pane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="1024.0" prefWidth="1440.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
+   <children>
+      <ImageView fitHeight="184.0" fitWidth="192.0" layoutX="-7.0" layoutY="-4.0" pickOnBounds="true" preserveRatio="true">
+         <image>
+            <Image url="@../assets/images/logo.png" />
+         </image>
+      </ImageView>
+      <Label layoutX="126.0" layoutY="60.0" text="Kedu">
+         <font>
+            <Font name="System Bold" size="36.0" />
+         </font>
+      </Label>
+      <PasswordField layoutX="440.0" layoutY="493.0" prefHeight="54.0" prefWidth="530.0" promptText="Contraseña">
+         <font>
+            <Font size="24.0" />
+         </font></PasswordField>
+      <TextField layoutX="440.0" layoutY="416.0" prefHeight="55.0" prefWidth="530.0" promptText="Correo">
+         <font>
+            <Font size="24.0" />
+         </font></TextField>
+      <Button layoutX="440.0" layoutY="570.0" mnemonicParsing="false" prefHeight="48.0" prefWidth="529.0" style="-fx-background-color: black" text="Iniciar sesión" textFill="WHITE">
+         <font>
+            <Font size="24.0" />
+         </font></Button>
+      <Label layoutX="600.0" layoutY="344.0" text="Bienvenido">
+         <font>
+            <Font name="System Bold" size="45.0" />
+         </font>
+      </Label>
+   </children>
+</Pane>

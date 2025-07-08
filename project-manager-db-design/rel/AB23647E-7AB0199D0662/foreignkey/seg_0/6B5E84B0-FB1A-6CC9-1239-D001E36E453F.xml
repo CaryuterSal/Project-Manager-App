@@ -1,0 +1,17 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<FKIndexAssociation class="oracle.dbtools.crest.model.design.relational.FKIndexAssociation" directorySegmentName="seg_0" id="6B5E84B0-FB1A-6CC9-1239-D001E36E453F" containerWithKeyObject="8A33FBD1-CE6B-CAA2-5029-BDBD7B8C6316" localFKIndex="89054CC5-525D-C3B3-A5B8-457433AA0F33" name="BOARD_STAGES_BOARDS_FK">
+<createdBy>caryuter</createdBy>
+<createdTime>2025-06-27 18:53:28 UTC</createdTime>
+<generatorID>8036AAB2-F1BA-ACE3-5697-DFD6A483894C</generatorID>
+<ownerDesignName>project-manager-db-design</ownerDesignName>
+<referredTableLongName>BOARDS</referredTableLongName>
+<deleteRule>NO ACTION</deleteRule>
+<referredTableID>233E2614-BAD7-C722-298F-62017CFB7AE0</referredTableID>
+<keyObject>579C4EF5-359A-6ABD-3A26-8C48D1EBF475</keyObject>
+<referredKeyID>579C4EF5-359A-6ABD-3A26-8C48D1EBF475</referredKeyID>
+<mandatory>true</mandatory>
+<refColNames>MANAGERS_aus_Email</refColNames>
+<transferable>false</transferable>
+<rely>false</rely>
+<columnDependencyConstraintGenerateInDDL>true</columnDependencyConstraintGenerateInDDL>
+</FKIndexAssociation>
