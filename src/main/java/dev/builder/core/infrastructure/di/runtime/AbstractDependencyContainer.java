@@ -1,10 +1,8 @@
 package dev.builder.core.infrastructure.di.runtime;
 
 import dev.builder.core.ConcurrentMultiValuedHashMap;
-import dev.builder.core.infrastructure.di.annotation.Eager;
 import dev.builder.core.infrastructure.di.constructor.ConstructorResolver;
 import dev.builder.core.infrastructure.di.constructor.FaillingConstructorResolver;
-import dev.builder.core.infrastructure.di.constructor.NoParamConstructorChooser;
 import dev.builder.core.infrastructure.di.constructor.ParameterCountConstructorResolver;
 import dev.builder.core.infrastructure.di.definition.*;
 import dev.builder.core.infrastructure.di.exception.BeanNotFoundException;
@@ -189,7 +187,7 @@ abstract class AbstractDependencyContainer implements DependencyContainer {
         for(Class<?> assignableType: getAllAssignableTypes(config.clazz())) {
             if(registerBeanDefinition(assignableType, beanDefinition)){
                 registered = true;
-            };
+            }
         }
         return registered;
     }
@@ -210,7 +208,7 @@ abstract class AbstractDependencyContainer implements DependencyContainer {
             try {
                 List<? extends BeanDefinition<?>> paramBeans = getBeanDefinitionsForConstructorParams(constructor);
                 Object[] paramInstances = paramBeans.stream().map(BeanDefinition::getBean).toArray();
-                T instance = constructor.newInstance((Object[]) paramInstances);
+                T instance = constructor.newInstance(paramInstances);
                 if(config.initCustomizer().isPresent()) config.initCustomizer().get().accept(instance);
                 return instance;
             } catch (InstantiationException | IllegalAccessException | InvocationTargetException e) {

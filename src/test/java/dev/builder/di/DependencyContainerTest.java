@@ -7,7 +7,6 @@ import dev.builder.core.infrastructure.di.definition.BeanScope;
 import dev.builder.core.infrastructure.di.definition.InitCustomizer;
 import dev.builder.core.infrastructure.di.definition.InstantiationMode;
 import dev.builder.core.infrastructure.di.exception.BeanNotFoundException;
-import dev.builder.core.infrastructure.di.exception.IllegalBeanClassException;
 import dev.builder.core.infrastructure.di.exception.UncertainBeanRetrievalException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -17,12 +16,10 @@ import java.util.logging.Logger;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.mock;
 
 public class DependencyContainerTest {
 
-    private DependencyContainer container;
-    private static final Logger LOG = Logger.getLogger(DependencyContainerTest.class.getName());
+    private static final DependencyContainer container = DefaultDependencyContainer.getInstance();
 
     private static  class FooClass{
         private String message;
@@ -45,6 +42,10 @@ public class DependencyContainerTest {
     }
 
     private static final class FirstContract extends FooClass implements Contract{
+
+        public FirstContract() {
+        }
+
         @Override
         public String saySomething() {
             return "Hello from FIRST contract";
@@ -52,6 +53,9 @@ public class DependencyContainerTest {
     }
 
     private static final class SecondContract implements Contract{
+        public SecondContract() {
+        }
+
         @Override
         public String saySomething() {
             return "Hello from SECOND contract";
@@ -80,11 +84,9 @@ public class DependencyContainerTest {
         }
     }
 
-
-
     @BeforeEach
     public void setUp() {
-        container = new DefaultDependencyContainer();
+        container.clear();
     }
 
     @Test
@@ -245,7 +247,7 @@ public class DependencyContainerTest {
         assertTrue(container.isRegistered("customName"));
         assertFalse(container.isRegistered("fooClass"));
 
-        container.getInstance("customName");
+        FooClass foo = container.getInstance(FooClass.class,"customName");
     }
 
 
@@ -281,7 +283,7 @@ public class DependencyContainerTest {
 
     @Test
     void testResolveRegisterForInterfaceFails(){
-        assertThrowsExactly(IllegalBeanClassException.class, () -> container.register(BeanRegistrationConfiguration.builder(Contract.class)
+        assertThrowsExactly(IllegalArgumentException.class, () -> container.register(BeanRegistrationConfiguration.builder(Contract.class)
                 .asLazySingleton().build()));
     }
 }
