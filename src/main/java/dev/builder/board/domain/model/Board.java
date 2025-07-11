@@ -2,8 +2,8 @@ package dev.builder.board.domain.model;
 
 import dev.builder.core.domain.AggregateRoot;
 import dev.builder.core.domain.ValueObject;
-import dev.builder.usermanagement.domain.GlobalIdentityManager;
 
+import java.net.HttpCookie;
 import java.util.*;
 /**
  * Representa un tablero (Board) dentro del sistema, actuando como un Aggregate Root.
@@ -33,6 +33,10 @@ public class Board extends AggregateRoot<Board.Id> {
      */
     public Set<Stage.Id> stageIds() {
         return Collections.unmodifiableSet(stageIds);
+    }
+
+    public HttpCookie getId() {
+        return null;
     }
 
     /**
@@ -75,5 +79,6 @@ public class Board extends AggregateRoot<Board.Id> {
         public static boolean isValid(UUID uuid) {
             return uuid != null;
         }
+
     }
 }

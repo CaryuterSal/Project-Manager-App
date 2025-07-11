@@ -18,6 +18,7 @@ module dev.builder {
     requires com.fasterxml.jackson.databind;
     requires org.hibernate.validator;
     requires org.reflections;
+    requires ucp;
 
     opens dev.builder to javafx.fxml;
     opens dev.builder.auth.application.controller to javafx.fxml;
