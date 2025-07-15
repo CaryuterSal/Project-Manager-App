@@ -1,0 +1,19 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<FKIndexAssociation class="oracle.dbtools.crest.model.design.relational.FKIndexAssociation" directorySegmentName="seg_0" id="24A9E856-6E5F-6AF4-0B0B-33378FAF1932" containerWithKeyObject="79F4084C-15AA-BDD4-8692-66FF6A9383FA" localFKIndex="731CAD68-3A26-AECF-6A9E-3B8EB4F14B89" name="STUDENTS_APP_USERS_FK">
+<createdBy>caryuter</createdBy>
+<createdTime>2025-06-27 17:56:12 UTC</createdTime>
+<generatorID>E20977F0-C9F0-82E6-8CDD-B7817B861E6A</generatorID>
+<ownerDesignName>project-manager-db-design</ownerDesignName>
+<referredTableLongName>APP_USER</referredTableLongName>
+<arc>8C5E46E0-9A5D-E117-1C15-EA52BA449B1B</arc>
+<deleteRule>NO ACTION</deleteRule>
+<referredTableID>CF81787F-17E3-4822-E636-B042837698F7</referredTableID>
+<keyObject>4AEDF575-2798-5241-18FB-6FC9C45B25B0</keyObject>
+<referredKeyID>4AEDF575-2798-5241-18FB-6FC9C45B25B0</referredKeyID>
+<mandatory>true</mandatory>
+<refColNames>email</refColNames>
+<transferable>true</transferable>
+<rely>false</rely>
+<discriminatorValue>student</discriminatorValue>
+<columnDependencyConstraintGenerateInDDL>true</columnDependencyConstraintGenerateInDDL>
+</FKIndexAssociation>
