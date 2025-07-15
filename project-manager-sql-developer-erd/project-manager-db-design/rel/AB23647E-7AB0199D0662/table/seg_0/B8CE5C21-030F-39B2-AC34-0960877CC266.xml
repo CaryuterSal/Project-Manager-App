@@ -1,0 +1,66 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<Table class="oracle.dbtools.crest.model.design.relational.Table" directorySegmentName="seg_0" id="B8CE5C21-030F-39B2-AC34-0960877CC266" name="FILE_SOURCE">
+<createdBy>caryuter</createdBy>
+<createdTime>2025-06-27 18:53:28 UTC</createdTime>
+<generatorID>DC048D59-41AB-27AA-B7BC-40217C491119</generatorID>
+<ownerDesignName>project-manager-db-design</ownerDesignName>
+<ordsAlias>file_sources</ordsAlias>
+<abbreviation>fse</abbreviation>
+<allowColumnReorder>false</allowColumnReorder>
+<existDependencyGenerateInDDl>true</existDependencyGenerateInDDl>
+<parsed>true</parsed>
+<columns itemClass="oracle.dbtools.crest.model.design.relational.Column">
+<Column name="fle_id" id="99D79C73-9BD8-C8D2-A3DD-5A2320F089BC">
+<createdBy>caryuter</createdBy>
+<createdTime>2025-06-27 18:53:28 UTC</createdTime>
+<generatorID>2B6F86FD-EE8B-BB62-6FCA-DE26F504C4FC</generatorID>
+<ownerDesignName>project-manager-db-design</ownerDesignName>
+<useDomainConstraints>false</useDomainConstraints>
+<use>1</use>
+<logicalDatatype>LogDes-4BABEC65-108B-2A3C-F7C4-84AC47D292B0@LOGDT10040</logicalDatatype>
+<dataTypeSize>16</dataTypeSize>
+<ownDataTypeParameters>,,</ownDataTypeParameters>
+<previousColumn>false</previousColumn>
+<autoIncrementCycle>false</autoIncrementCycle>
+<associations>
+<colAssociation fkAssociation="E9F56C8B-F008-679D-F897-51256C34E2B9" referredColumn="43050FDA-ED93-3581-3007-1DE5BD4E6D8E"/>
+</associations>
+</Column>
+<Column name="source" id="16571BD8-5789-4F51-465A-2B898B0365F5">
+<createdBy>caryuter</createdBy>
+<createdTime>2025-06-27 18:53:28 UTC</createdTime>
+<generatorID>12F198B7-E23A-890E-D993-66717E13E27A</generatorID>
+<ownerDesignName>project-manager-db-design</ownerDesignName>
+<useDomainConstraints>false</useDomainConstraints>
+<use>1</use>
+<logicalDatatype>LOGDT029</logicalDatatype>
+<ownDataTypeParameters>,,</ownDataTypeParameters>
+<autoIncrementCycle>false</autoIncrementCycle>
+</Column>
+</columns>
+<indexes itemClass="oracle.dbtools.crest.model.design.relational.Index">
+<ind_PK_UK id="7B13B295-37FB-8204-6E96-4D7AD60A6BF0" name="FILE_SOURCES_PK">
+<createdBy>caryuter</createdBy>
+<createdTime>2025-06-27 18:53:28 UTC</createdTime>
+<generatorID>55C30E62-09D2-3C24-3922-36D6E7D479B2</generatorID>
+<ownerDesignName>project-manager-db-design</ownerDesignName>
+<pk>true</pk>
+<indexState>Primary Constraint</indexState>
+<isSurrogateKey>false</isSurrogateKey>
+<indexColumnUsage>
+<colUsage columnID="99D79C73-9BD8-C8D2-A3DD-5A2320F089BC"/>
+</indexColumnUsage>
+</ind_PK_UK>
+<ind_PK_UK id="64E078D3-5715-A4E2-FE1A-D736DE7FCEF5" name="FILE_SOURCES_FILES_FK">
+<createdBy>caryuter</createdBy>
+<createdTime>2025-06-27 18:53:28 UTC</createdTime>
+<generatorID>8D6975B8-7FCA-B75A-E61A-5C0D30B5CAFD</generatorID>
+<ownerDesignName>project-manager-db-design</ownerDesignName>
+<indexState>Foreign Key</indexState>
+<isSurrogateKey>false</isSurrogateKey>
+<indexColumnUsage>
+<colUsage columnID="99D79C73-9BD8-C8D2-A3DD-5A2320F089BC"/>
+</indexColumnUsage>
+</ind_PK_UK>
+</indexes>
+</Table>

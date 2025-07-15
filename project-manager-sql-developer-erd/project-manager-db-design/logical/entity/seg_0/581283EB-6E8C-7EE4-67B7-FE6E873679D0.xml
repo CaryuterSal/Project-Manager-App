@@ -1,0 +1,78 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<Entity class="oracle.dbtools.crest.model.design.logical.Entity" directorySegmentName="seg_0" id="581283EB-6E8C-7EE4-67B7-FE6E873679D0" name="STUDENTS BOARDS">
+<createdBy>caryuter</createdBy>
+<createdTime>2025-06-27 17:50:16 UTC</createdTime>
+<ownerDesignName>project-manager-db-design</ownerDesignName>
+<engineerTo>
+<item key="AB23647E-F000-19A5-FCDD-7AB0199D0662" value="true"/>
+</engineerTo>
+<adequatelyNormalized>NO</adequatelyNormalized>
+<expectedVolumes>0</expectedVolumes>
+<fwdEngineeringStrategyName>Single Table</fwdEngineeringStrategyName>
+<growthPercent>0</growthPercent>
+<growthType>Year</growthType>
+<maxVolumes>9999999</maxVolumes>
+<minVolumes>0</minVolumes>
+<normalForm>Third</normalForm>
+<shortName>sbd</shortName>
+<attributes itemClass="oracle.dbtools.crest.model.design.logical.Attribute">
+<Attribute name="Issued at" id="408E70CA-187A-DC90-C5AB-0CBD12FCC0C7">
+<createdBy>caryuter</createdBy>
+<createdTime>2025-06-27 17:50:25 UTC</createdTime>
+<ownerDesignName>project-manager-db-design</ownerDesignName>
+<engineerTo>
+<item key="AB23647E-F000-19A5-FCDD-7AB0199D0662" value="true"/>
+</engineerTo>
+<useDomainConstraints>false</useDomainConstraints>
+<use>1</use>
+<logicalDatatype>LOGDT046</logicalDatatype>
+<ownDataTypeParameters>,,</ownDataTypeParameters>
+</Attribute>
+<Attribute name="Email" id="59636D92-FE92-441F-FCF5-62877A22EE63">
+<createdBy>caryuter</createdBy>
+<createdTime>2025-06-27 17:50:54 UTC</createdTime>
+<generatorID>82337D12-A032-6394-8FD7-1DD6707149B9</generatorID>
+<ownerDesignName>project-manager-db-design</ownerDesignName>
+<engineerTo>
+<item key="AB23647E-F000-19A5-FCDD-7AB0199D0662" value="true"/>
+</engineerTo>
+<referedAttribute>D300C36E-65BC-7C3A-03AC-0FF2B5DC80F0</referedAttribute>
+<useDomainConstraints>false</useDomainConstraints>
+<use>1</use>
+<logicalDatatype>LOGDT024</logicalDatatype>
+<dataTypeSize>63 CHAR</dataTypeSize>
+<ownDataTypeParameters>,,</ownDataTypeParameters>
+</Attribute>
+<Attribute name="Email1" id="8E657D7E-2E62-77DF-96FE-AC6806F5E3F1">
+<createdBy>caryuter</createdBy>
+<createdTime>2025-06-27 17:51:22 UTC</createdTime>
+<generatorID>274DE878-B0E8-D253-7062-937DE7A5D78C</generatorID>
+<ownerDesignName>project-manager-db-design</ownerDesignName>
+<engineerTo>
+<item key="AB23647E-F000-19A5-FCDD-7AB0199D0662" value="true"/>
+</engineerTo>
+<referedAttribute>69366603-505D-B3D0-28A1-9D5D1D113FDA</referedAttribute>
+<useDomainConstraints>false</useDomainConstraints>
+<use>1</use>
+<logicalDatatype>LOGDT024</logicalDatatype>
+<dataTypeSize>63 CHAR</dataTypeSize>
+<ownDataTypeParameters>,,</ownDataTypeParameters>
+</Attribute>
+</attributes>
+<identifiers itemClass="oracle.dbtools.crest.model.design.logical.CandidateKey">
+<identifier id="B54E151C-363F-6396-9F6D-11E332F9C261" name="STUDENTS BOARD PK">
+<createdBy>caryuter</createdBy>
+<createdTime>2025-06-27 17:50:54 UTC</createdTime>
+<ownerDesignName>project-manager-db-design</ownerDesignName>
+<shouldEngineer>false</shouldEngineer>
+<engineerTo>
+<item key="AB23647E-F000-19A5-FCDD-7AB0199D0662" value="false"/>
+</engineerTo>
+<pk>true</pk>
+<usedAttributes>
+<attributeRef>59636D92-FE92-441F-FCF5-62877A22EE63</attributeRef>
+<attributeRef>8E657D7E-2E62-77DF-96FE-AC6806F5E3F1</attributeRef>
+</usedAttributes>
+</identifier>
+</identifiers>
+</Entity>
