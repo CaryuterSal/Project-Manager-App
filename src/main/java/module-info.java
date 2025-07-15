@@ -13,11 +13,16 @@ module dev.builder {
     requires org.jetbrains.annotations;
     requires org.apache.tika.core;
     requires com.healthmarketscience.jackcess;
+    requires java.xml.crypto;
+    requires org.apache.commons.collections4;
+    requires com.fasterxml.jackson.databind;
+    requires org.hibernate.validator;
+    requires org.reflections;
 
     opens dev.builder to javafx.fxml;
     opens dev.builder.auth.application.controller to javafx.fxml;
     opens dev.builder.usermanagement.application.controller to javafx.fxml;
     opens dev.builder.board.application.controller to javafx.fxml;
 
-    exports dev.builder to javafx.graphics;
+    exports dev.builder;
 }

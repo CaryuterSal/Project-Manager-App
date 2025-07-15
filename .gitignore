@@ -1,3 +1,9 @@
+# Coverage reports
+htmlReport
+
+# Env
+.env
+
 target/
 !.mvn/wrapper/maven-wrapper.jar
 !**/src/main/**/target/
