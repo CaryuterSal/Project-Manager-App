@@ -34,7 +34,7 @@ public record Order(Double value) implements ValueObject {
      */
     public static Double validate(Double value) {
         if (!isValid(Objects.requireNonNull(value))) {
-            throw new IllegalArgumentException("Invalid value");
+            throw new IllegalArgumentException("Invalid order value");
         }
         return value;
     }

@@ -2,16 +2,10 @@ package dev.builder.board.domain.model;
 
 import dev.builder.core.domain.AggregateRoot;
 import dev.builder.core.domain.ValueObject;
-import dev.builder.usermanagement.domain.GlobalIdentityManager;
-import org.apache.tika.detect.DefaultDetector;
-import org.apache.tika.mime.MediaType;
-import org.apache.tika.mime.MimeType;
-import org.apache.tika.mime.MimeTypes;
+import dev.builder.core.infrastructure.persistence.UUIDGenerator;
 
-import java.io.InputStream;
 import java.util.Arrays;
 import java.util.Objects;
-import java.util.Optional;
 import java.util.UUID;
 import java.util.regex.Pattern;
 
@@ -43,7 +37,7 @@ public abstract class StoredFile extends AggregateRoot<StoredFile.Id> {
      * @throws NullPointerException si alguno de los parámetros son nulos
      */
     protected StoredFile(Filename filename, MimeType mimeType) {
-        this(new Id(GlobalIdentityManager.generateUUID()), filename, mimeType);
+        this(new Id(UUIDGenerator.generateUUID()), filename, mimeType);
     }
 
     /**

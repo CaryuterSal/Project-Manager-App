@@ -2,7 +2,6 @@ package dev.builder.board.domain.model;
 
 import dev.builder.core.domain.AggregateRoot;
 import dev.builder.core.domain.ValueObject;
-import dev.builder.usermanagement.domain.GlobalIdentityManager;
 
 import java.util.*;
 /**
