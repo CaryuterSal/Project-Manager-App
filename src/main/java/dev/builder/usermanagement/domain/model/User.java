@@ -1,18 +1,22 @@
 package dev.builder.usermanagement.domain.model;
 
 import dev.builder.core.domain.AggregateRoot;
+import dev.builder.core.domain.Auditable;
 import dev.builder.core.domain.ValueObject;
 import dev.builder.usermanagement.domain.port.out.PasswordEncoder;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
+import java.time.LocalDateTime;
 import java.util.Objects;
 
-public abstract class User<ID extends User.Id> extends AggregateRoot<ID> {
+public abstract class User<ID extends User.Id> extends AggregateRoot<ID> implements Auditable {
 
     private final Id id;
     private String password;
     private boolean verified;
+    private LocalDateTime createdAt;
+    private LocalDateTime updatedAt;
 
     public User(ID id, String password, boolean verified) {
         super(id);
@@ -27,6 +31,11 @@ public abstract class User<ID extends User.Id> extends AggregateRoot<ID> {
         }
         this.password = encoder.encode(Objects.requireNonNull(newPassword));
         this.verified = true;
+    }
+
+    public void hydrateAuditInfo(LocalDateTime createdAt, LocalDateTime updatedAt) {
+        this.createdAt = createdAt;
+        this.updatedAt = updatedAt;
     }
 
     public boolean login(Password password, @NotNull PasswordEncoder encoder) {
@@ -49,6 +58,20 @@ public abstract class User<ID extends User.Id> extends AggregateRoot<ID> {
 
     public boolean isVerified() {
         return verified;
+    }
+
+    public LocalDateTime createdAt() {
+        if(createdAt == null){
+            throw new IllegalStateException("User has not hydrated yet");
+        }
+        return createdAt;
+    }
+
+    public LocalDateTime updatedAt() {
+        if(updatedAt == null){
+            throw new IllegalStateException("User has not hydrated yet");
+        }
+        return updatedAt;
     }
 
     public static class Id implements ValueObject {

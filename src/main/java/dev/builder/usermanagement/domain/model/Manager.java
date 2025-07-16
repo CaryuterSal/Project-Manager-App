@@ -4,6 +4,7 @@ import dev.builder.usermanagement.domain.port.out.PasswordEncoder;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -32,8 +33,8 @@ public class Manager extends User<Manager.Id> {
     }
 
 
-    public Student inviteStudent(Student.Id id){
-        return Student.invite(this.id(), id);
+    public Student inviteStudent(Student.Id id, Name name){
+        return Student.invite(this.id(), id, name);
     }
 
     public Admin.Id createdBy() {

@@ -10,24 +10,31 @@ import java.util.Objects;
 public class Student extends User<User.Id>{
 
     private final Manager.Id createdBy;
+    private final Name name;
 
-    public Student(Manager.Id createdBy, Student.Id id, String password, boolean verified) {
+    public Student(Manager.Id createdBy, Student.Id id, String password, Name name, boolean verified) {
         super(id, password, verified);
         this.createdBy = createdBy;
+        this.name = name;
     }
 
-    @Contract("_, _ -> new")
-    static @NotNull Student invite(Manager.Id issuer, Student.Id id){
+    @Contract("_, _, _ -> new")
+    static @NotNull Student invite(Manager.Id issuer, Student.Id id, Name name){
         return new Student(
                 Objects.requireNonNull(issuer),
                 Objects.requireNonNull(id),
                 null,
+                name,
                 false
         );
     }
 
     public Manager.Id createdBy() {
         return createdBy;
+    }
+
+    public Name name() {
+        return name;
     }
 
     public static class Id extends User.Id {
