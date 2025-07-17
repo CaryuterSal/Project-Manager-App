@@ -1,11 +1,8 @@
 package dev.builder.usermanagement.domain.model;
 
-import dev.builder.core.domain.ValueObject;
-import dev.builder.usermanagement.domain.port.out.PasswordEncoder;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -13,11 +10,11 @@ import java.util.Objects;
 
 public class Admin extends User<Admin.Id> {
 
-    List<Manager.Id> managersInvited;
+    List<Manager.Id> managersCreated;
 
-    public Admin(Admin.Id id, String password, boolean verified, List<Manager.Id> managersInvited) {
+    public Admin(Admin.Id id, String password, boolean verified, List<Manager.Id> managersCreated) {
         super(id, password, verified);
-        this.managersInvited = managersInvited;
+        this.managersCreated = Objects.requireNonNull(managersCreated);
     }
 
     @Contract("_ -> new")
@@ -30,12 +27,12 @@ public class Admin extends User<Admin.Id> {
         );
     }
 
-    public Manager inviteManager(Manager.Id id){
-        return Manager.invite(this.id(), id);
+    public void addCreatedManager(Manager.Id id){
+        managersCreated.add(Objects.requireNonNull(id));
     }
 
     public List<Manager.Id> managersInvited() {
-        return Collections.unmodifiableList(managersInvited);
+        return Collections.unmodifiableList(managersCreated);
     }
 
     public static class Id extends User.Id {

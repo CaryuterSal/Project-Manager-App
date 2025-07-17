@@ -1,4 +1,6 @@
 package dev.builder.usermanagement.domain.port.out;
 
-public interface StudentRepository {
+import dev.builder.usermanagement.domain.model.Student;
+
+public interface StudentRepository extends UserRepository<Student, Student.Id> {
 }

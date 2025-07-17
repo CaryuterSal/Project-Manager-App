@@ -19,6 +19,7 @@ module dev.builder {
     requires org.hibernate.validator;
     requires org.reflections;
     requires ucp;
+    requires org.apache.poi.poi;
 
     opens dev.builder to javafx.fxml;
     opens dev.builder.auth.application.controller to javafx.fxml;

@@ -50,11 +50,15 @@ public class ConnectionManager {
         }
     }
 
-    public static Connection getConnection() throws SQLException {
-        if (dataSource == null) {
-            throw new SQLException("El pool de conexiones no fue inicializado.");
+    public static Connection getConnection(){
+        try {
+            if (dataSource == null) {
+                throw new SQLException("El pool de conexiones no fue inicializado.");
+            }
+            return dataSource.getConnection();
+        } catch (SQLException e) {
+            throw new IllegalStateException(e);
         }
-        return dataSource.getConnection();
     }
 
 }

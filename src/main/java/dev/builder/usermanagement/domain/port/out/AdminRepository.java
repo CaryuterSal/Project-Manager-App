@@ -1,4 +1,6 @@
 package dev.builder.usermanagement.domain.port.out;
 
-public interface AdminRepository {
+import dev.builder.usermanagement.domain.model.Admin;
+
+public interface AdminRepository extends UserRepository<Admin, Admin.Id>{
 }

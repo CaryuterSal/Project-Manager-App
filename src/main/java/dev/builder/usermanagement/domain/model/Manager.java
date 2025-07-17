@@ -17,24 +17,23 @@ public class Manager extends User<Manager.Id> {
 
     public Manager(Admin.Id createdBy, Manager.Id email, String password, boolean verified, List<Student.Id> studentsCreated) {
         super(email, password, verified);
-        this.createdBy = createdBy;
-        this.studentsCreated = studentsCreated;
+        this.createdBy = Objects.requireNonNull(createdBy);
+        this.studentsCreated = Objects.requireNonNull(studentsCreated);
     }
 
     @Contract("_, _ -> new")
-    static @NotNull Manager invite(Admin.Id issuer, Manager.Id id){
+    public static @NotNull Manager invite(Admin.Id issuer, Manager.Id id){
         return new Manager(
-                Objects.requireNonNull(issuer),
-                Objects.requireNonNull(id),
+                issuer,
+                id,
                 null,
                 false,
                 new ArrayList<>()
         );
     }
 
-
-    public Student inviteStudent(Student.Id id, Name name){
-        return Student.invite(this.id(), id, name);
+    public void addCreatedStudent(Student.Id id){
+        studentsCreated.add(Objects.requireNonNull(id));
     }
 
     public Admin.Id createdBy() {
