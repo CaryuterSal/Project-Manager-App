@@ -20,6 +20,7 @@ module dev.builder {
     requires org.reflections;
     requires ucp;
     requires org.apache.poi.poi;
+    requires org.slf4j;
 
     opens dev.builder to javafx.fxml;
     opens dev.builder.auth.application.controller to javafx.fxml;

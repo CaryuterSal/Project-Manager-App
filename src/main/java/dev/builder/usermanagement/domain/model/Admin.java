@@ -1,18 +1,16 @@
 package dev.builder.usermanagement.domain.model;
 
+import dev.builder.core.domain.AuditInfo;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
 public class Admin extends User<Admin.Id> {
 
-    List<Manager.Id> managersCreated;
+    Set<Manager.Id> managersCreated;
 
-    public Admin(Admin.Id id, String password, boolean verified, List<Manager.Id> managersCreated) {
+    public Admin(Admin.Id id, String password, boolean verified, Set<Manager.Id> managersCreated) {
         super(id, password, verified);
         this.managersCreated = Objects.requireNonNull(managersCreated);
     }
@@ -23,16 +21,22 @@ public class Admin extends User<Admin.Id> {
                 Objects.requireNonNull(id),
                 null,
                 false,
-                new ArrayList<>()
+                new HashSet<>()
         );
+    }
+
+    @Override
+    public Admin hydratedWithAuditInfo(AuditInfo auditInfo){
+        this.hydrateAuditInfo(auditInfo);
+        return this;
     }
 
     public void addCreatedManager(Manager.Id id){
         managersCreated.add(Objects.requireNonNull(id));
     }
 
-    public List<Manager.Id> managersInvited() {
-        return Collections.unmodifiableList(managersCreated);
+    public Set<Manager.Id> managersInvited() {
+        return Collections.unmodifiableSet(managersCreated);
     }
 
     public static class Id extends User.Id {

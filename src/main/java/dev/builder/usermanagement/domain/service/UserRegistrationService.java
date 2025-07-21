@@ -1,12 +1,13 @@
 package dev.builder.usermanagement.domain.service;
 
+import dev.builder.core.domain.DomainService;
 import dev.builder.usermanagement.domain.model.*;
 import org.jetbrains.annotations.NotNull;
 
 /**
  * Servicio de dominio que coordina la lógica de registro de nuevos usuarios
  */
-public class UserRegistrationService {
+public class UserRegistrationService implements DomainService {
 
     /**
      * Un nuevo Manager se registra a nombre de un Admin, actualizando la lista interna de managers creados inmediatamente

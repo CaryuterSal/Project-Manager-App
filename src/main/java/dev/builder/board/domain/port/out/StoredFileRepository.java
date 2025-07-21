@@ -1,8 +1,7 @@
 package dev.builder.board.domain.port.out;
 
 import dev.builder.board.domain.model.StoredFile;
-import dev.builder.core.domain.CrudRepository;
-import dev.builder.core.domain.Repository;
+import dev.builder.core.domain.port.CrudRepository;
 
 import java.io.InputStream;
 
