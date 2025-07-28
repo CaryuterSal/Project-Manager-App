@@ -4,6 +4,7 @@ import dev.builder.core.domain.AuditInfo;
 import dev.builder.usermanagement.domain.model.*;
 import org.jetbrains.annotations.NotNull;
 
+import javax.sql.DataSource;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.LocalDateTime;
@@ -62,7 +63,22 @@ public class UserJdbcMapper {
             LocalDateTime createdAt = rs.getTimestamp(UserColumns.CREATED_AT.columnName).toLocalDateTime();
             LocalDateTime updatedAt = rs.getTimestamp(UserColumns.UPDATED_AT.columnName).toLocalDateTime();
             return new CommonUserInfo(email, password, verified, new AuditInfo(createdAt, updatedAt));
-        };
+        }
+    }
+    public static List<Admin> rowToAdmins(ResultSet rs) throws SQLException {
+        List<Admin> admins = new ArrayList<>();
+        Map<Admin.Id, Set<Manager.Id>> managersCreated = extractManagersCreatedByAdmin(rs);
+        do{
+            CommonUserInfo baseInfo = CommonUserInfo.fromResultSet(rs);
+            Admin.Id id = new Admin.Id(baseInfo.email());
+            admins.add(new Admin(
+                    id,
+                    baseInfo.password(),
+                    baseInfo.verified(),
+                    managersCreated.getOrDefault(id, new HashSet<>())
+            ).hydratedWithAuditInfo(baseInfo.auditInfo()));
+        } while (rs.next());
+        return admins;
     }
 
     public static @NotNull Admin rowToAdmin(@NotNull ResultSet rs) throws SQLException {
@@ -77,6 +93,24 @@ public class UserJdbcMapper {
         ).hydratedWithAuditInfo(baseInfo.auditInfo());
     }
 
+    public static List<Manager> rowToManagers(ResultSet rs) throws SQLException {
+        List<Manager> managers = new ArrayList<>();
+        Map<Manager.Id, Set<Student.Id>> managersCreated = extractStudentsCreatedByManager(rs);
+        do{
+            CommonUserInfo baseInfo = CommonUserInfo.fromResultSet(rs);
+            Manager.Id id = new Manager.Id(baseInfo.email());
+            Admin.Id creator = new Admin.Id(rs.getString(ManagerColumns.CREATED_BY.columnName));
+            managers.add(new Manager(
+                    creator,
+                    id,
+                    baseInfo.password(),
+                    baseInfo.verified(),
+                    managersCreated.getOrDefault(id, new HashSet<>())
+            ).hydratedWithAuditInfo(baseInfo.auditInfo()));
+        } while (rs.next());
+        return managers;
+    }
+
     public static @NotNull Manager rowToManager(@NotNull ResultSet rs) throws SQLException {
         CommonUserInfo baseInfo = CommonUserInfo.fromResultSet(rs);
         Manager.Id id = new Manager.Id(baseInfo.email());
@@ -89,6 +123,33 @@ public class UserJdbcMapper {
                 baseInfo.verified(),
                 createdStudents
         ).hydratedWithAuditInfo(baseInfo.auditInfo());
+    }
+
+    public static List<Student> rowToStudents(ResultSet rs) throws SQLException {
+        List<Student> students = new ArrayList<>();
+        Map<Manager.Id, Set<Student.Id>> studentsCreated = extractStudentsCreatedByManager(rs);
+        do{
+            CommonUserInfo baseInfo = CommonUserInfo.fromResultSet(rs);
+            Student.Id id = new Student.Id(baseInfo.email());
+            Manager.Id creator = new Manager.Id(rs.getString(StudentColumns.CREATED_BY.columnName));
+            Name name = new Name(
+                    rs.getString(StudentColumns.FIRST_NAME.columnName),
+                    rs.getString(StudentColumns.LAST_NAME.columnName)
+            );
+            AcademicInfo academicInfo = new AcademicInfo(
+                    new AcademicQuarter(rs.getInt(StudentColumns.ACADEMIC_QUARTER.columnName)),
+                    new QuarterGroup(rs.getString(StudentColumns.ACADEMIC_GROUP.columnName).charAt(0))
+            );
+            students.add(new Student(
+                    creator,
+                    id,
+                    baseInfo.password(),
+                    name,
+                    academicInfo,
+                    baseInfo.verified()
+            ).hydratedWithAuditInfo(baseInfo.auditInfo()));
+        } while (rs.next());
+        return students;
     }
 
     public static @NotNull Student rowToStudent(@NotNull ResultSet rs) throws SQLException {
@@ -115,6 +176,13 @@ public class UserJdbcMapper {
 
     public static UserType extractUserType(@NotNull ResultSet rs) throws SQLException {
         return UserType.valueOf(rs.getString(UserColumns.TYPE.columnName));
+    }
+
+
+    public static @NotNull AuditInfo extractAuditInfo(@NotNull ResultSet rs) throws SQLException {
+        LocalDateTime createdAt = rs.getTimestamp(UserColumns.CREATED_AT.columnName).toLocalDateTime();
+        LocalDateTime updatedAt = rs.getTimestamp(UserColumns.UPDATED_AT.columnName).toLocalDateTime();
+        return new AuditInfo(createdAt,updatedAt);
     }
 
     private static @NotNull Set<Manager.Id> extractManagersCreated(Admin.Id creator, @NotNull ResultSet rs) throws SQLException {
@@ -152,8 +220,11 @@ public class UserJdbcMapper {
         do {
             K creator = keyExtractor.apply(rs);
             V created = valueExtractor.apply(rs);
-            result.computeIfAbsent(creator, k -> new HashSet<>()).add(created);
+            if(created != null){
+                result.computeIfAbsent(creator, k -> new HashSet<>()).add(created);
+            }
         } while (rs.next());
+        rs.first();
         return result;
     }
 

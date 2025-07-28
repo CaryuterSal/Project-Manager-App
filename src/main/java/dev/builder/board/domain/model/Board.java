@@ -2,6 +2,7 @@ package dev.builder.board.domain.model;
 
 import dev.builder.core.domain.AggregateRoot;
 import dev.builder.core.domain.ValueObject;
+import dev.builder.usermanagement.domain.model.User;
 
 import java.net.HttpCookie;
 import java.util.*;
@@ -34,50 +35,41 @@ public class Board extends AggregateRoot<Board.Id> {
     public Set<Stage.Id> stageIds() {
         return Collections.unmodifiableSet(stageIds);
     }
-
-    public HttpCookie getId() {
-        return null;
-    }
-
     /**
      * Identificador fuertemente tipado para la entidad Board.
-     * Este objeto encapsula un UUID válido y es utilizado para evitar errores
+     * Este objeto encapsula un ID de usuario y es utilizado para evitar errores
      * de tipo en el dominio.
      */
-    public record Id(UUID uuid) implements ValueObject {
+    public record Id(User.Id userId) implements ValueObject {
 
         /**
-         * Crea un nuevo identificador de Board validando que el UUID no sea nulo ni inválido.
-         *
-         * @param uuid UUID que representa el ID del Board.
+         * Crea un nuevo identificador de Board en base en un ID de usuario
+         * @param userId ID de usuario que representa el ID del Board.
          * @throws IllegalArgumentException Si el UUID es inválido (null).
          */
         public Id {
-            validate(uuid);
+            validate(userId);
         }
 
         /**
          * Valida que el UUID proporcionado no sea null.
          *
-         * @param uuid UUID a validar.
+         * @param userId UUID a validar.
          * @return El mismo UUID si es válido.
          * @throws IllegalArgumentException Si el UUID es null o inválido.
          */
-        public static UUID validate(UUID uuid) {
-            if (!isValid(Objects.requireNonNull(uuid))) {
-                throw new IllegalArgumentException("Invalid UUID");
-            }
-            return uuid;
+        public static User.Id validate(User.Id userId) {
+            return Objects.requireNonNull(userId);
         }
 
         /**
-         * Verifica si un UUID es válido.
+         * Verifica si un User.dev.builder.usermanagement.domain.model.User.Id es válido.
          *
-         * @param uuid UUID a verificar.
-         * @return true si el UUID no es null, false en caso contrario.
+         * @param userId User.dev.builder.usermanagement.domain.model.User.Id a verificar.
+         * @return true si el User.dev.builder.usermanagement.domain.model.User.Id no es null, false en caso contrario.
          */
-        public static boolean isValid(UUID uuid) {
-            return uuid != null;
+        public static boolean isValid(User.Id userId) {
+            return userId != null;
         }
 
     }

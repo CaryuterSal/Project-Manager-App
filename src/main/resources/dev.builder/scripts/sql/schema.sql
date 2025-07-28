@@ -9,27 +9,27 @@
 
 -- predefined type, no DDL - XMLTYPE
 
-CREATE TABLE academic_group (
+CREATE TABLE ADMIN.academic_group (
                                 NAME CHAR(1 CHAR) NOT NULL
 );
 
-ALTER TABLE academic_group ADD CONSTRAINT academic_groups_pk PRIMARY KEY ( NAME );
+ALTER TABLE ADMIN.academic_group ADD CONSTRAINT academic_groups_pk PRIMARY KEY ( NAME );
 
-CREATE TABLE academic_quarter (
+CREATE TABLE ADMIN.academic_quarter (
                                   "number" INTEGER NOT NULL
 );
 
-ALTER TABLE academic_quarter ADD CONSTRAINT aqr_pk PRIMARY KEY ( "number" );
+ALTER TABLE ADMIN.academic_quarter ADD CONSTRAINT aqr_pk PRIMARY KEY ( "number" );
 
-CREATE TABLE admin (
+CREATE TABLE ADMIN.admin (
                        email VARCHAR2(63 CHAR) NOT NULL
 );
 
-ALTER TABLE admin ADD CONSTRAINT admins_pk PRIMARY KEY ( email );
+ALTER TABLE ADMIN.admin ADD CONSTRAINT admins_pk PRIMARY KEY ( email );
 
-CREATE TABLE app_user (
+CREATE TABLE ADMIN.app_user (
                           email      VARCHAR2(63 CHAR) NOT NULL,
-                          password   VARCHAR2(63 CHAR),
+                          password   VARCHAR2(255 CHAR),
                           verified   NUMBER DEFAULT 0 NOT NULL,
                           created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP NOT NULL,
                           updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP NOT NULL,
@@ -37,83 +37,84 @@ CREATE TABLE app_user (
                           type       VARCHAR2(15) NOT NULL
 );
 
-CREATE OR REPLACE TRIGGER trg_update_timestamp
-    BEFORE UPDATE ON app_user
+CREATE OR REPLACE TRIGGER ADMIN.trg_update_timestamp
+    BEFORE UPDATE ON ADMIN.app_user
     FOR EACH ROW
 BEGIN
     :NEW.updated_at := CURRENT_TIMESTAMP;
 END;
+/
 
-ALTER TABLE app_user
+ALTER TABLE ADMIN.app_user
     ADD CONSTRAINT fkarc_1_lov
         CHECK ( type IN ( 'student', 'manager', 'admin' ) );
 
-ALTER TABLE app_user ADD CONSTRAINT app_users_pk PRIMARY KEY ( email );
+ALTER TABLE ADMIN.app_user ADD CONSTRAINT app_users_pk PRIMARY KEY ( email );
 
-CREATE TABLE board (
+CREATE TABLE ADMIN.board (
                        title      VARCHAR2(63) NOT NULL,
                        mnr_email  VARCHAR2(63 CHAR) NOT NULL
 );
 
-ALTER TABLE board ADD CONSTRAINT boards_pk PRIMARY KEY ( mnr_email );
+ALTER TABLE ADMIN.board ADD CONSTRAINT boards_pk PRIMARY KEY ( mnr_email );
 
-CREATE TABLE board_stage (
+CREATE TABLE ADMIN.board_stage (
                              bad_email VARCHAR2(63 CHAR) NOT NULL,
                              sae_NAME  VARCHAR2(15 CHAR) NOT NULL
 );
 
-ALTER TABLE board_stage ADD CONSTRAINT board_stages_pk PRIMARY KEY ( bad_email,
+ALTER TABLE ADMIN.board_stage ADD CONSTRAINT board_stages_pk PRIMARY KEY ( bad_email,
                                                                      sae_NAME );
 
-CREATE TABLE COLOR (
+CREATE TABLE ADMIN.COLOR (
                        NAME VARCHAR2(15) NOT NULL,
                        CODE VARCHAR2(7) NOT NULL
 );
 
-ALTER TABLE COLOR ADD CONSTRAINT COLORs_pk PRIMARY KEY ( NAME );
+ALTER TABLE ADMIN.COLOR ADD CONSTRAINT COLORs_pk PRIMARY KEY ( NAME );
 
-CREATE TABLE "FILE" (
+CREATE TABLE ADMIN."FILE" (
                         id       RAW(16) NOT NULL,
                         NAME     VARCHAR2(63) NOT NULL,
                         mimetype VARCHAR2(31 CHAR) NOT NULL,
                         purpose  VARCHAR2(15) NOT NULL
 );
 
-ALTER TABLE "FILE"
+ALTER TABLE ADMIN."FILE"
     ADD CONSTRAINT fkarc_2_lov CHECK ( purpose IN ( 'cover', 'attachement' ) );
 
-ALTER TABLE "FILE" ADD CONSTRAINT files_pk PRIMARY KEY ( id );
+ALTER TABLE ADMIN."FILE" ADD CONSTRAINT files_pk PRIMARY KEY ( id );
 
-CREATE TABLE file_source (
+CREATE TABLE ADMIN.file_source (
                              fle_id RAW(16) NOT NULL,
                              source BLOB NOT NULL
 );
 
-ALTER TABLE file_source ADD CONSTRAINT file_sources_pk PRIMARY KEY ( fle_id );
+ALTER TABLE ADMIN.file_source ADD CONSTRAINT file_sources_pk PRIMARY KEY ( fle_id );
 
-CREATE TABLE manager (
+CREATE TABLE ADMIN.manager (
                          email      VARCHAR2(63 CHAR) NOT NULL,
                          created_by VARCHAR2(63 CHAR) NOT NULL
 );
 
-ALTER TABLE manager ADD CONSTRAINT managers_pk PRIMARY KEY ( email );
+ALTER TABLE ADMIN.manager ADD CONSTRAINT managers_pk PRIMARY KEY ( email );
 
-CREATE TABLE quarter_group (
+CREATE TABLE ADMIN.quarter_group (
                                agp_NAME   CHAR(1 CHAR) NOT NULL,
     aqr_number INTEGER NOT NULL
 );
 
-ALTER TABLE quarter_group ADD CONSTRAINT quarter_groups_pk PRIMARY KEY ( agp_NAME,
+ALTER TABLE ADMIN.quarter_group ADD CONSTRAINT quarter_groups_pk PRIMARY KEY ( agp_NAME,
                                                                          aqr_number );
 
-CREATE TABLE stage (
+CREATE TABLE ADMIN.stage (
                        NAME  VARCHAR2(15 CHAR) NOT NULL,
                        final NUMBER NOT NULL
 );
 
-ALTER TABLE stage ADD CONSTRAINT stages_pk PRIMARY KEY ( NAME );
+ALTER TABLE ADMIN.stage ADD CONSTRAINT stages_pk PRIMARY KEY ( NAME );
 
-CREATE TABLE stage_task (
+CREATE TABLE ADMIN.stage_task (
                             "order"       NUMBER(10, 4) NOT NULL,
                             bse_bad_email VARCHAR2(63 CHAR) NOT NULL,
                             bse_sae_NAME  VARCHAR2(15 CHAR) NOT NULL,
@@ -121,21 +122,21 @@ CREATE TABLE stage_task (
 );
 
 CREATE UNIQUE INDEX stage_tasks__idx ON
-    stage_task (
+    ADMIN.stage_task (
                 tsk_id
                 ASC );
 
 CREATE UNIQUE INDEX order__idx ON
-    stage_task (
+    ADMIN.stage_task (
                 "order", bse_bad_email, bse_sae_NAME
                 ASC );
 
-ALTER TABLE stage_task
+ALTER TABLE ADMIN.stage_task
     ADD CONSTRAINT stage_tasks_pk PRIMARY KEY ( bse_bad_email,
                                                 bse_sae_NAME,
                                                 tsk_id );
 
-CREATE TABLE student (
+CREATE TABLE ADMIN.student (
                          email          VARCHAR2(63 CHAR) NOT NULL,
                          first_NAME     VARCHAR2(63) NOT NULL,
                          last_NAME      VARCHAR2(63) NOT NULL,
@@ -144,18 +145,18 @@ CREATE TABLE student (
     qgp_aqr_number INTEGER NOT NULL
 );
 
-ALTER TABLE student ADD CONSTRAINT students_pk PRIMARY KEY ( email );
+ALTER TABLE ADMIN.student ADD CONSTRAINT students_pk PRIMARY KEY ( email );
 
-CREATE TABLE student_board (
+CREATE TABLE ADMIN.student_board (
                                issued_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP NOT NULL,
                                sdt_email VARCHAR2(63 CHAR) NOT NULL,
                                bad_email VARCHAR2(63 CHAR) NOT NULL
 );
 
-ALTER TABLE student_board ADD CONSTRAINT students_board_pk PRIMARY KEY ( sdt_email,
+ALTER TABLE ADMIN.student_board ADD CONSTRAINT students_board_pk PRIMARY KEY ( sdt_email,
                                                                          bad_email );
 
-CREATE TABLE task (
+CREATE TABLE ADMIN.task (
                       id          RAW(16) NOT NULL,
                       title       VARCHAR2(63) NOT NULL,
                       description VARCHAR2(255) NOT NULL,
@@ -166,161 +167,159 @@ CREATE TABLE task (
                       clr_NAME    VARCHAR2(15) NOT NULL
 );
 
-ALTER TABLE task ADD CONSTRAINT tasks_pk PRIMARY KEY ( id );
+ALTER TABLE ADMIN.task ADD CONSTRAINT tasks_pk PRIMARY KEY ( id );
 
-CREATE TABLE task_assignee (
+CREATE TABLE ADMIN.task_assignee (
                                tsk_id        RAW(16) NOT NULL,
                                sbd_sdt_email VARCHAR2(63 CHAR) NOT NULL,
                                sbd_bad_email VARCHAR2(63 CHAR) NOT NULL
 );
 
-ALTER TABLE task_assignee
+ALTER TABLE ADMIN.task_assignee
     ADD CONSTRAINT relation_19_pk PRIMARY KEY ( tsk_id,
                                                 sbd_sdt_email,
                                                 sbd_bad_email );
 
-CREATE TABLE task_attachement (
+CREATE TABLE ADMIN.task_attachement (
                                   fle_id RAW(16) NOT NULL,
                                   tsk_id RAW(16) NOT NULL
 );
 
-ALTER TABLE task_attachement ADD CONSTRAINT task_attachements_pk PRIMARY KEY ( fle_id );
+ALTER TABLE ADMIN.task_attachement ADD CONSTRAINT task_attachements_pk PRIMARY KEY ( fle_id );
 
-CREATE TABLE task_cover (
+CREATE TABLE ADMIN.task_cover (
                             fle_id RAW(16) NOT NULL,
                             tsk_id RAW(16) NOT NULL
 );
 
-ALTER TABLE task_cover ADD CONSTRAINT task_covers_pk PRIMARY KEY ( fle_id );
+ALTER TABLE ADMIN.task_cover ADD CONSTRAINT task_covers_pk PRIMARY KEY ( fle_id );
 
-ALTER TABLE task_cover ADD CONSTRAINT task_covers_pkv1 UNIQUE ( tsk_id );
+ALTER TABLE ADMIN.task_cover ADD CONSTRAINT task_covers_pkv1 UNIQUE ( tsk_id );
 
-ALTER TABLE admin
+ALTER TABLE ADMIN.admin
     ADD CONSTRAINT admins_app_users_fk FOREIGN KEY ( email )
-        REFERENCES app_user ( email );
+        REFERENCES ADMIN.app_user ( email );
 
-ALTER TABLE board_stage
+ALTER TABLE ADMIN.board_stage
     ADD CONSTRAINT board_stages_boards_fk FOREIGN KEY ( bad_email )
-        REFERENCES board ( mnr_email );
+        REFERENCES ADMIN.board ( mnr_email );
 
-ALTER TABLE board_stage
+ALTER TABLE ADMIN.board_stage
     ADD CONSTRAINT board_stages_stages_fk FOREIGN KEY ( sae_NAME )
-        REFERENCES stage ( NAME );
+        REFERENCES ADMIN.stage ( NAME );
 
-ALTER TABLE board
+ALTER TABLE ADMIN.board
     ADD CONSTRAINT boards_managers_fk FOREIGN KEY ( mnr_email )
-        REFERENCES manager ( email );
+        REFERENCES ADMIN.manager ( email );
 
-ALTER TABLE file_source
+ALTER TABLE ADMIN.file_source
     ADD CONSTRAINT file_sources_files_fk FOREIGN KEY ( fle_id )
-        REFERENCES "FILE" ( id );
+        REFERENCES ADMIN."FILE" ( id );
 
-ALTER TABLE manager
+ALTER TABLE ADMIN.manager
     ADD CONSTRAINT managers_admins_fk FOREIGN KEY ( created_by )
-        REFERENCES admin ( email );
+        REFERENCES ADMIN.admin ( email );
 
-ALTER TABLE manager
+ALTER TABLE ADMIN.manager
     ADD CONSTRAINT managers_app_users_fk FOREIGN KEY ( email )
-        REFERENCES app_user ( email );
+        REFERENCES ADMIN.app_user ( email );
 
---  ERROR: FK NAME length exceeds maximum allowed length(30)
-ALTER TABLE quarter_group
+ALTER TABLE ADMIN.quarter_group
     ADD CONSTRAINT quarter_groups_academic_groups_fk FOREIGN KEY ( agp_NAME )
-        REFERENCES academic_group ( NAME );
+        REFERENCES ADMIN.academic_group ( NAME );
 
---  ERROR: FK NAME length exceeds maximum allowed length(30)
-ALTER TABLE quarter_group
+ALTER TABLE ADMIN.quarter_group
     ADD CONSTRAINT quarter_groups_academic_quarters_fk FOREIGN KEY ( aqr_number )
-        REFERENCES academic_quarter ( "number" );
+        REFERENCES ADMIN.academic_quarter ( "number" );
 
-ALTER TABLE task_assignee
+ALTER TABLE ADMIN.task_assignee
     ADD CONSTRAINT relation_19_students_board_fk
         FOREIGN KEY ( sbd_sdt_email,
                       sbd_bad_email )
-            REFERENCES student_board ( sdt_email,
+            REFERENCES ADMIN.student_board ( sdt_email,
                                        bad_email );
 
-ALTER TABLE task_assignee
+ALTER TABLE ADMIN.task_assignee
     ADD CONSTRAINT relation_19_tasks_fk FOREIGN KEY ( tsk_id )
-        REFERENCES task ( id );
+        REFERENCES ADMIN.task ( id );
 
-ALTER TABLE stage_task
+ALTER TABLE ADMIN.stage_task
     ADD CONSTRAINT stage_tasks_board_stages_fk
         FOREIGN KEY ( bse_bad_email,
                       bse_sae_NAME )
-            REFERENCES board_stage ( bad_email,
+            REFERENCES ADMIN.board_stage ( bad_email,
                                      sae_NAME );
 
-ALTER TABLE stage_task
+ALTER TABLE ADMIN.stage_task
     ADD CONSTRAINT stage_tasks_tasks_fk FOREIGN KEY ( tsk_id )
-        REFERENCES task ( id );
+        REFERENCES ADMIN.task ( id );
 
-ALTER TABLE student
+ALTER TABLE ADMIN.student
     ADD CONSTRAINT students_app_users_fk FOREIGN KEY ( email )
-        REFERENCES app_user ( email );
+        REFERENCES ADMIN.app_user ( email );
 
-ALTER TABLE student_board
+ALTER TABLE ADMIN.student_board
     ADD CONSTRAINT students_board_boards_fk FOREIGN KEY ( bad_email )
-        REFERENCES board ( mnr_email );
+        REFERENCES ADMIN.board ( mnr_email );
 
-ALTER TABLE student_board
+ALTER TABLE ADMIN.student_board
     ADD CONSTRAINT students_board_students_fk FOREIGN KEY ( sdt_email )
-        REFERENCES student ( email );
+        REFERENCES ADMIN.student ( email );
 
-ALTER TABLE student
+ALTER TABLE ADMIN.student
     ADD CONSTRAINT students_managers_fk FOREIGN KEY ( created_by )
-        REFERENCES manager ( email );
+        REFERENCES ADMIN.manager ( email );
 
-ALTER TABLE student
+ALTER TABLE ADMIN.student
     ADD CONSTRAINT students_quarter_groups_fk
         FOREIGN KEY ( qgp_agp_NAME,
                       qgp_aqr_number )
-            REFERENCES quarter_group ( agp_NAME,
+            REFERENCES ADMIN.quarter_group ( agp_NAME,
                                        aqr_number );
 
-ALTER TABLE task_attachement
+ALTER TABLE ADMIN.task_attachement
     ADD CONSTRAINT task_attachements_files_fk FOREIGN KEY ( fle_id )
-        REFERENCES "FILE" ( id );
+        REFERENCES ADMIN."FILE" ( id );
 
-ALTER TABLE task_attachement
+ALTER TABLE ADMIN.task_attachement
     ADD CONSTRAINT task_attachements_tasks_fk FOREIGN KEY ( tsk_id )
-        REFERENCES task ( id );
+        REFERENCES ADMIN.task ( id );
 
-ALTER TABLE task_cover
+ALTER TABLE ADMIN.task_cover
     ADD CONSTRAINT task_covers_files_fk FOREIGN KEY ( fle_id )
-        REFERENCES "FILE" ( id );
+        REFERENCES ADMIN."FILE" ( id );
 
-ALTER TABLE task_cover
+ALTER TABLE ADMIN.task_cover
     ADD CONSTRAINT task_covers_tasks_fk FOREIGN KEY ( tsk_id )
-        REFERENCES task ( id );
+        REFERENCES ADMIN.task ( id );
 
-ALTER TABLE task
+ALTER TABLE ADMIN.task
     ADD CONSTRAINT tasks_COLORs_fk FOREIGN KEY ( clr_NAME )
-        REFERENCES COLOR ( NAME );
+        REFERENCES ADMIN.COLOR ( NAME );
 
-CREATE OR REPLACE TRIGGER fkntm_board_stage BEFORE
-UPDATE OF bad_email, sae_NAME ON board_stage
+CREATE OR REPLACE TRIGGER ADMIN.fkntm_board_stage BEFORE
+UPDATE OF bad_email, sae_NAME ON ADMIN.board_stage
 BEGIN
     raise_application_error(-20225, 'Non Transferable FK constraint  on table BOARD_STAGE is violated');
 END;
 /
 
-CREATE OR REPLACE TRIGGER fkntm_manager BEFORE
-UPDATE OF created_by ON manager
+CREATE OR REPLACE TRIGGER ADMIN.fkntm_manager BEFORE
+UPDATE OF created_by ON ADMIN.manager
 BEGIN
     raise_application_error(-20225, 'Non Transferable FK constraint  on table MANAGER is violated');
 END;
 /
 
-CREATE OR REPLACE TRIGGER fkntm_student BEFORE
-UPDATE OF created_by ON student
+CREATE OR REPLACE TRIGGER ADMIN.fkntm_student BEFORE
+UPDATE OF created_by ON ADMIN.student
 BEGIN
     raise_application_error(-20225, 'Non Transferable FK constraint  on table STUDENT is violated');
 END;
 /
 
-CREATE OR REPLACE TRIGGER arc_fkarc_1_student BEFORE
-INSERT OR UPDATE OF email ON student
+CREATE OR REPLACE TRIGGER ADMIN.arc_fkarc_1_student BEFORE
+INSERT OR UPDATE OF email ON ADMIN.student
     FOR EACH ROW
     DECLARE
     d VARCHAR2(15);
@@ -329,7 +328,7 @@ SELECT
     a.type
 INTO d
 FROM
-    app_user a
+    ADMIN.app_user a
 WHERE
     a.email = :new.email;
 
@@ -347,8 +346,8 @@ WHEN OTHERS THEN
 END;
 /
 
-CREATE OR REPLACE TRIGGER arc_fkarc_1_manager BEFORE
-INSERT OR UPDATE OF email ON manager
+CREATE OR REPLACE TRIGGER ADMIN.arc_fkarc_1_manager BEFORE
+INSERT OR UPDATE OF email ON ADMIN.manager
     FOR EACH ROW
     DECLARE
     d VARCHAR2(15);
@@ -357,7 +356,7 @@ SELECT
     a.type
 INTO d
 FROM
-    app_user a
+    ADMIN.app_user a
 WHERE
     a.email = :new.email;
 
@@ -375,8 +374,8 @@ WHEN OTHERS THEN
 END;
 /
 
-CREATE OR REPLACE TRIGGER arc_fkarc_1_admin BEFORE
-INSERT OR UPDATE OF email ON admin
+CREATE OR REPLACE TRIGGER ADMIN.arc_fkarc_1_admin BEFORE
+INSERT OR UPDATE OF email ON ADMIN.admin
     FOR EACH ROW
     DECLARE
     d VARCHAR2(15);
@@ -385,7 +384,7 @@ SELECT
     a.type
 INTO d
 FROM
-    app_user a
+    ADMIN.app_user a
 WHERE
     a.email = :new.email;
 
@@ -403,8 +402,8 @@ WHEN OTHERS THEN
 END;
 /
 
-CREATE OR REPLACE TRIGGER arc_fkarc_2_task_cover BEFORE
-INSERT OR UPDATE OF fle_id ON task_cover
+CREATE OR REPLACE TRIGGER ADMIN.arc_fkarc_2_task_cover BEFORE
+INSERT OR UPDATE OF fle_id ON ADMIN.task_cover
     FOR EACH ROW
     DECLARE
     d VARCHAR2(15);
@@ -413,7 +412,7 @@ SELECT
     a.purpose
 INTO d
 FROM
-    "FILE" a
+    ADMIN."FILE" a
 WHERE
     a.id = :new.fle_id;
 
@@ -431,8 +430,8 @@ WHEN OTHERS THEN
 END;
 /
 
-CREATE OR REPLACE TRIGGER arc_fkarc_2_task_attachement BEFORE
-INSERT OR UPDATE OF fle_id ON task_attachement
+CREATE OR REPLACE TRIGGER ADMIN.arc_fkarc_2_task_attachement BEFORE
+INSERT OR UPDATE OF fle_id ON ADMIN.task_attachement
     FOR EACH ROW
     DECLARE
     d VARCHAR2(15);
@@ -441,7 +440,7 @@ SELECT
     a.purpose
 INTO d
 FROM
-    "FILE" a
+    ADMIN."FILE" a
 WHERE
     a.id = :new.fle_id;
 
@@ -457,75 +456,74 @@ EXCEPTION
 WHEN OTHERS THEN
         RAISE;
 END;
+/
 
 -- -----------------------------------------------------
 -- Data for table COLOR
 -- -----------------------------------------------------
-MERGE INTO COLOR c USING (SELECT 'Red' AS NAME, '#FF0000' AS CODE FROM DUAL) src ON (c.NAME = src.NAME)
+MERGE INTO ADMIN.COLOR c USING (SELECT 'Red' AS NAME, '#FF0000' AS CODE FROM DUAL) src ON (c.NAME = src.NAME)
 WHEN NOT MATCHED THEN INSERT (NAME, CODE) VALUES (src.NAME, src.CODE);
 
-MERGE INTO COLOR c USING (SELECT 'Orange' AS NAME, '#F97316' AS CODE FROM DUAL) src ON (c.NAME = src.NAME)
+MERGE INTO ADMIN.COLOR c USING (SELECT 'Orange' AS NAME, '#F97316' AS CODE FROM DUAL) src ON (c.NAME = src.NAME)
 WHEN NOT MATCHED THEN INSERT (NAME, CODE) VALUES (src.NAME, src.CODE);
 
-MERGE INTO COLOR c USING (SELECT 'Amber' AS NAME, '#F59E0B' AS CODE FROM DUAL) src ON (c.NAME = src.NAME)
+MERGE INTO ADMIN.COLOR c USING (SELECT 'Amber' AS NAME, '#F59E0B' AS CODE FROM DUAL) src ON (c.NAME = src.NAME)
 WHEN NOT MATCHED THEN INSERT (NAME, CODE) VALUES (src.NAME, src.CODE);
 
-MERGE INTO COLOR c USING (SELECT 'Yellow' AS NAME, '#EAB308' AS CODE FROM DUAL) src ON (c.NAME = src.NAME)
+MERGE INTO ADMIN.COLOR c USING (SELECT 'Yellow' AS NAME, '#EAB308' AS CODE FROM DUAL) src ON (c.NAME = src.NAME)
 WHEN NOT MATCHED THEN INSERT (NAME, CODE) VALUES (src.NAME, src.CODE);
 
-MERGE INTO COLOR c USING (SELECT 'Lime' AS NAME, '#84CC16' AS CODE FROM DUAL) src ON (c.NAME = src.NAME)
+MERGE INTO ADMIN.COLOR c USING (SELECT 'Lime' AS NAME, '#84CC16' AS CODE FROM DUAL) src ON (c.NAME = src.NAME)
 WHEN NOT MATCHED THEN INSERT (NAME, CODE) VALUES (src.NAME, src.CODE);
 
-MERGE INTO COLOR c USING (SELECT 'Green' AS NAME, '#22C55E' AS CODE FROM DUAL) src ON (c.NAME = src.NAME)
+MERGE INTO ADMIN.COLOR c USING (SELECT 'Green' AS NAME, '#22C55E' AS CODE FROM DUAL) src ON (c.NAME = src.NAME)
 WHEN NOT MATCHED THEN INSERT (NAME, CODE) VALUES (src.NAME, src.CODE);
 
-MERGE INTO COLOR c USING (SELECT 'Emerald' AS NAME, '#10B981' AS CODE FROM DUAL) src ON (c.NAME = src.NAME)
+MERGE INTO ADMIN.COLOR c USING (SELECT 'Emerald' AS NAME, '#10B981' AS CODE FROM DUAL) src ON (c.NAME = src.NAME)
 WHEN NOT MATCHED THEN INSERT (NAME, CODE) VALUES (src.NAME, src.CODE);
 
-MERGE INTO COLOR c USING (SELECT 'Teal' AS NAME, '#14B8A6' AS CODE FROM DUAL) src ON (c.NAME = src.NAME)
+MERGE INTO ADMIN.COLOR c USING (SELECT 'Teal' AS NAME, '#14B8A6' AS CODE FROM DUAL) src ON (c.NAME = src.NAME)
 WHEN NOT MATCHED THEN INSERT (NAME, CODE) VALUES (src.NAME, src.CODE);
 
-MERGE INTO COLOR c USING (SELECT 'Cyan' AS NAME, '#06B6D4' AS CODE FROM DUAL) src ON (c.NAME = src.NAME)
+MERGE INTO ADMIN.COLOR c USING (SELECT 'Cyan' AS NAME, '#06B6D4' AS CODE FROM DUAL) src ON (c.NAME = src.NAME)
 WHEN NOT MATCHED THEN INSERT (NAME, CODE) VALUES (src.NAME, src.CODE);
 
-MERGE INTO COLOR c USING (SELECT 'Blue' AS NAME, '#3B82F6' AS CODE FROM DUAL) src ON (c.NAME = src.NAME)
+MERGE INTO ADMIN.COLOR c USING (SELECT 'Blue' AS NAME, '#3B82F6' AS CODE FROM DUAL) src ON (c.NAME = src.NAME)
 WHEN NOT MATCHED THEN INSERT (NAME, CODE) VALUES (src.NAME, src.CODE);
 
-MERGE INTO COLOR c USING (SELECT 'Indigo' AS NAME, '#6366F1' AS CODE FROM DUAL) src ON (c.NAME = src.NAME)
+MERGE INTO ADMIN.COLOR c USING (SELECT 'Indigo' AS NAME, '#6366F1' AS CODE FROM DUAL) src ON (c.NAME = src.NAME)
 WHEN NOT MATCHED THEN INSERT (NAME, CODE) VALUES (src.NAME, src.CODE);
 
-MERGE INTO COLOR c USING (SELECT 'Violet' AS NAME, '#8B5CF6' AS CODE FROM DUAL) src ON (c.NAME = src.NAME)
+MERGE INTO ADMIN.COLOR c USING (SELECT 'Violet' AS NAME, '#8B5CF6' AS CODE FROM DUAL) src ON (c.NAME = src.NAME)
 WHEN NOT MATCHED THEN INSERT (NAME, CODE) VALUES (src.NAME, src.CODE);
 
-MERGE INTO COLOR c USING (SELECT 'Fuchsia' AS NAME, '#D946EF' AS CODE FROM DUAL) src ON (c.NAME = src.NAME)
+MERGE INTO ADMIN.COLOR c USING (SELECT 'Fuchsia' AS NAME, '#D946EF' AS CODE FROM DUAL) src ON (c.NAME = src.NAME)
 WHEN NOT MATCHED THEN INSERT (NAME, CODE) VALUES (src.NAME, src.CODE);
 
-MERGE INTO COLOR c USING (SELECT 'Pink' AS NAME, '#EC4899' AS CODE FROM DUAL) src ON (c.NAME = src.NAME)
+MERGE INTO ADMIN.COLOR c USING (SELECT 'Pink' AS NAME, '#EC4899' AS CODE FROM DUAL) src ON (c.NAME = src.NAME)
 WHEN NOT MATCHED THEN INSERT (NAME, CODE) VALUES (src.NAME, src.CODE);
 
-MERGE INTO COLOR c USING (SELECT 'Rose' AS NAME, '#F43F5E' AS CODE FROM DUAL) src ON (c.NAME = src.NAME)
+MERGE INTO ADMIN.COLOR c USING (SELECT 'Rose' AS NAME, '#F43F5E' AS CODE FROM DUAL) src ON (c.NAME = src.NAME)
 WHEN NOT MATCHED THEN INSERT (NAME, CODE) VALUES (src.NAME, src.CODE);
 
-MERGE INTO COLOR c USING (SELECT 'Gray' AS NAME, '#6B7280' AS CODE FROM DUAL) src ON (c.NAME = src.NAME)
+MERGE INTO ADMIN.COLOR c USING (SELECT 'Gray' AS NAME, '#6B7280' AS CODE FROM DUAL) src ON (c.NAME = src.NAME)
 WHEN NOT MATCHED THEN INSERT (NAME, CODE) VALUES (src.NAME, src.CODE);
 
-MERGE INTO COLOR c USING (SELECT 'Slate' AS NAME, '#64748B' AS CODE FROM DUAL) src ON (c.NAME = src.NAME)
+MERGE INTO ADMIN.COLOR c USING (SELECT 'Slate' AS NAME, '#64748B' AS CODE FROM DUAL) src ON (c.NAME = src.NAME)
 WHEN NOT MATCHED THEN INSERT (NAME, CODE) VALUES (src.NAME, src.CODE);
 
-MERGE INTO COLOR c USING (SELECT 'Zinc' AS NAME, '#71717A' AS CODE FROM DUAL) src ON (c.NAME = src.NAME)
+MERGE INTO ADMIN.COLOR c USING (SELECT 'Zinc' AS NAME, '#71717A' AS CODE FROM DUAL) src ON (c.NAME = src.NAME)
 WHEN NOT MATCHED THEN INSERT (NAME, CODE) VALUES (src.NAME, src.CODE);
 
 -- -----------------------------------------------------
 -- Data for table stage
 -- -----------------------------------------------------
-MERGE INTO stage s USING (SELECT 'To Do' AS NAME, 0 AS final FROM DUAL) src ON (s.NAME = src.NAME)
+MERGE INTO ADMIN.stage s USING (SELECT 'To Do' AS NAME, 0 AS final FROM DUAL) src ON (s.NAME = src.NAME)
 WHEN NOT MATCHED THEN INSERT (NAME, final) VALUES (src.NAME, src.final);
 
-MERGE INTO stage s USING (SELECT 'In Progress' AS NAME, 0 AS final FROM DUAL) src ON (s.NAME = src.NAME)
+MERGE INTO ADMIN.stage s USING (SELECT 'In Progress' AS NAME, 0 AS final FROM DUAL) src ON (s.NAME = src.NAME)
 WHEN NOT MATCHED THEN INSERT (NAME, final) VALUES (src.NAME, src.final);
 
-MERGE INTO stage s USING (SELECT 'Done' AS NAME, 1 AS final FROM DUAL) src ON (s.NAME = src.NAME)
+MERGE INTO ADMIN.stage s USING (SELECT 'Done' AS NAME, 1 AS final FROM DUAL) src ON (s.NAME = src.NAME)
 WHEN NOT MATCHED THEN INSERT (NAME, final) VALUES (src.NAME, src.final);
 
-COMMIT;
-/

@@ -1,19 +1,14 @@
 package dev.builder.board.infrastructure;
 
 import dev.builder.board.domain.model.Board;
-import dev.builder.board.domain.model.Stage;
 import dev.builder.board.domain.port.out.BoardRepository;
 import dev.builder.core.infrastructure.di.annotation.Bean;
 import dev.builder.core.infrastructure.di.annotation.Inject;
-import dev.builder.core.infrastructure.persistence.ConnectionManager;
 import dev.builder.usermanagement.domain.port.out.UserRepository;
 
 
-import java.sql.*;
-import java.util.*;
 import java.util.List;
 import java.util.Optional;
-import java.sql.SQLException;
 
 @Bean
 public class JdbcBoardRepository implements BoardRepository {
@@ -21,12 +16,43 @@ public class JdbcBoardRepository implements BoardRepository {
     @Inject
     private UserRepository userRepository;
 
+    @Override
+    public Board save(Board aggregateRoot) {
+        return null;
+    }
+
+    @Override
+    public boolean delete(Board aggregateRoot) {
+        return false;
+    }
+
+    @Override
+    public boolean deleteById(Board.Id id) {
+        return false;
+    }
+
+    @Override
+    public List<Board> findAll() {
+        return List.of();
+    }
+
+    @Override
+    public Optional<Board> findById(Board.Id id) {
+        return Optional.empty();
+    }
+
+    @Override
+    public boolean existsById(Board.Id id) {
+        return false;
+    }
+
+    /*
 
     // Este metodo es para buscar un tablero por Id
     @Override
     public Optional<Board> findById(Board.Id id) {
         String query = "SELECT * FROM board WHERE mnr_email = ?";
-        try (Connection conn = ConnectionManager.getConnection();
+        try (Connection conn = DefaultConnectionManager.getConnection();
         PreparedStatement ps = conn.prepareStatement(query)){
 
             ps.setString(1, id.uuid().toString());
@@ -49,7 +75,7 @@ public class JdbcBoardRepository implements BoardRepository {
         List<Board> boards = new ArrayList<>();
         String query = "SELECT * FROM board";
 
-        try (Connection conn = ConnectionManager.getConnection();
+        try (Connection conn = DefaultConnectionManager.getConnection();
              PreparedStatement ps = conn.prepareStatement(query);
              ResultSet rs = ps.executeQuery()) {
 
@@ -92,7 +118,7 @@ public class JdbcBoardRepository implements BoardRepository {
         String deleteStages = "DELETE FROM board_stage WHERE bad_email = ?";
         String deleteBoard = "DELETE FROM board WHERE mnr_email = ?";
 
-        try (Connection conn = ConnectionManager.getConnection()) {
+        try (Connection conn = DefaultConnectionManager.getConnection()) {
             conn.setAutoCommit(false);
 
             try (PreparedStatement psStages = conn.prepareStatement(deleteStages);
@@ -131,7 +157,7 @@ public class JdbcBoardRepository implements BoardRepository {
     //TODO: insertar columnas nuevas tambien
     private Board createBoard(Board aggregateRoot) {
         String insertBoard = "INSERT INTO board (mnr_email) VALUES (?)";
-        try (Connection conn = ConnectionManager.getConnection();
+        try (Connection conn = DefaultConnectionManager.getConnection();
              PreparedStatement ps = conn.prepareStatement(insertBoard)) {
 
             ps.setString(1, aggregateRoot.id().uuid().toString());
@@ -153,7 +179,7 @@ public class JdbcBoardRepository implements BoardRepository {
     public boolean existsById(Board.Id id) {
 
         String query = "SELECT 1 FROM board WHERE mnr_email = ?";
-        try (Connection conn = ConnectionManager.getConnection();
+        try (Connection conn = DefaultConnectionManager.getConnection();
              PreparedStatement ps = conn.prepareStatement(query)) {
 
             ps.setString(1, id.uuid().toString());
@@ -166,4 +192,6 @@ public class JdbcBoardRepository implements BoardRepository {
         return false;
 
     }
+
+ */
 }

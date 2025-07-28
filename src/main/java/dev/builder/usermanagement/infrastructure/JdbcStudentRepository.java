@@ -1,74 +1,265 @@
 package dev.builder.usermanagement.infrastructure;
 
+import dev.builder.core.domain.AuditInfo;
 import dev.builder.core.infrastructure.di.annotation.Bean;
+import dev.builder.core.infrastructure.di.annotation.Inject;
+import dev.builder.core.infrastructure.di.annotation.Lazy;
+import dev.builder.core.infrastructure.persistence.*;
+import dev.builder.usermanagement.domain.model.Manager;
 import dev.builder.usermanagement.domain.model.Student;
 import dev.builder.usermanagement.domain.port.out.StudentRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
-@Bean
-public class JdbcStudentRepository implements StudentRepository {
+import static dev.builder.core.infrastructure.persistence.CommonJdbcOperationWrappers.*;
 
+@Bean
+public class JdbcStudentRepository extends TransactionalJdbcCrudRepository<Student, Student.Id> implements StudentRepository {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(JdbcStudentRepository.class);
 
     @Override
-    public Optional<Student> findById(Student.Id id) {
-        return Optional.empty();
+    protected Logger getLogger() {
+        return null;
+    }
+
+    private static final String SELECT_ALL = String.format("""
+            SELECT
+                u.*,
+                s.first_name,
+                s.last_name,
+                s.qgp_agp_name as %s,
+                s.qgp_aqr_number as %s,
+                s.created_by as %s
+            FROM student s
+            JOIN app_user u ON u.email = s.email
+            WHERE u.active = 1
+            """,
+            UserJdbcMapper.StudentColumns.ACADEMIC_GROUP,
+            UserJdbcMapper.StudentColumns.ACADEMIC_QUARTER,
+            UserJdbcMapper.StudentColumns.CREATED_BY);
+    private static final String SELECT_BY_ID = String.format("""
+            SELECT
+                u.*,
+                s.first_name,
+                s.last_name,
+                s.qgp_agp_name as %s,
+                s.qgp_aqr_number as %s,
+                s.created_by as %s
+            FROM student s
+            JOIN app_user u ON u.email = s.email
+            WHERE u.email = ?
+            AND
+            u.active = 1
+            """,
+            UserJdbcMapper.StudentColumns.ACADEMIC_GROUP,
+            UserJdbcMapper.StudentColumns.ACADEMIC_QUARTER,
+            UserJdbcMapper.StudentColumns.CREATED_BY);
+
+
+    private static final String SELECT_BY_CREATOR = String.format("""
+           
+            SELECT
+                u.*,
+                s.first_name,
+                s.last_name,
+                s.qgp_agp_name as %s,
+                s.qgp_aqr_number as %s,
+                s.created_by as %s
+            FROM manager m
+            JOIN app_user mu ON mu.email = m.email AND mu.active = 1
+             JOIN student s ON s.created_by = m.email
+            JOIN app_user u ON u.email = s.email AND u.active = 1
+            WHERE a.email = ?
+            """,
+            UserJdbcMapper.StudentColumns.ACADEMIC_GROUP,
+            UserJdbcMapper.StudentColumns.ACADEMIC_QUARTER,
+            UserJdbcMapper.StudentColumns.CREATED_BY);
+
+
+    private static final String INSERT = """
+            INSERT INTO student(
+                email,
+                FIRST_NAME,
+                LAST_NAME,
+                created_by,
+                QGP_AGP_NAME,
+                QGP_AQR_NUMBER)
+            VALUES (?, ?,?,?,?,?)
+            """;
+
+    private static final String UPDATE = """
+            UPDATE STUDENT
+            SET FIRST_NAME = ?,
+                LAST_NAME = ?,
+                QGP_AGP_NAME = ?,
+                QGP_AQR_NUMBER = ?
+            WHERE EMAIL = ?
+            """;
+
+    private static final String EXISTS_BY_ID = """
+            SELECT count(*) AS total
+            FROM STUDENT s
+            JOIN APP_USER u ON u.email = s.email
+            WHERE u.ACTIVE = 1
+            """;
+
+    private static final String EXISTS_DELETED_BY_ID = """
+            SELECT count(*) AS total
+            FROM STUDENT s
+            JOIN APP_USER u ON u.email = s.email
+            WHERE u.ACTIVE = 0
+            """;
+
+    private JdbcAnyUserRepository anyUserRepository;
+
+    @Inject
+    @Lazy
+    public void setAnyUserRepository(JdbcAnyUserRepository anyUserRepository) {
+        this.anyUserRepository = anyUserRepository;
+    }
+
+    private final JdbcAcademicInfoRepository academicInfoRepository;
+
+    @Inject
+    public JdbcStudentRepository(ConnectionManager connectionManager, JdbcAcademicInfoRepository academicInfoRepository) {
+        super(connectionManager);
+        this.academicInfoRepository = academicInfoRepository;
     }
 
     @Override
     public Optional<Student> findById(Student.Id id, Connection connection) {
-        return Optional.empty();
-    }
-
-    @Override
-    public List<Student> findAll() {
-        return List.of();
+        return executeQuery(
+                SELECT_BY_ID,
+                ps -> ps.setString(1, id.value()),
+                rs -> rs.next() ? Optional.of(UserJdbcMapper.rowToStudent(rs)) : Optional.empty(),
+                LOGGER,
+                connection
+        );
     }
 
     @Override
     public List<Student> findAll(Connection connection) {
-        return List.of();
+        return executeQuery(
+                SELECT_ALL,
+                PreparedStatementFiller.NO_OP,
+                rs -> rs.next() ? UserJdbcMapper.rowToStudents(rs) : Collections.emptyList(),
+                LOGGER,
+                connection
+        );
     }
 
     @Override
-    public boolean delete(Student aggregateRoot) {
-        return false;
+    public List<Student> findByCreatedBy(Manager.Id id) {
+        return wrapWithConnection(
+                connectionManager,
+                LOGGER,
+                this::findByCreatedBy,
+                id
+        );
     }
 
     @Override
-    public boolean delete(Student aggregateRoot, Connection connection) {
-        return false;
-    }
-
-    @Override
-    public boolean deleteById(Student.Id id) {
-        return false;
+    public List<Student> findByCreatedBy(Manager.Id id, Connection connection) {
+        return executeQuery(
+                SELECT_BY_CREATOR,
+                ps -> ps.setString(1, id.value()),
+                rs -> rs.next() ? UserJdbcMapper.rowToStudents(rs) : Collections.emptyList(),
+                LOGGER,
+                connection
+        );
     }
 
     @Override
     public boolean deleteById(Student.Id id, Connection connection) {
-        return false;
+        return anyUserRepository.deleteById(id, connection);
     }
 
     @Override
-    public Student save(Student aggregateRoot) {
-        return null;
+    public Student save(Student student) {
+        return runInTransaction(
+                connectionManager,
+                LOGGER,
+                this::save,
+                student
+        );
     }
 
     @Override
-    public Student save(Student aggregateRoot, Connection connection) {
-        return null;
+    public Student save(Student student, Connection connection) {
+        if (existsById(student.id(), connection)) {
+            return update(student, connection);
+        } else {
+            return create(student, connection);
+        }
     }
 
-    @Override
-    public boolean existsById(Student.Id id) {
-        return false;
+    private Student update(Student student, Connection connection) {
+        try(PreparedStatement ps = connection.prepareStatement(UPDATE)){
+            academicInfoRepository.createOrIgnore(student.academicInfo(), connection);
+            AuditInfo auditInfo = anyUserRepository.updateBaseUserInfo(student, connection);
+            ps.setString(1, student.name().firstName());
+            ps.setString(2, student.name().lastName());
+            ps.setString(3, student.createdBy().value());
+            ps.setString(4, String.valueOf(student.academicInfo().group().value()));
+            ps.setInt(5, student.academicInfo().quarter().number());
+            ps.setString(6, student.email().value());
+            if(ps.executeUpdate() <= 0){
+                throw new RepositoryException(String.format("Error updating student with name: %s", student.name()));
+            };
+            return student.hydratedWithAuditInfo(auditInfo);
+        } catch (SQLException e) {
+            LOGGER.error(e.getMessage(), e);
+            throw new RepositoryException(e.getMessage(), e);
+        }
+    }
+
+    private Student create(Student student, Connection connection){
+        try(PreparedStatement ps = connection.prepareStatement(INSERT)){
+            academicInfoRepository.createOrIgnore(student.academicInfo(), connection);
+            AuditInfo auditInfo = anyUserRepository.saveBaseUserInfo(student, connection);
+            ps.setString(1, student.email().value());
+            ps.setString(2, student.name().firstName());
+            ps.setString(3, student.name().lastName());
+            ps.setString(4, student.createdBy().value());
+            ps.setString(5, String.valueOf(student.academicInfo().group().value()));
+            ps.setInt(6, student.academicInfo().quarter().number());
+
+            boolean updated = ps.executeUpdate() > 0;
+            if(!updated) throw new RepositoryException("Duplicate key on user insert");
+            return student.hydratedWithAuditInfo(auditInfo);
+        } catch (SQLException e){
+            LOGGER.error(e.getMessage(), e);
+            throw new RepositoryException(e.getMessage(), e);
+        }
     }
 
     @Override
     public boolean existsById(Student.Id id, Connection connection) {
-        return false;
+        return existsById(EXISTS_BY_ID, rs -> rs.setString(1, id.value()), id, connection);
+    }
+
+    @Override
+    public boolean existsDeletedById(Student.Id id) {
+        return wrapWithConnection(
+                connectionManager,
+                LOGGER,
+                this::existsDeletedById,
+                id
+        );
+    }
+
+    @Override
+    public boolean existsDeletedById(Student.Id id, Connection connection) {
+        return existsById(EXISTS_DELETED_BY_ID, rs -> rs.setString(1, id.value()), id, connection);
     }
 }

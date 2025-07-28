@@ -21,7 +21,6 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.time.LocalDateTime;
 import java.util.*;
 
 @Bean
@@ -29,23 +28,18 @@ public class JdbcAnyUserRepository implements AnyUserRepository {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(JdbcAnyUserRepository.class);
 
-    private final AdminRepository adminRepository;
-    private final ManagerRepository managerRepository;
-    private final StudentRepository studentRepository;
-
-    @Inject
-    public JdbcAnyUserRepository(AdminRepository adminRepository, ManagerRepository managerRepository, StudentRepository studentRepository) {
-        this.adminRepository = adminRepository;
-        this.managerRepository = managerRepository;
-        this.studentRepository = studentRepository;
-    }
-
     private static final String INSERT = """
             INSERT INTO app_user(
                 email,
                 password,
                 type)
             VALUES(?,?,?)
+            """;
+    private static final String UPDATE = """
+            UPDATE app_user
+            SET password = ?,
+            verified = ?
+            WHERE email = ?
             """;
     private static final String SELECT_ALL_WITH_TYPE= """
             SELECT
@@ -68,6 +62,12 @@ public class JdbcAnyUserRepository implements AnyUserRepository {
             WHERE email = ?
               AND active = 1
             """;
+    private static final String SELECT_EXISTS_DELETED = """
+            SELECT COUNT(*) AS total
+            FROM app_user
+            WHERE email = ?
+              AND active = 0
+            """;
     private static final String DELETE = """
             UPDATE app_user
             SET active = 0
@@ -75,9 +75,24 @@ public class JdbcAnyUserRepository implements AnyUserRepository {
             AND
             active = 1
             """;
+
+
+    private final AdminRepository adminRepository;
+    private final ManagerRepository managerRepository;
+    private final StudentRepository studentRepository;
+    private final ConnectionManager connectionManager;
+
+    @Inject
+    public JdbcAnyUserRepository(ConnectionManager connectionManager, AdminRepository adminRepository, ManagerRepository managerRepository, StudentRepository studentRepository) {
+        this.adminRepository = adminRepository;
+        this.managerRepository = managerRepository;
+        this.studentRepository = studentRepository;
+        this.connectionManager = connectionManager;
+    }
+
     @Override
     public Optional<? extends User<?>> findById(User.Id id) {
-        try(Connection conn = ConnectionManager.getConnection()){
+        try(Connection conn = connectionManager.getConnection()){
             return findById(id, conn);
         } catch (SQLException e) {
             LOGGER.error(e.getMessage(),e);
@@ -113,7 +128,7 @@ public class JdbcAnyUserRepository implements AnyUserRepository {
 
     @Override
     public List<? extends User<?>> findAll() {
-        try(Connection conn = ConnectionManager.getConnection()){
+        try(Connection conn = connectionManager.getConnection()){
             return findAll(conn);
         } catch (SQLException e) {
             LOGGER.error(e.getMessage(),e);
@@ -151,18 +166,36 @@ public class JdbcAnyUserRepository implements AnyUserRepository {
 
     @Override
     public boolean existsById(User.Id id) {
-        try(Connection conn = ConnectionManager.getConnection()){
-           return existsById(id, conn);
+        return existsById(SELECT_EXISTS, id);
+    }
+
+    @Override
+    public boolean existsById(User.Id id, Connection connection) {
+        return existsById(SELECT_EXISTS, id, connection);
+    }
+
+    @Override
+    public boolean existsDeletedById(User.Id id) {
+        return existsById(SELECT_EXISTS_DELETED, id);
+    }
+
+    @Override
+    public boolean existsDeletedById(User.Id id, Connection connection) {
+        return existsById(SELECT_EXISTS_DELETED, id, connection);
+    }
+
+    boolean existsById(String queryVariant, User.Id id){
+        try(Connection conn = connectionManager.getConnection()){
+            return existsById(queryVariant, id, conn);
         } catch (SQLException e) {
             LOGGER.error(e.getMessage(),e);
             throw new RepositoryException(e.getMessage(),e);
         }
     }
 
-    @Override
-    public boolean existsById(User.Id id, Connection connection) {
-        try(Connection conn = ConnectionManager.getConnection()){
-            PreparedStatement ps = conn.prepareStatement(SELECT_EXISTS);
+    boolean existsById(String queryVariant, User.@NotNull Id id, Connection connection){
+        try(Connection conn = connectionManager.getConnection()){
+            PreparedStatement ps = conn.prepareStatement(queryVariant);
             ps.setString(1, id.value());
             ResultSet rs = ps.executeQuery();
             return rs.getInt("total") > 0;
@@ -172,9 +205,10 @@ public class JdbcAnyUserRepository implements AnyUserRepository {
         }
     }
 
+
     @Override
     public boolean deleteById(User.Id id) {
-        try(Connection conn = ConnectionManager.getConnection()){
+        try(Connection conn = connectionManager.getConnection()){
            return deleteById(id, conn);
         } catch (SQLException e) {
             LOGGER.error(e.getMessage(),e);
@@ -214,12 +248,20 @@ public class JdbcAnyUserRepository implements AnyUserRepository {
             if(!updated) throw new RepositoryException("Duplicate key on user insert");
 
             try(ResultSet rs = ps.getGeneratedKeys()){
-                LocalDateTime createdAt = rs.getTimestamp("created_at").toLocalDateTime();
-                LocalDateTime updatedAt = rs.getTimestamp("updated_at").toLocalDateTime();
-                return new AuditInfo(createdAt,updatedAt);
+                return UserJdbcMapper.extractAuditInfo(rs);
             }
         }
     }
 
+    AuditInfo updateBaseUserInfo( @NotNull User<?> user, Connection conn) throws SQLException {
+        try(PreparedStatement ps = conn.prepareStatement(UPDATE, new String[]{"created_at", "updated_at"})) {
+            ps.setString(1, user.password());
 
+            boolean updated = ps.executeUpdate() > 0;
+            if(!updated) throw new RepositoryException("Duplicate key on user insert");
+            try(ResultSet rs = ps.getGeneratedKeys()){
+                return UserJdbcMapper.extractAuditInfo(rs);
+            }
+        }
+    }
 }

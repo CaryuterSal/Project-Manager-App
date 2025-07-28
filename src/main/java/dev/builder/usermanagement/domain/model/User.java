@@ -1,13 +1,12 @@
 package dev.builder.usermanagement.domain.model;
 
 import dev.builder.core.domain.AggregateRoot;
+import dev.builder.core.domain.AuditInfo;
 import dev.builder.core.domain.Auditable;
 import dev.builder.core.domain.ValueObject;
 import dev.builder.usermanagement.domain.port.out.PasswordEncoder;
-import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
-import java.time.LocalDateTime;
 import java.util.Objects;
 
 public abstract class User<ID extends User.Id> extends AggregateRoot<ID> implements Auditable {
@@ -15,8 +14,7 @@ public abstract class User<ID extends User.Id> extends AggregateRoot<ID> impleme
     private final Id id;
     private String password;
     private boolean verified;
-    private LocalDateTime createdAt;
-    private LocalDateTime updatedAt;
+    private AuditInfo auditInfo;
 
     public User(ID id, String password, boolean verified) {
         super(id);
@@ -25,7 +23,7 @@ public abstract class User<ID extends User.Id> extends AggregateRoot<ID> impleme
         this.verified = verified;
     }
 
-    public void completeRegistration(Password newPassword, @NotNull PasswordEncoder encoder) {
+    public void createPassword(Password newPassword, @NotNull PasswordEncoder encoder) {
         if(verified){
             throw new IllegalStateException("User has already completed registration");
         }
@@ -33,10 +31,18 @@ public abstract class User<ID extends User.Id> extends AggregateRoot<ID> impleme
         this.verified = true;
     }
 
-    public void hydrateAuditInfo(LocalDateTime createdAt, LocalDateTime updatedAt) {
-        this.createdAt = createdAt;
-        this.updatedAt = updatedAt;
+    @Override
+    public void hydrateAuditInfo(AuditInfo auditInfo) {
+        this.auditInfo = Objects.requireNonNull(auditInfo, "Audit info must not be null");
     }
+
+    /**
+     * Hidrata los campos de auditoría y devuelve la instancia concreta del usuario.
+     * @param auditInfo la información de auditoria
+     * @return esta instancia con tipo concreto T
+     * @throws ClassCastException si se usa desde una instancia que no es T
+     */
+    public abstract User<ID> hydratedWithAuditInfo(AuditInfo auditInfo);
 
     public boolean login(Password password, @NotNull PasswordEncoder encoder) {
         if(!verified){
@@ -60,19 +66,12 @@ public abstract class User<ID extends User.Id> extends AggregateRoot<ID> impleme
         return verified;
     }
 
-    public LocalDateTime createdAt() {
-        if(createdAt == null){
-            throw new IllegalStateException("User has not hydrated yet");
-        }
-        return createdAt;
+    @Override
+    public AuditInfo auditInfo() {
+        return auditInfo;
     }
 
-    public LocalDateTime updatedAt() {
-        if(updatedAt == null){
-            throw new IllegalStateException("User has not hydrated yet");
-        }
-        return updatedAt;
-    }
+
 
     public static class Id implements ValueObject {
         protected final Email email;

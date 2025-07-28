@@ -1,5 +1,6 @@
 package dev.builder.usermanagement.domain.model;
 
+import dev.builder.core.domain.AuditInfo;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
@@ -30,6 +31,13 @@ public class Student extends User<Student.Id>{
                 academicInfo,
                 false
         );
+    }
+
+
+    @Override
+    public Student hydratedWithAuditInfo(AuditInfo auditInfo){
+        this.hydrateAuditInfo(auditInfo);
+        return this;
     }
 
     public Manager.Id createdBy() {

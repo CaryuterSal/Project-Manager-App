@@ -1,6 +1,5 @@
 package dev.builder.usermanagement.domain.port.out;
 
-import dev.builder.core.domain.port.TransactionalReadRepository;
 import dev.builder.usermanagement.domain.model.User;
 
 import java.sql.Connection;
@@ -18,5 +17,8 @@ public interface AnyUserRepository{
     boolean deleteById(User.Id id, Connection connection);
     boolean delete(User<?> user);
     boolean delete(User<?> user, Connection connection);
+
+    boolean existsDeletedById(User.Id id);
+    boolean existsDeletedById(User.Id id, Connection connection);
 
 }

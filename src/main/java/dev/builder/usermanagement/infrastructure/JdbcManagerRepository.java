@@ -3,10 +3,11 @@ package dev.builder.usermanagement.infrastructure;
 import dev.builder.core.domain.AuditInfo;
 import dev.builder.core.infrastructure.di.annotation.Bean;
 import dev.builder.core.infrastructure.di.annotation.Inject;
-import dev.builder.core.infrastructure.persistence.ConnectionManager;
-import dev.builder.core.infrastructure.persistence.RepositoryException;
+import dev.builder.core.infrastructure.di.annotation.Lazy;
+import dev.builder.core.infrastructure.persistence.*;
+import dev.builder.usermanagement.domain.model.Admin;
 import dev.builder.usermanagement.domain.model.Manager;
-import dev.builder.usermanagement.domain.port.out.AnyUserRepository;
+import dev.builder.usermanagement.domain.model.Student;
 import dev.builder.usermanagement.domain.port.out.ManagerRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -16,44 +17,91 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
+import static dev.builder.core.infrastructure.persistence.CommonJdbcOperationWrappers.executeQuery;
+import static dev.builder.core.infrastructure.persistence.CommonJdbcOperationWrappers.wrapWithConnection;
+
 @Bean
-public class JdbcManagerRepository implements ManagerRepository {
+public class JdbcManagerRepository extends TransactionalJdbcCrudRepository<Manager, Manager.Id> implements ManagerRepository {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(JdbcManagerRepository.class);
 
-    private final JdbcAnyUserRepository anyUserRepository;
-
-    @Inject
-    public JdbcManagerRepository(JdbcAnyUserRepository anyUserRepository) {
-        this.anyUserRepository = anyUserRepository;
+    @Override
+    protected Logger getLogger() {
+        return LOGGER;
     }
 
     private static final String SELECT_ALL = String.format("""
             SELECT
                 u.*,
-                s.email as %s,
+                s_active.email as %s,
                 m.created_by as %s
             FROM manager m
-            JOIN app_user u ON u.email = m.email
-            JOIN student s ON s.created_by = u.email
-            WHERE u.active = 1
+            JOIN app_user u ON u.email = m.email AND u.active = 1
+            LEFT JOIN (
+                SELECT s.email, s.created_by
+                FROM student s
+                JOIN app_user su ON su.email = s.email AND su.active = 1
+            ) s_active ON s_active.created_by = u.email
             """,
             UserJdbcMapper.StudentColumns.AS_CREATED,
             UserJdbcMapper.ManagerColumns.CREATED_BY);
+
     private static final String SELECT_BY_ID = String.format("""
             SELECT
                 u.*,
-                s.email as %s,
+                s_active.email as %s,
                 m.created_by as %s
             FROM manager m
-            JOIN app_user u ON u.email = m.email
-            JOIN student s ON s.created_by = u.email
+            JOIN app_user u ON u.email = m.email AND u.active = 1
+            LEFT JOIN (
+                SELECT s.email, s.created_by
+                FROM student s
+                JOIN app_user su ON su.email = s.email AND su.active = 1
+            ) s_active ON s_active.created_by = u.email
             WHERE u.email = ?
-            AND
-            u.active = 1
+            """,
+            UserJdbcMapper.StudentColumns.AS_CREATED,
+            UserJdbcMapper.ManagerColumns.CREATED_BY);
+
+    private static final String SELECT_BY_CREATED_STUDENT = String.format("""
+            SELECT
+                u.*,
+                s_active.email AS %s,
+                m.created_by AS %s
+            FROM student s
+            JOIN app_user su ON su.email = s.email AND su.active = 1
+            JOIN manager m ON m.email = s.created_by
+            JOIN app_user u ON u.email = m.email AND u.active = 1
+            LEFT JOIN (
+                SELECT s2.email, s2.created_by
+                FROM student s2
+                JOIN app_user su ON su.email = s2.email AND su.active = 1
+            ) s_active ON s_active.created_by = u.email
+            WHERE s.email = ?
+            """,
+            UserJdbcMapper.StudentColumns.AS_CREATED,
+            UserJdbcMapper.ManagerColumns.CREATED_BY);
+
+    private static final String SELECT_BY_CREATOR = String.format("""
+           
+            SELECT
+                u.*,
+                s_active.email AS %s,
+                m.created_by AS %s
+            FROM admin a
+            JOIN app_user au ON au.email = a.email AND au.active = 1
+             JOIN manager m ON m.created_by = a.email
+            JOIN app_user u ON u.email = m.email AND u.active = 1
+            LEFT JOIN (
+                SELECT s.email, s.created_by
+                FROM student s
+                JOIN app_user su ON su.email = s.email AND su.active = 1
+            ) s_active ON s_active.created_by = u.email
+            WHERE a.email = ?
             """,
             UserJdbcMapper.StudentColumns.AS_CREATED,
             UserJdbcMapper.ManagerColumns.CREATED_BY);
@@ -65,67 +113,89 @@ public class JdbcManagerRepository implements ManagerRepository {
             VALUES (?, ?)
             """;
 
-    @Override
-    public Optional<Manager> findById(Manager.Id id) {
-        try(Connection conn = ConnectionManager.getConnection()){
-            return findById(id, conn);
-        } catch (SQLException e) {
-            LOGGER.error(e.getMessage(), e);
-            throw new RepositoryException(e.getMessage(), e);
-        }
+    private static final String EXISTS_BY_ID = """
+            SELECT COUNT(*) AS total
+            FROM manager m
+            JOIN app_user u ON u.email = m.email
+            WHERE u.email = ?
+            AND
+            u.active = 1
+            """;
+
+    private static final String EXISTS_DELETED_BY_ID = """
+            SELECT COUNT(*) AS total
+            FROM manager m
+            JOIN app_user u ON u.email = m.email
+            WHERE u.email = ?
+            AND
+            u.active = 0
+            """;
+
+    private JdbcAnyUserRepository anyUserRepository;
+
+    @Inject
+    @Lazy
+    public void setAnyUserRepository(JdbcAnyUserRepository anyUserRepository) {
+        this.anyUserRepository = anyUserRepository;
+    }
+
+    @Inject
+    public JdbcManagerRepository(ConnectionManager connectionManager) {
+        super(connectionManager);
     }
 
     @Override
     public Optional<Manager> findById(Manager.Id id, Connection connection) {
-        try(PreparedStatement ps = connection.prepareStatement(SELECT_BY_ID)){
-            ps.setString(1, id.value());
-
-            try(ResultSet rs = ps.executeQuery()) {
-                if (rs.next()) {
-                    return Optional.of(UserJdbcMapper.rowToManager(rs));
-                }
-            }
-            return Optional.empty();
-        } catch (SQLException e) {
-            LOGGER.error(e.getMessage(), e);
-            throw new RepositoryException(e.getMessage(), e);
-        }
-    }
-
-    @Override
-    public List<Manager> findAll() {
-        try(Connection conn = ConnectionManager.getConnection()){
-            return findAll(conn);
-        } catch (SQLException e) {
-            LOGGER.error(e.getMessage(), e);
-            throw new RepositoryException(e.getMessage(), e);
-        }
+        return executeQuery(
+                SELECT_BY_ID,
+                ps -> ps.setString(1, id.value()),
+                rs -> rs.next() ? Optional.of(UserJdbcMapper.rowToManager(rs)) : Optional.empty(),
+                getLogger(),
+                connection
+        );
     }
 
     @Override
     public List<Manager> findAll(Connection connection) {
-        List<Manager> managers = new ArrayList<>();
-        try(PreparedStatement ps = connection.prepareStatement(SELECT_BY_ID)){
-
-            ResultSet rs = ps.executeQuery();
-            while(rs.next()){
-                managers.add(UserJdbcMapper.rowToManager(rs));
-            }
-        } catch (SQLException e) {
-            LOGGER.error(e.getMessage(), e);
-            throw new RepositoryException(e.getMessage(), e);
-        }
-        return managers;
+        return executeQuery(
+                SELECT_ALL,
+                PreparedStatementFiller.NO_OP,
+                rs -> rs.next() ? UserJdbcMapper.rowToManagers(rs) : Collections.emptyList(),
+                getLogger(),
+                connection
+        );
     }
 
     @Override
-    public boolean delete(Manager manager) {
-        return deleteById(manager.id());
+    public List<Manager> findByCreatedBy(Admin.Id id) {
+        return wrapWithConnection(connectionManager, LOGGER, this::findByCreatedBy, id);
     }
 
     @Override
-    public boolean delete(Manager aggregateRoot, Connection connection) {
-        return deleteById(aggregateRoot.id(), connection);
+    public List<Manager> findByCreatedBy(Admin.Id id, Connection connection) {
+        return executeQuery(
+                SELECT_BY_CREATOR,
+                ps -> ps.setString(1, id.value()),
+                rs -> rs.next() ? UserJdbcMapper.rowToManagers(rs) : Collections.emptyList(),
+                getLogger(),
+                connection
+        );
+    }
+
+    @Override
+    public Optional<Manager> findByCreatedStudent(Student.Id id) {
+        return wrapWithConnection(connectionManager, LOGGER, this::findByCreatedStudent, id);
+    }
+
+    @Override
+    public Optional<Manager> findByCreatedStudent(Student.Id id, Connection connection) {
+        return executeQuery(
+                SELECT_BY_CREATED_STUDENT,
+                ps -> ps.setString(1, id.value()),
+                rs -> rs.next() ? Optional.of(UserJdbcMapper.rowToManager(rs)) : Optional.empty(),
+                getLogger(),
+                connection
+        );
     }
 
     @Override
@@ -140,18 +210,16 @@ public class JdbcManagerRepository implements ManagerRepository {
     }
 
     @Override
-    public Manager save(Manager manager) {
-        try(Connection conn = ConnectionManager.getConnection()){
-            return save(manager, conn);
-        } catch (SQLException e) {
-            LOGGER.error(e.getMessage(), e);
-            throw new RepositoryException(e.getMessage(), e);
+    public Manager save(Manager manager, Connection connection) {
+        if(existsById(manager.id(), connection)){
+            return update(manager, connection);
+        } else {
+            return create(manager, connection);
         }
     }
 
-    @Override
-    public Manager save(Manager manager, Connection connection) {
-        try(PreparedStatement ps = connection.prepareStatement(SELECT_BY_ID)){
+    private Manager create(Manager manager, Connection connection){
+        try(PreparedStatement ps = connection.prepareStatement(INSERT)){
             AuditInfo auditInfo = anyUserRepository.saveBaseUserInfo(manager, connection);
             ps.setString(1, manager.email().value());
             ps.setString(2, manager.createdBy().value());
@@ -166,13 +234,28 @@ public class JdbcManagerRepository implements ManagerRepository {
         }
     }
 
-    @Override
-    public boolean existsById(Manager.Id id) {
-        return anyUserRepository.existsById(id);
+    private Manager update(Manager manager, Connection connection){
+        try {
+            AuditInfo updatedAuditInfo = anyUserRepository.updateBaseUserInfo(manager, connection);
+            return manager.hydratedWithAuditInfo(updatedAuditInfo);
+        } catch (SQLException e) {
+            LOGGER.error(e.getMessage(), e);
+            throw new RepositoryException(e.getMessage(), e);
+        }
     }
 
     @Override
     public boolean existsById(Manager.Id id, Connection connection) {
-        return anyUserRepository.existsById(id,connection);
+        return existsById(EXISTS_BY_ID, rs -> rs.setString(1, id.value()), id, connection);
+    }
+
+    @Override
+    public boolean existsDeletedById(Manager.Id id) {
+        return wrapWithConnection(connectionManager, LOGGER, this::existsDeletedById, id);
+    }
+
+    @Override
+    public boolean existsDeletedById(Manager.Id id, Connection connection) {
+        return existsById(EXISTS_DELETED_BY_ID, rs -> rs.setString(1, id.value()),id, connection);
     }
 }
