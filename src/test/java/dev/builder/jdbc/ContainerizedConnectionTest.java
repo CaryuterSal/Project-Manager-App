@@ -9,6 +9,10 @@ public class ContainerizedConnectionTest extends ContainerizedTest {
 
     @Override
     protected void setup() {
+    }
+
+    @Override
+    protected void setupFirstRun() {
 
     }
 
@@ -16,4 +20,5 @@ public class ContainerizedConnectionTest extends ContainerizedTest {
     void testGetConnection() throws SQLException {
         connectionManager.getConnection();
     }
+
 }

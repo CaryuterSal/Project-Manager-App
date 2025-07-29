@@ -303,7 +303,7 @@ ON (f.id = src.id)
 WHEN NOT MATCHED THEN INSERT (id, name, mimetype, purpose)
                       VALUES (src.id, 'requirements.pdf', 'application/pdf', 'attachement');
 
-
+COMMIT;
 -- ============================================
 -- TASK_COVER
 -- ============================================

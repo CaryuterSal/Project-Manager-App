@@ -2,16 +2,15 @@ package dev.builder.shared;
 
 import dev.builder.core.infrastructure.persistence.BaseConnectionManager;
 import dev.builder.core.infrastructure.persistence.ConnectionManager;
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
+import org.junit.After;
+import org.junit.jupiter.api.*;
 import org.slf4j.LoggerFactory;
 import org.testcontainers.containers.output.Slf4jLogConsumer;
 import org.testcontainers.oracle.OracleContainer;
 
 import static dev.builder.core.infrastructure.persistence.CommonJdbcOperationWrappers.runOracleScript;
 
+@IntegrationTest
 public abstract class ContainerizedTest {
 
     static final String schemaScript = "/dev.builder/scripts/sql/schema.sql";
@@ -30,31 +29,36 @@ public abstract class ContainerizedTest {
     protected ConnectionManager connectionManager;
 
     @BeforeAll
-    static void initContainer() {
+    void initContainer() {
         oracleContainer.start();
-    }
-
-    @AfterAll
-    static void stopContainer() {
-    }
-
-    @BeforeEach
-    void setupDB() {
         connectionManager = new BaseConnectionManager(
                 oracleContainer.getJdbcUrl(),
                 oracleContainer.getUsername(),
                 oracleContainer.getPassword()
         );
+
+        executeDropSchema();
+        setupFirstRun();
+    }
+
+    @AfterAll
+    void stopContainer() {
+    }
+
+    protected abstract void setupFirstRun();
+
+    @BeforeEach
+    void setupDB() {
         executeSchemaScript();
         setup();
     }
+
+    protected abstract void setup();
 
     @AfterEach
     void tearDownDB() {
         executeDropSchema();
     }
-
-    protected abstract void setup();
 
     protected void executeInsertTestData(){
         runOracleScript(connectionManager, insertTestDataScript);

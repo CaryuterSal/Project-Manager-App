@@ -8,21 +8,21 @@ import java.util.*;
 
 public class Admin extends User<Admin.Id> {
 
-    Set<Manager.Id> managersCreated;
+    private final Set<Manager.Id> managersCreated;
 
     public Admin(Admin.Id id, String password, boolean verified, Set<Manager.Id> managersCreated) {
         super(id, password, verified);
         this.managersCreated = Objects.requireNonNull(managersCreated);
     }
 
+    private Admin(Admin.Id id){
+        super(id);
+        this.managersCreated = new HashSet<>();
+    }
+
     @Contract("_ -> new")
     public static @NotNull Admin invite(Admin.Id id){
-        return new Admin(
-                Objects.requireNonNull(id),
-                null,
-                false,
-                new HashSet<>()
-        );
+        return new Admin(id);
     }
 
     @Override

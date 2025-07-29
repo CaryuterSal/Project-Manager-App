@@ -5,6 +5,7 @@ import dev.builder.core.domain.AuditInfo;
 import dev.builder.core.domain.Auditable;
 import dev.builder.core.domain.ValueObject;
 import dev.builder.usermanagement.domain.port.out.PasswordEncoder;
+import dev.builder.usermanagement.domain.port.out.PasswordMatcher;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Objects;
@@ -21,6 +22,11 @@ public abstract class User<ID extends User.Id> extends AggregateRoot<ID> impleme
         this.id = Objects.requireNonNull(id);
         this.password = Objects.requireNonNull(password);
         this.verified = verified;
+    }
+
+    protected User(ID id){
+        super(id);
+        this.id = Objects.requireNonNull(id);
     }
 
     public void createPassword(Password newPassword, @NotNull PasswordEncoder encoder) {
@@ -44,12 +50,12 @@ public abstract class User<ID extends User.Id> extends AggregateRoot<ID> impleme
      */
     public abstract User<ID> hydratedWithAuditInfo(AuditInfo auditInfo);
 
-    public boolean login(Password password, @NotNull PasswordEncoder encoder) {
+    public boolean login(Password password, @NotNull PasswordMatcher encoder) {
         if(!verified){
             throw new IllegalStateException("User has not completed registration yet");
         }
         if(password == null){
-            throw new IllegalStateException("User already logged in");
+            throw new IllegalArgumentException("Password must not be null");
         }
         return encoder.matches(Objects.requireNonNull(password), this.password);
     }

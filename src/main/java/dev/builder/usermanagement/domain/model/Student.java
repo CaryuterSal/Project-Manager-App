@@ -21,16 +21,16 @@ public class Student extends User<Student.Id>{
         this.name = name;
     }
 
+    private Student(Manager.Id issuer, Student.Id id, Name name, AcademicInfo academicInfo){
+        super(id);
+        this.createdBy = Objects.requireNonNull(issuer);
+        this.name = Objects.requireNonNull(name);
+        this.academicInfo = Objects.requireNonNull(academicInfo);
+    }
+
     @Contract("_, _, _, _ -> new")
     public static @NotNull Student invite(Manager.Id issuer, Student.Id id, Name name, AcademicInfo academicInfo) {
-        return new Student(
-                Objects.requireNonNull(issuer),
-                Objects.requireNonNull(id),
-                null,
-                name,
-                academicInfo,
-                false
-        );
+        return new Student(issuer, id, name, academicInfo);
     }
 
 

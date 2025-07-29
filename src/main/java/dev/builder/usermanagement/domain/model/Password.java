@@ -15,7 +15,7 @@ public final class Password implements ValueObject {
     private final Strength strength;
 
     public Password(String value){
-        this.value = validate(value);
+        this.value = validate(value).trim();
         this.strength = Strength.forPassword(value);
     }
 
@@ -79,14 +79,16 @@ public final class Password implements ValueObject {
          * @return la fuerza de la contraseña
          */
         public static @NotNull Strength forPassword(@NotNull String password){
+            String trimmed = password.trim();
             int score = 0;
-            if(password.matches(".*[a-z].*")) score++;
-            if(password.matches(".*[A-Z].*")) score++;
-            if(password.matches(".*[0-9].*")) score++;
-            if(password.matches(".*[!@#$%^&*()\\-_=+{}\\[\\]:;\"'<>,.?/].*")) score++;
-            if(password.length() > 8 && password.length() < 12){
+            if(trimmed.length() < 6) return INVALID;
+            if(trimmed.matches(".*[a-z].*")) score++;
+            if(trimmed.matches(".*[A-Z].*")) score++;
+            if(trimmed.matches(".*[0-9].*")) score++;
+            if(trimmed.matches(".*[!@#$%^&*()\\-_=+{}\\[\\]:;\"'<>,.?/].*")) score++;
+            if(trimmed.length() > 8 && trimmed.length() < 12){
                 score++;
-            } else if (password.length() >= 12) {
+            } else if (trimmed.length() >= 12) {
                 score += 2;
             }
 

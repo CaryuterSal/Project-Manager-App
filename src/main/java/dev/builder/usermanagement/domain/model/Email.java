@@ -5,7 +5,9 @@ import dev.builder.core.domain.ValueObject;
 import java.util.regex.Pattern;
 
 public record Email(String value) implements ValueObject {
-    private static final Pattern emailPattern = Pattern.compile("^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$");
+    private static final Pattern emailPattern = Pattern.compile(
+            "^(?!.*\\.\\.)[a-zA-Z0-9](?:[a-zA-Z0-9._%+-]{0,62}[a-zA-Z0-9])?@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\\.[a-zA-Z]{2,})+$"
+    );
 
     public Email{
         validate(value);

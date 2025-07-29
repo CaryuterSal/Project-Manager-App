@@ -1,11 +1,9 @@
 package dev.builder.usermanagement.domain.model;
 
 import dev.builder.core.domain.AuditInfo;
-import dev.builder.usermanagement.domain.port.out.PasswordEncoder;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
-import java.time.LocalDateTime;
 import java.util.*;
 
 public class Manager extends User<Manager.Id> {
@@ -19,15 +17,15 @@ public class Manager extends User<Manager.Id> {
         this.studentsCreated = Objects.requireNonNull(studentsCreated);
     }
 
+    private Manager(Admin.Id createdBy, Manager.Id email) {
+        super(email);
+        this.createdBy = Objects.requireNonNull(createdBy);
+        this.studentsCreated = new HashSet<>();
+    }
+
     @Contract("_, _ -> new")
     public static @NotNull Manager invite(Admin.Id issuer, Manager.Id id){
-        return new Manager(
-                issuer,
-                id,
-                null,
-                false,
-                new HashSet<>()
-        );
+        return new Manager(issuer, id);
     }
 
     @Override

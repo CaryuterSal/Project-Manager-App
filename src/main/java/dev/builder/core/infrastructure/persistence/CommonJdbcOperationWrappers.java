@@ -127,6 +127,8 @@ public class CommonJdbcOperationWrappers {
                         // Skip empty lines and full-line comments
                         if (trimmed.isEmpty() || trimmed.startsWith("--")) continue;
 
+
+                        current.append(line).append("\n");
                         // Detect end of PL/SQL block
                         if (trimmed.equals("/") && insidePlsqlBlock) {
                             statements.add(current.toString());
@@ -134,8 +136,6 @@ public class CommonJdbcOperationWrappers {
                             insidePlsqlBlock = false;
                             continue;
                         }
-
-                        current.append(line).append("\n");
 
                         // Detect end of SQL statement
                         if (!insidePlsqlBlock && trimmed.endsWith(";")) {
@@ -164,8 +164,9 @@ public class CommonJdbcOperationWrappers {
                 try (Statement stmt = connection.createStatement()) {
                     for (String sql : statements) {
                         String trimmed = sql.trim();
+                        String cleanup = trimmed.replaceAll(";$", "").replaceAll("\n/$", "");
                         if (!trimmed.isEmpty()) {
-                            stmt.execute(trimmed.replaceAll(";$", "")); // remove trailing ;
+                            stmt.execute(cleanup); // remove trailing ;
                         }
                     }
                 }
