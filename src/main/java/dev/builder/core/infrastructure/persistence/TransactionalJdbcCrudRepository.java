@@ -14,7 +14,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
 import java.util.Optional;
-import dev.builder.core.SQLConsumer;
 
 public abstract class TransactionalJdbcCrudRepository<T extends AggregateRoot<ID>, ID> implements TransactionalCrudRepository<T, ID> {
 
