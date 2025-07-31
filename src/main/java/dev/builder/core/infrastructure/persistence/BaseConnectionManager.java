@@ -29,6 +29,11 @@ public class BaseConnectionManager implements ConnectionManager {
             poolDataSource.setURL(dbUrl);
             poolDataSource.setUser(username);
             poolDataSource.setPassword(password);
+            poolDataSource.setInitialPoolSize(5);
+            poolDataSource.setMinPoolSize(5);
+            poolDataSource.setMaxPoolSize(20);
+            poolDataSource.setTimeoutCheckInterval(5);
+            poolDataSource.setInactiveConnectionTimeout(10);
             poolDataSource.setConnectionProperties(properties);
             poolDataSource.setConnectionFactoryClassName(CONN_FACTORY_CLASS_NAME);
             dataSource = poolDataSource;
