@@ -1,4 +1,6 @@
 package dev.builder.board.application.command;
 
-public record AddCollaboratorCommand() {
+import dev.builder.core.application.Command;
+
+public record AddCollaboratorCommand(String email) implements Command<Void> {
 }

@@ -1,4 +1,5 @@
 package dev.builder.board.application.view;
+import java.util.List;
 
-public class BoardView {
+public record BoardView(List<StageView> stages) {
 }
