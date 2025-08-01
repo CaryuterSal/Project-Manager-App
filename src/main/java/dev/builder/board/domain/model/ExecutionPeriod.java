@@ -18,7 +18,7 @@ import java.util.Optional;
  *
  * Puede representar períodos abiertos, donde la fecha de fin es null. Esto también puede interpretarse como un periodo que aún no ha tenido fin
  */
-public record ExecutionPeriod(LocalDateTime startTime, LocalDateTime endTime) implements ValueObject {
+public record ExecutionPeriod(LocalDateTime startTime, LocalDateTime endTime) implements ValueObject<ExecutionPeriod> {
 
     /**
      * Constructor auxiliar para crear un período con solo fecha de inicio.
@@ -135,5 +135,11 @@ public record ExecutionPeriod(LocalDateTime startTime, LocalDateTime endTime) im
     public boolean isInRange(LocalDateTime point) {
         Objects.requireNonNull(point);
         return startTime.isBefore(point) && endTime != null && endTime.isAfter(point);
+    }
+
+    @Override
+    public int compareTo(@NotNull ExecutionPeriod executionPeriod) {
+        int cmp = startTime.compareTo(executionPeriod.startTime);
+        return  cmp != 0 ? cmp : endTime.compareTo(executionPeriod.endTime);
     }
 }

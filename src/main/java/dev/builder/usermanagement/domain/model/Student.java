@@ -60,7 +60,7 @@ public class Student extends User<Student.Id>{
         this.academicInfo = Objects.requireNonNull(academicInfo);
     }
 
-    public static class Id extends User.Id {
+    public static class Id extends User.Id<Id> {
 
         public Id(String email) {
             super(email);

@@ -46,7 +46,7 @@ public class Manager extends User<Manager.Id> {
         return Collections.unmodifiableSet(studentsCreated);
     }
 
-    public static class Id extends User.Id {
+    public static class Id extends User.Id<Id> {
 
         public Id(String email) {
             super(email);

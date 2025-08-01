@@ -9,6 +9,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.time.Duration;
 import java.util.Optional;
 import java.util.Properties;
 import java.util.logging.Logger;
@@ -110,5 +111,11 @@ public class SimpleApplicationProperties implements ApplicationProperties {
     @Override
     public String getFilename() {
         return applicationProperties.getProperty(PropertiesNamespaces.Session.FILENAME);
+    }
+
+    @Override
+    public Duration getTTL() {
+        long ttlSeconds = Long.parseLong(applicationProperties.getProperty(PropertiesNamespaces.Session.TTL));
+        return Duration.ofSeconds(ttlSeconds);
     }
 }

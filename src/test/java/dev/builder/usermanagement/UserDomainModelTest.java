@@ -12,7 +12,6 @@ import org.junit.jupiter.params.provider.ValueSource;
 import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.List;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -184,7 +183,7 @@ public class UserDomainModelTest {
         Admin admin = Admin.invite(new Admin.Id("admin@example.com"));
         Password password = new Password("mockPass123");
         PasswordEncoder encoder = pass -> pass.value().concat("salt");
-        admin.createPassword(password, encoder);
+        admin.completeRegistration(password, encoder);
         assertAll(
                 () -> assertTrue(admin.isVerified()),
                 () -> assertThat(admin.password()).isEqualTo(encoder.encode(password))
@@ -194,7 +193,7 @@ public class UserDomainModelTest {
     @Test
     void test_create_password_on_verified_user_throws(){
         Admin admin = new Admin(new Admin.Id("admin@eample.com"), "passhash", true, new HashSet<>());
-        assertThrowsExactly(IllegalStateException.class, () -> admin.createPassword(new Password("newPassword123#"), Password::value));
+        assertThrowsExactly(IllegalStateException.class, () -> admin.completeRegistration(new Password("newPassword123#"), Password::value));
     }
 
     @Test

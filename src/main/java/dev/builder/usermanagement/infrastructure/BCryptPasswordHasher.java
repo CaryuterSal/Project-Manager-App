@@ -5,10 +5,10 @@ import com.password4j.Hash;
 import com.password4j.types.Bcrypt;
 import dev.builder.core.infrastructure.di.annotation.Bean;
 import dev.builder.usermanagement.domain.model.Password;
-import dev.builder.usermanagement.domain.port.out.PasswordEncoder;
+import dev.builder.usermanagement.domain.port.out.PasswordHasher;
 
 @Bean
-public class BCryptPasswordEncoder implements PasswordEncoder {
+public class BCryptPasswordHasher implements PasswordHasher {
 
     private static final BcryptFunction bcrypt = BcryptFunction.getInstance(Bcrypt.B, 12);
 

@@ -3,7 +3,9 @@ package dev.builder.usermanagement.infrastructure;
 import dev.builder.core.domain.AuditInfo;
 import dev.builder.core.infrastructure.di.annotation.Bean;
 import dev.builder.core.infrastructure.di.annotation.Inject;
+import dev.builder.core.infrastructure.persistence.CommonJdbcOperationWrappers;
 import dev.builder.core.infrastructure.persistence.ConnectionManager;
+import dev.builder.core.infrastructure.persistence.PreparedStatementFiller;
 import dev.builder.core.infrastructure.persistence.RepositoryException;
 import dev.builder.usermanagement.domain.model.Admin;
 import dev.builder.usermanagement.domain.model.Manager;
@@ -23,6 +25,9 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.*;
 
+import static dev.builder.core.infrastructure.persistence.CommonJdbcOperationWrappers.executeQuery;
+import static dev.builder.core.infrastructure.persistence.CommonJdbcOperationWrappers.wrapWithConnection;
+
 @Bean
 public class JdbcAnyUserRepository implements AnyUserRepository {
 
@@ -40,6 +45,7 @@ public class JdbcAnyUserRepository implements AnyUserRepository {
             SET password = ?,
             verified = ?
             WHERE email = ?
+            AND active = true
             """;
     private static final String SELECT_ALL_WITH_TYPE= """
             SELECT
@@ -91,114 +97,131 @@ public class JdbcAnyUserRepository implements AnyUserRepository {
     }
 
     @Override
-    public Optional<? extends User<?>> findById(User.Id id) {
-        try(Connection conn = connectionManager.getConnection()){
-            return findById(id, conn);
+    public User<?> save(User<?> user) {
+        return wrapWithConnection(
+                connectionManager,
+                LOGGER,
+                this::save,
+                user
+        );
+    }
+
+    @Override
+    public User<?> save(User<?> user, Connection connection) {
+        if(!existsById(user.id())){
+            throw new RepositoryException("Use specific repository for creating new user");
+        }
+
+        try {
+            AuditInfo auditInfo = updateBaseUserInfo(user,connection);
+            return user.hydratedWithAuditInfo(auditInfo);
         } catch (SQLException e) {
-            LOGGER.error(e.getMessage(),e);
-            throw new RepositoryException(e.getMessage(),e);
+            LOGGER.error("An error occurred while trying to save user", e);
+            throw new RepositoryException(e.getMessage(), e);
         }
     }
 
     @Override
-    public Optional<? extends User<?>> findById(User.Id id, Connection connection) {
-        try(PreparedStatement ps = connection.prepareStatement(SELECT_TYPE_BY_ID)) {
-            ps.setString(1, id.value());
+    public Optional<? extends User<?>> findById(User.Id<?> id) {
+        return wrapWithConnection(
+                connectionManager,
+                LOGGER,
+                this::findById,
+                id
+        );
+    }
 
-            try(ResultSet rs = ps.executeQuery()) {
-                if (rs.next()) {
-                    UserType type = UserJdbcMapper.extractUserType(rs);
-                    Optional<? extends User<?>> specificUser = switch (type) {
-                        case ADMIN -> adminRepository.findById(new Admin.Id(id.value()));
-                        case MANAGER -> managerRepository.findById(new Manager.Id(id.value()));
-                        case STUDENT -> studentRepository.findById(new Student.Id(id.value()));
-                    };
-                    if (specificUser.isEmpty()) {
-                        LOGGER.warn("{} with email {} is registered on app_user table but not in child table", type.name(), id.value());
-                    }
-                    return specificUser;
-                }
-            }
-            return Optional.empty();
-        } catch (SQLException e){
-            LOGGER.error(e.getMessage(),e);
-            throw new RepositoryException(e.getMessage(),e);
-        }
+    @Override
+    public Optional<? extends User<?>> findById(User.Id<?> id, Connection connection) {
+        return executeQuery(
+                SELECT_TYPE_BY_ID,
+                ps -> ps.setString(1, id.value()),
+                rs -> rs.next() ?  findSpecificUserByEmail(id.value(), rs, connection) : Optional.empty(),
+                LOGGER,
+                connection
+        );
     }
 
     @Override
     public List<? extends User<?>> findAll() {
-        try(Connection conn = connectionManager.getConnection()){
-            return findAll(conn);
-        } catch (SQLException e) {
-            LOGGER.error(e.getMessage(),e);
-            throw new RepositoryException(e.getMessage(),e);
-        }
+        return wrapWithConnection(
+                connectionManager,
+                LOGGER,
+                this::findAll
+        );
     }
 
     @Override
     public List<? extends User<?>> findAll(Connection connection) {
-        Set<User<?>> users = new HashSet<>();
-        try( PreparedStatement ps = connection.prepareStatement(SELECT_ALL_WITH_TYPE)){
-
-            try(ResultSet rs = ps.executeQuery()) {
-                while (rs.next()) {
-                    String email = rs.getString("email");
-                    UserType type = UserJdbcMapper.extractUserType(rs);
-                    Optional<? extends User<?>> retrievedUser = switch (type) {
-                        case ADMIN -> adminRepository.findById(new Admin.Id(email));
-                        case MANAGER -> managerRepository.findById(new Manager.Id(email));
-                        case STUDENT -> studentRepository.findById(new Student.Id(email));
-                    };
-                    if (retrievedUser.isPresent()) {
-                        users.add(retrievedUser.get());
-                    } else {
-                        LOGGER.warn("{} with email {} is registered on app_user table but not in child table", type.name(), email);
+        return executeQuery(
+                SELECT_ALL_WITH_TYPE,
+                PreparedStatementFiller.NO_OP,
+                rs -> {
+                    List<User<?>> users = new ArrayList<>();
+                    while (rs.next()) {
+                        String email = rs.getString("email");
+                        Optional<? extends User<?>> retrievedUser = findSpecificUserByEmail(email, rs, connection);
+                        retrievedUser.ifPresent(users::add);
                     }
-                }
-                return new ArrayList<>(users);
-            }
-        } catch (SQLException e) {
-            LOGGER.error(e.getMessage(), e);
-            throw new RepositoryException(e.getMessage(), e);
+                    return users;
+                },
+                LOGGER,
+                connection
+        );
+    }
+
+    private @NotNull Optional<? extends User<?>> findSpecificUserByEmail(String email, ResultSet typeResult, Connection connection) throws SQLException {
+        UserType type = UserJdbcMapper.extractUserType(typeResult);
+        Optional<? extends User<?>> specificUser = switch (type) {
+            case ADMIN -> adminRepository.findById(new Admin.Id(email), connection);
+            case MANAGER -> managerRepository.findById(new Manager.Id(email), connection);
+            case STUDENT -> studentRepository.findById(new Student.Id(email), connection);
+        };
+        if (specificUser.isEmpty()) {
+            LOGGER.warn("{} with email {} is registered on app_user table but not in child table", type.name(), email);
         }
+        return specificUser;
     }
 
     @Override
-    public boolean existsById(User.Id id) {
-        return existsById(SELECT_EXISTS, id);
+    public boolean existsById(User.Id<?> id) {
+        return wrapWithConnection(
+                connectionManager,
+                LOGGER,
+                this::existsById,
+                id
+        );
     }
 
     @Override
-    public boolean existsById(User.Id id, Connection connection) {
+    public boolean existsById(User.Id<?> id, Connection connection) {
         return existsById(SELECT_EXISTS, id, connection);
     }
 
     @Override
-    public boolean existsDeletedById(User.Id id) {
-        return existsById(SELECT_EXISTS_DELETED, id);
+    public boolean existsDeletedById(User.Id<?> id) {
+        return wrapWithConnection(
+                connectionManager,
+                LOGGER,
+                this::existsDeletedById,
+                id
+        );
     }
 
     @Override
-    public boolean existsDeletedById(User.Id id, Connection connection) {
+    public boolean existsDeletedById(User.Id<?> id, Connection connection) {
         return existsById(SELECT_EXISTS_DELETED, id, connection);
     }
 
-    boolean existsById(String queryVariant, User.Id id){
-        try(Connection conn = connectionManager.getConnection()){
-            return existsById(queryVariant, id, conn);
-        } catch (SQLException e) {
-            LOGGER.error(e.getMessage(),e);
-            throw new RepositoryException(e.getMessage(),e);
-        }
-    }
-
-    boolean existsById(String queryVariant, User.@NotNull Id id, Connection connection){
+    boolean existsById(String queryVariant, User.@NotNull Id<?> id, Connection connection){
         try(Connection conn = connectionManager.getConnection()){
             PreparedStatement ps = conn.prepareStatement(queryVariant);
             ps.setString(1, id.value());
             ResultSet rs = ps.executeQuery();
-            return rs.getInt("total") > 0;
+            if(rs.next()){
+                return rs.getInt("total") > 0;
+            }
+            return false;
         } catch (SQLException e) {
             LOGGER.error(e.getMessage(), e);
             throw new RepositoryException(e.getMessage(), e);
@@ -207,17 +230,18 @@ public class JdbcAnyUserRepository implements AnyUserRepository {
 
 
     @Override
-    public boolean deleteById(User.Id id) {
-        try(Connection conn = connectionManager.getConnection()){
-           return deleteById(id, conn);
-        } catch (SQLException e) {
-            LOGGER.error(e.getMessage(),e);
-            throw new RepositoryException(e.getMessage(),e);
-        }
+    public boolean deleteById(User.Id<?> id) {
+        return wrapWithConnection(
+                connectionManager,
+                LOGGER,
+                this::deleteById,
+                id
+        );
     }
 
+
     @Override
-    public boolean deleteById(User.Id id, Connection connection) {
+    public boolean deleteById(User.Id<?> id, Connection connection) {
         try(PreparedStatement ps = connection.prepareStatement(DELETE)){
             ps.setString(1, id.value());
             int rs = ps.executeUpdate();

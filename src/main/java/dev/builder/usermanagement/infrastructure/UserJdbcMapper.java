@@ -4,12 +4,10 @@ import dev.builder.core.domain.AuditInfo;
 import dev.builder.usermanagement.domain.model.*;
 import org.jetbrains.annotations.NotNull;
 
-import javax.sql.DataSource;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.LocalDateTime;
 import java.util.*;
-import java.util.function.Function;
 
 public class UserJdbcMapper {
 
@@ -23,6 +21,10 @@ public class UserJdbcMapper {
 
         private final String columnName;
 
+        public String columnName() {
+            return columnName;
+        }
+
         UserColumns(String columnName) {
             this.columnName = columnName;
         }
@@ -33,10 +35,14 @@ public class UserJdbcMapper {
         AS_CREATED("created_student"),
         FIRST_NAME("first_NAME"),
         LAST_NAME("last_NAME"),
-        ACADEMIC_GROUP("group"),
-        ACADEMIC_QUARTER("quarter");
+        ACADEMIC_GROUP("academic_group"),
+        ACADEMIC_QUARTER("academic_quarter");
 
         private final String columnName;
+
+        public String columnName() {
+            return columnName;
+        }
 
         StudentColumns(String columnName) {
             this.columnName = columnName;
@@ -48,6 +54,10 @@ public class UserJdbcMapper {
         AS_CREATED("created_manager");
 
         private final String columnName;
+
+        public String columnName() {
+            return columnName;
+        }
 
         ManagerColumns(String columnName) {
             this.columnName = columnName;
@@ -175,7 +185,7 @@ public class UserJdbcMapper {
     }
 
     public static UserType extractUserType(@NotNull ResultSet rs) throws SQLException {
-        return UserType.valueOf(rs.getString(UserColumns.TYPE.columnName));
+        return UserType.fromDbType(rs.getString(UserColumns.TYPE.columnName));
     }
 
 

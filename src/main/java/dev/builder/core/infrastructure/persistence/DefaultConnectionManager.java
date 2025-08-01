@@ -11,9 +11,7 @@ import java.util.zip.ZipInputStream;
 
 import dev.builder.core.infrastructure.di.annotation.Bean;
 import dev.builder.core.infrastructure.di.annotation.Inject;
-import dev.builder.core.infrastructure.properties.DataSourcePropertiesHolder;
-import oracle.ucp.jdbc.PoolDataSourceFactory;
-import oracle.ucp.jdbc.PoolDataSource;
+import dev.builder.core.infrastructure.properties.DataSourceProperties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -41,8 +39,8 @@ public class DefaultConnectionManager extends BaseConnectionManager {
     }
 
     @Inject
-    public DefaultConnectionManager(DataSourcePropertiesHolder dbProperties) {
-        super(dbProperties.getDbUrl() + WALLET, dbProperties.getUser(), dbProperties.getPassword());
+    public DefaultConnectionManager(DataSourceProperties dbProperties) {
+        super(dbProperties.getDbUrl() + WALLET, dbProperties.getUser(), dbProperties.getPassword(), CONN_PROPS);
     }
 
     private static Path unzipWallet() throws IOException {

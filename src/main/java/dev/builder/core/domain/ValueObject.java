@@ -1,10 +1,7 @@
 package dev.builder.core.domain;
 
-import dev.builder.board.domain.model.Task;
 
-import java.util.Objects;
-
-public interface ValueObject extends DomainObject{
+public interface ValueObject<SELF extends ValueObject<SELF>> extends DomainObject, Comparable<SELF>{
 
      boolean equals(Object o);
 

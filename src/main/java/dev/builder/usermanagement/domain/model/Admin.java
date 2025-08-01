@@ -39,7 +39,7 @@ public class Admin extends User<Admin.Id> {
         return Collections.unmodifiableSet(managersCreated);
     }
 
-    public static class Id extends User.Id {
+    public static class Id extends User.Id<Id> {
 
         public Id(String email) {
             super(email);

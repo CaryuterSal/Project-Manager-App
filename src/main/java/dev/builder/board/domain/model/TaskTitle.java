@@ -1,6 +1,7 @@
 package dev.builder.board.domain.model;
 
 import dev.builder.core.domain.ValueObject;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Objects;
 import java.util.regex.Pattern;
@@ -10,7 +11,7 @@ import java.util.regex.Pattern;
  *
  * El título solo puede contener caracteres alfanuméricos, expacio o símbolos
  */
-public record TaskTitle(String value) implements ValueObject {
+public record TaskTitle(String value) implements ValueObject<TaskTitle> {
 
     // Patrón regex para permitir solo letra,  números, espacios o símbolos
     private static final Pattern pattern = Pattern.compile("^[a-zA-Z0-9 -_]+$");
@@ -50,5 +51,10 @@ public record TaskTitle(String value) implements ValueObject {
      */
     public static boolean isValid(String value) {
         return value != null && pattern.matcher(value).matches();
+    }
+
+    @Override
+    public int compareTo(@NotNull TaskTitle taskTitle) {
+        return taskTitle.value.compareTo(value);
     }
 }

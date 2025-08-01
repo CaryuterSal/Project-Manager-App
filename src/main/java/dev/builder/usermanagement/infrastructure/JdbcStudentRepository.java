@@ -44,9 +44,9 @@ public class JdbcStudentRepository extends TransactionalJdbcCrudRepository<Stude
             JOIN app_user u ON u.email = s.email
             WHERE u.active = 1
             """,
-            UserJdbcMapper.StudentColumns.ACADEMIC_GROUP,
-            UserJdbcMapper.StudentColumns.ACADEMIC_QUARTER,
-            UserJdbcMapper.StudentColumns.CREATED_BY);
+            UserJdbcMapper.StudentColumns.ACADEMIC_GROUP.columnName(),
+            UserJdbcMapper.StudentColumns.ACADEMIC_QUARTER.columnName(),
+            UserJdbcMapper.StudentColumns.CREATED_BY.columnName());
     private static final String SELECT_BY_ID = String.format("""
             SELECT
                 u.*,
@@ -61,9 +61,9 @@ public class JdbcStudentRepository extends TransactionalJdbcCrudRepository<Stude
             AND
             u.active = 1
             """,
-            UserJdbcMapper.StudentColumns.ACADEMIC_GROUP,
-            UserJdbcMapper.StudentColumns.ACADEMIC_QUARTER,
-            UserJdbcMapper.StudentColumns.CREATED_BY);
+            UserJdbcMapper.StudentColumns.ACADEMIC_GROUP.columnName(),
+            UserJdbcMapper.StudentColumns.ACADEMIC_QUARTER.columnName(),
+            UserJdbcMapper.StudentColumns.CREATED_BY.columnName());
 
 
     private static final String SELECT_BY_CREATOR = String.format("""
@@ -81,9 +81,9 @@ public class JdbcStudentRepository extends TransactionalJdbcCrudRepository<Stude
             JOIN app_user u ON u.email = s.email AND u.active = 1
             WHERE a.email = ?
             """,
-            UserJdbcMapper.StudentColumns.ACADEMIC_GROUP,
-            UserJdbcMapper.StudentColumns.ACADEMIC_QUARTER,
-            UserJdbcMapper.StudentColumns.CREATED_BY);
+            UserJdbcMapper.StudentColumns.ACADEMIC_GROUP.columnName(),
+            UserJdbcMapper.StudentColumns.ACADEMIC_QUARTER.columnName(),
+            UserJdbcMapper.StudentColumns.CREATED_BY.columnName());
 
 
     private static final String INSERT = """
@@ -215,7 +215,7 @@ public class JdbcStudentRepository extends TransactionalJdbcCrudRepository<Stude
             ps.setString(6, student.email().value());
             if(ps.executeUpdate() <= 0){
                 throw new RepositoryException(String.format("Error updating student with name: %s", student.name()));
-            };
+            }
             return student.hydratedWithAuditInfo(auditInfo);
         } catch (SQLException e) {
             LOGGER.error(e.getMessage(), e);

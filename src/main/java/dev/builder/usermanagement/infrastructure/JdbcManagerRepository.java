@@ -47,8 +47,8 @@ public class JdbcManagerRepository extends TransactionalJdbcCrudRepository<Manag
                 JOIN app_user su ON su.email = s.email AND su.active = 1
             ) s_active ON s_active.created_by = u.email
             """,
-            UserJdbcMapper.StudentColumns.AS_CREATED,
-            UserJdbcMapper.ManagerColumns.CREATED_BY);
+            UserJdbcMapper.StudentColumns.AS_CREATED.columnName(),
+            UserJdbcMapper.ManagerColumns.CREATED_BY.columnName());
 
     private static final String SELECT_BY_ID = String.format("""
             SELECT
@@ -64,8 +64,8 @@ public class JdbcManagerRepository extends TransactionalJdbcCrudRepository<Manag
             ) s_active ON s_active.created_by = u.email
             WHERE u.email = ?
             """,
-            UserJdbcMapper.StudentColumns.AS_CREATED,
-            UserJdbcMapper.ManagerColumns.CREATED_BY);
+            UserJdbcMapper.StudentColumns.AS_CREATED.columnName(),
+            UserJdbcMapper.ManagerColumns.CREATED_BY.columnName());
 
     private static final String SELECT_BY_CREATED_STUDENT = String.format("""
             SELECT
@@ -83,8 +83,8 @@ public class JdbcManagerRepository extends TransactionalJdbcCrudRepository<Manag
             ) s_active ON s_active.created_by = u.email
             WHERE s.email = ?
             """,
-            UserJdbcMapper.StudentColumns.AS_CREATED,
-            UserJdbcMapper.ManagerColumns.CREATED_BY);
+            UserJdbcMapper.StudentColumns.AS_CREATED.columnName(),
+            UserJdbcMapper.ManagerColumns.CREATED_BY.columnName());
 
     private static final String SELECT_BY_CREATOR = String.format("""
            
@@ -103,8 +103,8 @@ public class JdbcManagerRepository extends TransactionalJdbcCrudRepository<Manag
             ) s_active ON s_active.created_by = u.email
             WHERE a.email = ?
             """,
-            UserJdbcMapper.StudentColumns.AS_CREATED,
-            UserJdbcMapper.ManagerColumns.CREATED_BY);
+            UserJdbcMapper.StudentColumns.AS_CREATED.columnName(),
+            UserJdbcMapper.ManagerColumns.CREATED_BY.columnName());
 
     private static final String INSERT = """
             INSERT INTO manager(

@@ -2,14 +2,10 @@ package dev.builder.usermanagement.domain.model;
 
 import dev.builder.core.domain.ValueObject;
 import org.jetbrains.annotations.NotNull;
-
-import java.util.Arrays;
-import java.util.function.Predicate;
-
 /**
  * Encapsula la lógica de validación de contraseña con verificación de fuerza
  */
-public final class Password implements ValueObject {
+public final class Password implements ValueObject<Password> {
 
     private final String value;
     private final Strength strength;
@@ -55,7 +51,7 @@ public final class Password implements ValueObject {
     /**
      * Representa la fuerza de una contraseña
      */
-    public enum Strength implements ValueObject{
+    public enum Strength implements ValueObject<Strength>{
 
         INVALID,
         WEAK,
@@ -99,5 +95,10 @@ public final class Password implements ValueObject {
                 default -> Strength.INVALID;
             };
         }
+    }
+
+    @Override
+    public int compareTo(@NotNull Password password) {
+        return strength().compareTo(password.strength());
     }
 }

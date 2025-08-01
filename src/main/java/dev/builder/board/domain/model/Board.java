@@ -2,7 +2,9 @@ package dev.builder.board.domain.model;
 
 import dev.builder.core.domain.AggregateRoot;
 import dev.builder.core.domain.ValueObject;
+import dev.builder.usermanagement.domain.model.Manager;
 import dev.builder.usermanagement.domain.model.User;
+import org.jetbrains.annotations.NotNull;
 
 import java.net.HttpCookie;
 import java.util.*;
@@ -40,7 +42,7 @@ public class Board extends AggregateRoot<Board.Id> {
      * Este objeto encapsula un ID de usuario y es utilizado para evitar errores
      * de tipo en el dominio.
      */
-    public record Id(User.Id userId) implements ValueObject {
+    public record Id(Manager.Id userId) implements ValueObject<Id> {
 
         /**
          * Crea un nuevo identificador de Board en base en un ID de usuario
@@ -58,7 +60,7 @@ public class Board extends AggregateRoot<Board.Id> {
          * @return El mismo UUID si es válido.
          * @throws IllegalArgumentException Si el UUID es null o inválido.
          */
-        public static User.Id validate(User.Id userId) {
+        public static Manager.Id validate(Manager.Id userId) {
             return Objects.requireNonNull(userId);
         }
 
@@ -68,9 +70,13 @@ public class Board extends AggregateRoot<Board.Id> {
          * @param userId User.dev.builder.usermanagement.domain.model.User.Id a verificar.
          * @return true si el User.dev.builder.usermanagement.domain.model.User.Id no es null, false en caso contrario.
          */
-        public static boolean isValid(User.Id userId) {
+        public static boolean isValid(Manager.Id userId) {
             return userId != null;
         }
 
+        @Override
+        public int compareTo(@NotNull Board.Id id) {
+            return userId().compareTo(id.userId());
+        }
     }
 }

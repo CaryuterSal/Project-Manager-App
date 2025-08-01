@@ -1,8 +1,9 @@
 package dev.builder.usermanagement.domain.model;
 
 import dev.builder.core.domain.ValueObject;
+import org.jetbrains.annotations.NotNull;
 
-public record Range(int start, int end) implements ValueObject {
+public record Range(int start, int end) implements ValueObject<Range> {
 
     public Range{
         validate(start, end);
@@ -40,5 +41,11 @@ public record Range(int start, int end) implements ValueObject {
 
     public static boolean isValid(int start, int end){
         return start <= end;
+    }
+
+    @Override
+    public int compareTo(@NotNull Range range) {
+        int cmp = Integer.compare(this.start, range.start);
+        return cmp != 0 ? cmp : Integer.compare(this.end, range.end);
     }
 }

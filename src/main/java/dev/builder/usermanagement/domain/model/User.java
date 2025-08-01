@@ -10,9 +10,9 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Objects;
 
-public abstract class User<ID extends User.Id> extends AggregateRoot<ID> implements Auditable {
+public abstract class User<ID extends User.Id<ID>> extends AggregateRoot<ID> implements Auditable {
 
-    private final Id id;
+    private final Id<ID> id;
     private String password;
     private boolean verified;
     private AuditInfo auditInfo;
@@ -29,7 +29,7 @@ public abstract class User<ID extends User.Id> extends AggregateRoot<ID> impleme
         this.id = Objects.requireNonNull(id);
     }
 
-    public void createPassword(Password newPassword, @NotNull PasswordEncoder encoder) {
+    public void completeRegistration(Password newPassword, @NotNull PasswordEncoder encoder) {
         if(verified){
             throw new IllegalStateException("User has already completed registration");
         }
@@ -60,7 +60,7 @@ public abstract class User<ID extends User.Id> extends AggregateRoot<ID> impleme
         return encoder.matches(Objects.requireNonNull(password), this.password);
     }
 
-    public Id email() {
+    public Id<ID> email() {
         return id;
     }
 
@@ -79,7 +79,7 @@ public abstract class User<ID extends User.Id> extends AggregateRoot<ID> impleme
 
 
 
-    public static class Id implements ValueObject {
+    public static class Id<SELF extends Id<SELF>> implements ValueObject<SELF>{
         protected final Email email;
 
         public Id(String email) {
@@ -105,13 +105,18 @@ public abstract class User<ID extends User.Id> extends AggregateRoot<ID> impleme
         public boolean equals(Object o) {
             if (o == null || getClass() != o.getClass()) return false;
 
-            Id id = (Id) o;
+            Id<?> id = (Id<?>) o;
             return email.equals(id.email);
         }
 
         @Override
         public int hashCode() {
             return email.hashCode();
+        }
+
+        @Override
+        public int compareTo(@NotNull SELF self) {
+            return email.compareTo(self.email);
         }
     }
 }

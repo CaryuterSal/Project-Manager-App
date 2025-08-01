@@ -30,29 +30,29 @@ public class JdbcAdminRepository extends TransactionalJdbcCrudRepository<Admin,A
             SELECT
                 u.*,
                 m_active.email as %s
-            FROM "admin" s
-            JOIN app_user u ON u.email = m.email AND u.active = 1
+            FROM "ADMIN" a
+            JOIN app_user u ON u.email = a.email AND u.active = 1
             LEFT JOIN (
                 SELECT m.email, m.created_by
                 FROM manager m
                 JOIN app_user mu ON mu.email = m.email AND mu.active = 1
-            ) m_active ON m_active.created_by = mu.email
+            ) m_active ON m_active.created_by = u.email
             """,
-            UserJdbcMapper.ManagerColumns.AS_CREATED);
+            UserJdbcMapper.ManagerColumns.AS_CREATED.columnName());
     private static final String SELECT_BY_ID = String.format("""
             SELECT
                 u.*,
                 m_active.email as %s
-            FROM "admin" s
-            JOIN app_user u ON u.email = m.email AND u.active = 1
+            FROM "ADMIN" a
+            JOIN app_user u ON u.email = a.email AND u.active = 1
             LEFT JOIN (
                 SELECT m.email, m.created_by
                 FROM manager m
                 JOIN app_user mu ON mu.email = m.email AND mu.active = 1
-            ) m_active ON m_active.created_by = mu.email
+            ) m_active ON m_active.created_by = u.email
             WHERE u.email = ?
             """,
-            UserJdbcMapper.ManagerColumns.AS_CREATED);
+            UserJdbcMapper.ManagerColumns.AS_CREATED.columnName());
 
 
     private static final String SELECT_BY_CREATED_STUDENT = String.format("""
@@ -61,7 +61,7 @@ public class JdbcAdminRepository extends TransactionalJdbcCrudRepository<Admin,A
                 m_active.email AS %s
             FROM manager m
             JOIN app_user mu ON mu.email = m.email AND mu.active = 1
-            JOIN admin a ON a.email = m.created_by
+            JOIN "ADMIN" a ON a.email = m.created_by
             JOIN app_user u ON u.email = a.email AND u.active = 1
             LEFT JOIN (
                 SELECT m2.email, m2.created_by
@@ -70,8 +70,7 @@ public class JdbcAdminRepository extends TransactionalJdbcCrudRepository<Admin,A
             ) m_active ON m_active.created_by = u.email
             WHERE m.email = ?
             """,
-            UserJdbcMapper.StudentColumns.AS_CREATED,
-            UserJdbcMapper.ManagerColumns.CREATED_BY);
+            UserJdbcMapper.ManagerColumns.AS_CREATED.columnName());
 
 
     private static final String INSERT = """
@@ -81,15 +80,15 @@ public class JdbcAdminRepository extends TransactionalJdbcCrudRepository<Admin,A
 
     private static final String EXISTS_BY_ID = """
             SELECT count(*) AS total
-            FROM STUDENT s
-            JOIN APP_USER u ON u.email = s.email
+            FROM "ADMIN" a
+            JOIN APP_USER u ON u.email = a.email
             WHERE u.ACTIVE = 1
             """;
 
     private static final String EXISTS_DELETED_BY_ID = """
             SELECT count(*) AS total
-            FROM STUDENT s
-            JOIN APP_USER u ON u.email = s.email
+            FROM "ADMIN" a
+            JOIN APP_USER u ON u.email = a.email
             WHERE u.ACTIVE = 0
             """;
 

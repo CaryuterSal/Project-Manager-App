@@ -1,9 +1,9 @@
 package dev.builder.usermanagement.domain.model;
 
-import com.healthmarketscience.jackcess.InvalidValueException;
 import dev.builder.core.domain.ValueObject;
+import org.jetbrains.annotations.NotNull;
 
-public record AcademicInfo(AcademicQuarter quarter, QuarterGroup group) implements ValueObject {
+public record AcademicInfo(AcademicQuarter quarter, QuarterGroup group) implements ValueObject<AcademicInfo> {
 
     public AcademicInfo{
         validate(quarter, group);
@@ -17,5 +17,11 @@ public record AcademicInfo(AcademicQuarter quarter, QuarterGroup group) implemen
 
     public static boolean isValid(AcademicQuarter quarter, QuarterGroup group) {
         return  quarter != null && group != null;
+    }
+
+    @Override
+    public int compareTo(@NotNull AcademicInfo academicInfo) {
+        int cmp = quarter.compareTo(academicInfo.quarter);
+        return cmp != 0 ? cmp : group.compareTo(academicInfo.group);
     }
 }

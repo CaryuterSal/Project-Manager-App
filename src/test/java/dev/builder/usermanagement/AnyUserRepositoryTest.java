@@ -81,7 +81,7 @@ public class AnyUserRepositoryTest extends ContainerizedTest {
     @Test
     void test_find_existing_admin_by_id(){
         executeInsertTestData();
-        Optional<? extends User<?>> retrievedAdmin = anyUserRepository.findById(new User.Id("admin@example.com"));
+        Optional<? extends User<?>> retrievedAdmin = anyUserRepository.findById(new User.Id<>("admin@example.com"));
         assertTrue(retrievedAdmin.isPresent());
         assertAll(
                 () -> assertThat(retrievedAdmin.get()).isExactlyInstanceOf(Admin.class),
@@ -92,7 +92,7 @@ public class AnyUserRepositoryTest extends ContainerizedTest {
     @Test
     void test_find_existing_manager_by_id(){
         executeInsertTestData();
-        Optional<? extends User<?>> retrievedManager = anyUserRepository.findById(new User.Id("manager1@example.com"));
+        Optional<? extends User<?>> retrievedManager = anyUserRepository.findById(new User.Id<>("manager1@example.com"));
         assertTrue(retrievedManager.isPresent());
         assertAll(
                 () -> assertThat(retrievedManager.get()).isExactlyInstanceOf(Manager.class),
@@ -104,7 +104,7 @@ public class AnyUserRepositoryTest extends ContainerizedTest {
     @Test
     void test_find_existing_student_by_id(){
         executeInsertTestData();
-        Optional<? extends User<?>> retrievedStudent = anyUserRepository.findById(new User.Id("student1@example.com"));
+        Optional<? extends User<?>> retrievedStudent = anyUserRepository.findById(new User.Id<>("student1@example.com"));
         assertTrue(retrievedStudent.isPresent());
         assertAll(
                 () -> assertThat(retrievedStudent.get()).isExactlyInstanceOf(Student.class),
@@ -116,7 +116,7 @@ public class AnyUserRepositoryTest extends ContainerizedTest {
     @Test
     void test_find_all_values_are_populated(){
         executeInsertTestData();
-        Optional<? extends User<?>> user = anyUserRepository.findById(new User.Id("admin@example.com"));
+        Optional<? extends User<?>> user = anyUserRepository.findById(new User.Id<>("admin@example.com"));
         assumeTrue(user.isPresent());
         assertAll(
                 () -> assertThat(user.get().isHydrated()).isTrue(),
@@ -131,14 +131,14 @@ public class AnyUserRepositoryTest extends ContainerizedTest {
     @Test
     void test_delete_by_id(){
         executeInsertTestData();
-        boolean deleted = anyUserRepository.deleteById(new User.Id("admin@example.com"));
+        boolean deleted = anyUserRepository.deleteById(new User.Id<>("admin@example.com"));
         assertTrue(deleted);
     }
 
     @Test
     void test_delete(){
         executeInsertTestData();
-        Optional<? extends User<?>> existingUser = anyUserRepository.findById(new User.Id("admin@example.com"));
+        Optional<? extends User<?>> existingUser = anyUserRepository.findById(new User.Id<>("admin@example.com"));
         assumeTrue(existingUser.isPresent());
         boolean deleted = anyUserRepository.delete(existingUser.get());
         assertTrue(deleted);
@@ -147,8 +147,8 @@ public class AnyUserRepositoryTest extends ContainerizedTest {
     @Test
     void test_deleted_user_is_not_found(){
         executeInsertTestData();
-        anyUserRepository.deleteById(new User.Id("admin@example.com"));
-        Optional<? extends User<?>> deletedUser = anyUserRepository.findById(new User.Id("admin@example.com"));
+        anyUserRepository.deleteById(new User.Id<>("admin@example.com"));
+        Optional<? extends User<?>> deletedUser = anyUserRepository.findById(new User.Id<>("admin@example.com"));
         assertTrue(deletedUser.isEmpty());
     }
 
@@ -164,7 +164,7 @@ public class AnyUserRepositoryTest extends ContainerizedTest {
                 students -> assertThat(students.stream().map(s -> s.email().value()).toList()).containsExactly("student1@example.com", "student2@example.com")
         );
 
-        anyUserRepository.deleteById(new User.Id("student1@example.com"));
+        anyUserRepository.deleteById(new User.Id<>("student1@example.com"));
         List<? extends User<?>> updatedUsers = anyUserRepository.findAll();
         assertThat(updatedUsers).hasSize(3);
         // Cuenta los estudiantes existentes
@@ -178,19 +178,19 @@ public class AnyUserRepositoryTest extends ContainerizedTest {
     @Test
     void test_existing_user_exists_by_id(){
         executeInsertTestData();
-        assertTrue(anyUserRepository.existsById(new User.Id("admin@example.com")));
+        assertTrue(anyUserRepository.existsById(new User.Id<>("admin@example.com")));
     }
 
     @Test
     void test_non_existing_user__not_exists_by_id(){
         executeInsertTestData();
-        assertFalse(anyUserRepository.existsById(new User.Id("nonexisting@example.com")));
+        assertFalse(anyUserRepository.existsById(new User.Id<>("nonexisting@example.com")));
     }
 
     @Test
     void test_deleted_user_not_exists_by_id(){
         executeInsertTestData();
-        User.Id userId = new User.Id("admin@example.com");
+        User.Id<?> userId = new User.Id<>("admin@example.com");
         assertTrue(anyUserRepository.existsById(userId));
         anyUserRepository.deleteById(userId);
         assertFalse(anyUserRepository.existsById(userId));
