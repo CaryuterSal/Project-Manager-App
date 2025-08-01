@@ -1,6 +1,7 @@
 package dev.builder.board.domain.model;
 
 import dev.builder.core.domain.ValueObject;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Objects;
 
@@ -9,7 +10,7 @@ import java.util.Objects;
  *
  * Actualmente solo valida que la descripción no sea null.
  */
-public record TaskDescription(String value) implements ValueObject {
+public record TaskDescription(String value) implements ValueObject<TaskDescription> {
 
     /**
      * Crea una nueva instancia de TaskDescription validando que el valor no sea null.
@@ -42,5 +43,10 @@ public record TaskDescription(String value) implements ValueObject {
      */
     public static boolean isValid(String value) {
         return value != null;
+    }
+
+    @Override
+    public int compareTo(@NotNull TaskDescription taskDescription) {
+        return value.compareTo(taskDescription.value);
     }
 }

@@ -1,98 +1,122 @@
 package dev.builder.usermanagement.domain.model;
 
-import java.time.LocalDateTime;
-import java.util.UUID;
-import java.util.regex.Pattern;
+import dev.builder.core.domain.AggregateRoot;
+import dev.builder.core.domain.AuditInfo;
+import dev.builder.core.domain.Auditable;
+import dev.builder.core.domain.ValueObject;
+import dev.builder.usermanagement.domain.port.out.PasswordEncoder;
+import dev.builder.usermanagement.domain.port.out.PasswordMatcher;
+import org.jetbrains.annotations.NotNull;
 
-public class User {
+import java.util.Objects;
 
-    //Se crearon Variables
+public abstract class User<ID extends User.Id<ID>> extends AggregateRoot<ID> implements Auditable {
 
-        private UUID id;
-        private String email;
-        private String password;
-        private boolean active;
-        private LocalDateTime createdAt;
-        private LocalDateTime updatedAt;
+    private final Id<ID> id;
+    private String password;
+    private boolean verified;
+    private AuditInfo auditInfo;
 
-        protected static final Pattern EMAIL = Pattern.compile("^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$");
-        protected static final Pattern PASSWORD = Pattern.compile("^(?=.[a-z])(?=.[A-Z])(?=.*\\d).{5,}$");
+    public User(ID id, String password, boolean verified) {
+        super(id);
+        this.id = Objects.requireNonNull(id);
+        this.password = Objects.requireNonNull(password);
+        this.verified = verified;
+    }
+
+    protected User(ID id){
+        super(id);
+        this.id = Objects.requireNonNull(id);
+    }
+
+    public void completeRegistration(Password newPassword, @NotNull PasswordEncoder encoder) {
+        if(verified){
+            throw new IllegalStateException("User has already completed registration");
+        }
+        this.password = encoder.encode(Objects.requireNonNull(newPassword));
+        this.verified = true;
+    }
+
+    @Override
+    public void hydrateAuditInfo(AuditInfo auditInfo) {
+        this.auditInfo = Objects.requireNonNull(auditInfo, "Audit info must not be null");
+    }
+
+    /**
+     * Hidrata los campos de auditoría y devuelve la instancia concreta del usuario.
+     * @param auditInfo la información de auditoria
+     * @return esta instancia con tipo concreto T
+     * @throws ClassCastException si se usa desde una instancia que no es T
+     */
+    public abstract User<ID> hydratedWithAuditInfo(AuditInfo auditInfo);
+
+    public boolean login(Password password, @NotNull PasswordMatcher encoder) {
+        if(!verified){
+            throw new IllegalStateException("User has not completed registration yet");
+        }
+        if(password == null){
+            throw new IllegalArgumentException("Password must not be null");
+        }
+        return encoder.matches(Objects.requireNonNull(password), this.password);
+    }
+
+    public Id<ID> email() {
+        return id;
+    }
+
+    public String password() {
+        return password;
+    }
+
+    public boolean isVerified() {
+        return verified;
+    }
+
+    @Override
+    public AuditInfo auditInfo() {
+        return auditInfo;
+    }
 
 
-        public User(UserId id) {
+
+    public static class Id<SELF extends Id<SELF>> implements ValueObject<SELF>{
+        protected final Email email;
+
+        public Id(String email) {
+            this.email = new Email(email);
         }
 
-        public User(UUID id, String email, String password, boolean active, LocalDateTime createdAt, LocalDateTime updateAT) {
-            this.id = id;
-            this.email = email;
-            this.password = password;
-            this.active = active;
-            this.createdAt = createdAt;
-            this.updatedAt = updateAT;
-        }
-
-        public User(UUID id, String email, String password, boolean active) {
-            if (!EMAIL.matcher(email).matches()) {
-                throw new IllegalArgumentException("Ivalid email format");
+        public static String validate(String email){
+            if(!isValid(email)){
+                throw new IllegalArgumentException("Invalid email");
             }
-            if (!PASSWORD.matcher(password).matches()) {
-                throw new IllegalArgumentException("The password must have at least one uppercase character and one number");
-            }
-
-            this.id = id;
-            this.email = email;
-            this.password = password;
-            this.active = active;
-        }
-        public UUID getId() {
-            return id;
-        }
-
-        public void setId(UUID id) {
-            this.id = id;
-        }
-
-        public String getEmail() {
             return email;
         }
 
-        public void setEmail(String email) {
-            this.email = email;
+        public static boolean isValid(String email) {
+            return Email.isValid(email);
         }
 
-        public String getPassword() {
-            return password;
+        public String value(){
+            return email.value();
         }
 
-        public void setPassword(String password) {
-            this.password = password;
+        @Override
+        public boolean equals(Object o) {
+            if (o == null || getClass() != o.getClass()) return false;
+
+            Id<?> id = (Id<?>) o;
+            return email.equals(id.email);
         }
 
-        public boolean isActive() {
-            return active;
+        @Override
+        public int hashCode() {
+            return email.hashCode();
         }
 
-        public void setActive(boolean active) {
-            this.active = active;
+        @Override
+        public int compareTo(@NotNull SELF self) {
+            return email.compareTo(self.email);
         }
-
-        public LocalDateTime getCreateAT() {
-            return createdAt;
-        }
-
-        public void setCreateAT(LocalDateTime createdAt) {
-            this.createdAt = createdAt;
-        }
-
-        public LocalDateTime getUpdatedAt() {
-            return updatedAt;
-        }
-
-        public void setUpdatedAt(LocalDateTime updatedAt) {
-            this.updatedAt = updatedAt;
-        }
-
-
-    public static class UserId {
     }
 }

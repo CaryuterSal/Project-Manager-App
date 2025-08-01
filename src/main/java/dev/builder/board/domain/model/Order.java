@@ -2,6 +2,7 @@ package dev.builder.board.domain.model;
 
 import com.healthmarketscience.jackcess.InvalidValueException;
 import dev.builder.core.domain.ValueObject;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Objects;
 
@@ -11,7 +12,7 @@ import java.util.Objects;
  *
  * Este Value Object encapsula un valor {@link Double} que debe ser mayor que cero.
  */
-public record Order(Double value) implements ValueObject {
+public record Order(Double value) implements ValueObject<Order> {
 
     /**
      * Crea una nueva instancia de {@code Order}, validando que el valor sea positivo.
@@ -34,7 +35,7 @@ public record Order(Double value) implements ValueObject {
      */
     public static Double validate(Double value) {
         if (!isValid(Objects.requireNonNull(value))) {
-            throw new IllegalArgumentException("Invalid value");
+            throw new IllegalArgumentException("Invalid order value");
         }
         return value;
     }
@@ -47,5 +48,10 @@ public record Order(Double value) implements ValueObject {
      */
     public static boolean isValid(Double value) {
         return value != null && value > 0;
+    }
+
+    @Override
+    public int compareTo(@NotNull Order order) {
+        return value.compareTo(order.value);
     }
 }
