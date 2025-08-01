@@ -1,5 +1,6 @@
 package dev.builder.core.infrastructure.properties;
 
+import dev.builder.core.infrastructure.di.annotation.Bean;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
@@ -8,16 +9,17 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.time.Duration;
 import java.util.Optional;
 import java.util.Properties;
 import java.util.logging.Logger;
 
+@Bean
 public class SimpleApplicationProperties implements ApplicationProperties {
-
 
     private final ActiveProfileProvider activeProfileProvider;
 
-    private static Properties applicationProperties = new Properties();
+    private static final Properties applicationProperties = new Properties();
     private static final Logger logger = Logger.getLogger(SimpleApplicationProperties.class.getSimpleName());
 
 
@@ -31,21 +33,30 @@ public class SimpleApplicationProperties implements ApplicationProperties {
             URL propertiesURL = loadDefaultPropertiesResource();
             if(propertiesURL != null) {
                 applicationProperties.load(new FileInputStream(new File(propertiesURL.toURI())));
-                activeProfileProvider.getActiveProfile();
             }
             Optional<String> activeProfile = activeProfileProvider.getActiveProfile();
             activeProfile.ifPresent(s -> overrideProperties(loadPropertiesResource(s)));
-        } catch (URISyntaxException | IOException ignored){
+        } catch (URISyntaxException | IOException ex){
+            logger.severe(ex.getMessage());
+            throw new RuntimeException(ex);
         }
     }
 
-    private void overrideProperties(@NotNull  URL propertiesResource){
-        Properties newProperties = new Properties();
-        applicationProperties = new Properties(applicationProperties);
+    private void overrideProperties(@NotNull  URL propertiesResource) {
+        try {
+            Properties newProperties = new Properties();
+            newProperties.load(new FileInputStream(new File(propertiesResource.toURI())));
+            for (String key : newProperties.stringPropertyNames()) {
+                applicationProperties.setProperty(key, newProperties.getProperty(key));
+            }
+        } catch (IOException | URISyntaxException ex) {
+            logger.severe(ex.getMessage());
+            throw new RuntimeException(ex);
+        }
     }
 
     private URL loadPropertiesResource(String profile){
-        String filename = PropertiesNamespaces.MODULE_CONTEXT_PATH + PropertiesNamespaces.FILE_PREFIX + profile + PropertiesNamespaces.FILE_POSTFIX;
+        String filename = PropertiesNamespaces.MODULE_CONTEXT_PATH + PropertiesNamespaces.FILE_PREFIX + '-' + profile + PropertiesNamespaces.FILE_POSTFIX;
         return checkResource(filename, getClass().getResource(filename));
     }
 
@@ -61,11 +72,50 @@ public class SimpleApplicationProperties implements ApplicationProperties {
 
     }
 
+    private String getProperty(String key){
+        String prop = applicationProperties.getProperty(key);
+        if(prop == null) throw new IllegalStateException(key + " not found");
+        return prop;
+    }
 
     @Override
     public String getDbUrl() {
-        String prop = applicationProperties.getProperty(PropertiesNamespaces.DataSource.DB_URL);
-        if(prop == null) throw new IllegalStateException(PropertiesNamespaces.DataSource.DB_URL + " not found");
-        return prop;
+        return System.getenv("DB_URL");
+    }
+
+    @Override
+    public String getUser() {
+        return System.getenv("DB_USER");
+    }
+
+    @Override
+    public String getPassword() {
+        return System.getenv("DB_PASSWORD");
+    }
+
+    @Override
+    public String getDbName() {
+        return System.getenv("DB_NAME");
+    }
+
+    @Override
+    public String getCipherTransformation() {
+        return  applicationProperties.getProperty(PropertiesNamespaces.Session.TRANSFORMATION);
+    }
+
+    @Override
+    public String getCipherKeyType() {
+        return applicationProperties.getProperty(PropertiesNamespaces.Session.KEY_TYPE);
+    }
+
+    @Override
+    public String getFilename() {
+        return applicationProperties.getProperty(PropertiesNamespaces.Session.FILENAME);
+    }
+
+    @Override
+    public Duration getTTL() {
+        long ttlSeconds = Long.parseLong(applicationProperties.getProperty(PropertiesNamespaces.Session.TTL));
+        return Duration.ofSeconds(ttlSeconds);
     }
 }

@@ -1,5 +1,7 @@
 package dev.builder.core.infrastructure.properties;
 
+import dev.builder.core.infrastructure.di.annotation.Bean;
+
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
@@ -23,9 +25,10 @@ public class DelegatingActiveProfileManager implements ActiveProfileManager{
         Optional<String> profile = preferredProvider.getActiveProfile();
         if(profile.isEmpty()){
             for(ActiveProfileProvider provider: providers.values()){
-                profile = provider.getActiveProfile();
+                Optional<String> fallback = provider.getActiveProfile();
+                if(fallback.isPresent()) return fallback;
             }
         }
-        return profile;
+        return Optional.empty();
     }
 }

@@ -2,6 +2,7 @@ package dev.builder.board.domain.model;
 
 import dev.builder.core.domain.AggregateRoot;
 import dev.builder.core.domain.ValueObject;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
 
@@ -82,6 +83,10 @@ public class Stage extends AggregateRoot<Stage.Id> {
      */
     public boolean pushTask(Task task) {
         Objects.requireNonNull(task);
+        if(tasks.isEmpty()) {
+            tasks.add(task);
+            return true;
+        }
         double lastOrderValue = tasks.last().order().get().value();
         double newOrderValue = lastOrderValue + taskOrderStep;
         task.changeOrder(new Order(newOrderValue));
@@ -217,7 +222,7 @@ public class Stage extends AggregateRoot<Stage.Id> {
      * Identificador compuesto de la etapa, formado por el ID del tablero
      * al que pertenece y el estado actual de la etapa.
      */
-    public record Id(Board.Id boardId, StageState state) implements ValueObject {
+    public record Id(Board.Id boardId, StageState state) implements ValueObject<Id> {
 
         /**
          * Crea un nuevo Id validando que los componentes no sean nulos.
@@ -259,6 +264,12 @@ public class Stage extends AggregateRoot<Stage.Id> {
         public static boolean isValid(Board.Id boardId, StageState state) {
             return boardId != null && state != null;
         }
+
+        @Override
+        public int compareTo(@NotNull Stage.Id id) {
+            int cmp = boardId.compareTo(id.boardId);
+            return cmp != 0 ? cmp : state.compareTo(id.state);
+        }
     }
 
     /**
@@ -266,7 +277,7 @@ public class Stage extends AggregateRoot<Stage.Id> {
      *
      * Cada estado indica si la etapa es final (completada).
      */
-    public enum StageState implements ValueObject {
+    public enum StageState implements ValueObject<StageState> {
 
         TO_DO(false),
         IN_PROGRESS(false),

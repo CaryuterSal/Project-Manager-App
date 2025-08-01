@@ -2,16 +2,11 @@ package dev.builder.board.domain.model;
 
 import dev.builder.core.domain.AggregateRoot;
 import dev.builder.core.domain.ValueObject;
-import dev.builder.usermanagement.domain.GlobalIdentityManager;
-import org.apache.tika.detect.DefaultDetector;
-import org.apache.tika.mime.MediaType;
-import org.apache.tika.mime.MimeType;
-import org.apache.tika.mime.MimeTypes;
+import dev.builder.core.infrastructure.persistence.UUIDGenerator;
+import org.jetbrains.annotations.NotNull;
 
-import java.io.InputStream;
 import java.util.Arrays;
 import java.util.Objects;
-import java.util.Optional;
 import java.util.UUID;
 import java.util.regex.Pattern;
 
@@ -43,7 +38,7 @@ public abstract class StoredFile extends AggregateRoot<StoredFile.Id> {
      * @throws NullPointerException si alguno de los parámetros son nulos
      */
     protected StoredFile(Filename filename, MimeType mimeType) {
-        this(new Id(GlobalIdentityManager.generateUUID()), filename, mimeType);
+        this(new Id(UUIDGenerator.generateUUID()), filename, mimeType);
     }
 
     /**
@@ -95,7 +90,7 @@ public abstract class StoredFile extends AggregateRoot<StoredFile.Id> {
      * El nombre debe cumplir un patrón que permita caracteres alfanuméricos,
      * guiones bajos y guiones medios, y una extensión con punto (ejemplo: "archivo_1.txt").
      */
-    public static class Filename implements ValueObject {
+    public static class Filename implements ValueObject<Filename> {
 
         private final String value;
 
@@ -143,12 +138,17 @@ public abstract class StoredFile extends AggregateRoot<StoredFile.Id> {
         public static boolean isValid(String value) {
             return pattern.matcher(value).matches();
         }
+
+        @Override
+        public int compareTo(@NotNull StoredFile.Filename filename) {
+            return value.compareTo(filename.value());
+        }
     }
 
     /**
      * Identificador único de un StoredFile, basado en UUID.
      */
-    public record Id(UUID uuid) {
+    public record Id(UUID uuid) implements ValueObject<Id>{
 
         /**
          * Crea un nuevo Id validando el UUID.
@@ -183,13 +183,18 @@ public abstract class StoredFile extends AggregateRoot<StoredFile.Id> {
         public static boolean isValid(UUID uuid) {
             return uuid != null;
         }
+
+        @Override
+        public int compareTo(@NotNull StoredFile.Id id) {
+            return uuid.compareTo(id.uuid());
+        }
     }
 
     /**
      * Enumeración de tipos MIME soportados para archivos almacenados.
      * Incluye formatos de imágenes, documentos y archivos comprimidos.
      */
-    public enum MimeType {
+    public enum MimeType implements ValueObject<MimeType> {
         // Imágenes
         JPEG("image/jpeg"),
         PNG("image/png"),

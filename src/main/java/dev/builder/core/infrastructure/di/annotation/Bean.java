@@ -14,7 +14,7 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 public @interface Bean{
 
-    public boolean singleton() default true;
-    public String name() default "";
-    public InstantiationMode mode() default InstantiationMode.EAGER;
+    boolean singleton() default true;
+    String name() default "";
+    InstantiationMode mode() default InstantiationMode.LAZY;
 }

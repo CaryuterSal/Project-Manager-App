@@ -1,18 +1,11 @@
 package dev.builder.usermanagement.domain.port.out;
 
+import dev.builder.core.domain.port.TransactionalCrudRepository;
 import dev.builder.usermanagement.domain.model.User;
 
-public interface UserRepository {
+import java.sql.Connection;
 
-    User findById(User.UserId id);
-
-    User save(User user);
-
-    User update(User user);
-
-    void deleteById(User.UserId id);
-
-    void delete(User user);
-
-
+public interface UserRepository<E extends User<ID>, ID extends User.Id> extends TransactionalCrudRepository<E, ID> {
+    boolean existsDeletedById(ID id);
+    boolean existsDeletedById(ID id, Connection connection);
 }

@@ -13,6 +13,6 @@ import java.lang.annotation.Target;
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
 public @interface Singleton {
-    public String name() default "";
-    public InstantiationMode mode() default InstantiationMode.EAGER;
+    String name() default "";
+    InstantiationMode mode() default InstantiationMode.LAZY;
 }

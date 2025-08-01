@@ -1,7 +1,7 @@
 package dev.builder.board.domain.model;
 
 import dev.builder.core.domain.LocalEntity;
-import dev.builder.usermanagement.domain.GlobalIdentityManager;
+import dev.builder.core.infrastructure.persistence.UUIDGenerator;
 import org.jetbrains.annotations.NotNull;
 
 import java.time.LocalDateTime;
@@ -40,7 +40,7 @@ public class Task extends LocalEntity<Task.Id> implements Comparable<Task> {
      * @throws NullPointerException si alguno de los parámetros es nulo
      */
     public Task(TaskTitle title, TaskDescription description, Color color, Deadline deadline) {
-        this(new Task.Id(GlobalIdentityManager.generateUUID()), title, description, color, deadline);
+        this(new Task.Id(UUIDGenerator.generateUUID()), title, description, color, deadline);
     }
 
     /**

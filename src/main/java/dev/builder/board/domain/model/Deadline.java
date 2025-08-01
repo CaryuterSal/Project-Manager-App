@@ -15,7 +15,7 @@ import java.util.Objects;
  * Este Value Object encapsula una instancia de {@link LocalDateTime} y valida
  * que su valor sea posterior al tiempo presente en el momento de creación.
  */
-public record Deadline(LocalDateTime value) implements ValueObject {
+public record Deadline(LocalDateTime value) implements ValueObject<Deadline> {
 
     /**
      * Crea una nueva instancia de {@code Deadline}, validando que el valor proporcionado
@@ -77,5 +77,10 @@ public record Deadline(LocalDateTime value) implements ValueObject {
     @Contract(pure = true)
     public boolean isBefore(@NotNull LocalDateTime point) {
         return point.isBefore(value);
+    }
+
+    @Override
+    public int compareTo(@NotNull Deadline deadline) {
+        return value.compareTo(deadline.value);
     }
 }

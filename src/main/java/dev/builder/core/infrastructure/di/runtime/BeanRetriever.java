@@ -2,6 +2,7 @@ package dev.builder.core.infrastructure.di.runtime;
 
 import org.jetbrains.annotations.Nullable;
 
+import java.util.List;
 import java.util.Set;
 
 public interface BeanRetriever {
@@ -50,4 +51,14 @@ public interface BeanRetriever {
      * @return un {@link Set} inmodificable con las clases de los beans registrados
      */
     Set<String> getRegisteredBeanNames();
+
+    /**
+     * Obtiene todas las instancias de beans que implementan o extienden un tipo dado.
+     *
+     * @param type tipo base o interfaz
+     * @param <T>  tipo base o interfaz
+     * @return un {@link List} con las instancias encontradas
+     */
+    <T> Set<T> getInstancesOfType(Class<T> type);
+
 }

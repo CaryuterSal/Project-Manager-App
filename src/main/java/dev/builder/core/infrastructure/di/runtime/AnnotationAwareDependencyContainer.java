@@ -1,9 +1,7 @@
 package dev.builder.core.infrastructure.di.runtime;
 
 import dev.builder.core.infrastructure.di.annotation.*;
-import dev.builder.core.infrastructure.di.constructor.AnnotationConstructorResolver;
-import dev.builder.core.infrastructure.di.constructor.ConstructorResolver;
-import dev.builder.core.infrastructure.di.constructor.FaillingConstructorResolver;
+import dev.builder.core.infrastructure.di.constructor.*;
 import dev.builder.core.infrastructure.di.definition.*;
 import dev.builder.core.infrastructure.di.exception.BeanNotFoundException;
 import org.jetbrains.annotations.NotNull;
@@ -52,11 +50,18 @@ public class AnnotationAwareDependencyContainer extends AbstractDependencyContai
     @Override
     protected <T> BeanRegistrationConfiguration<T> createDefaultRegistrationConfiguration(Class<T> clazz) {
 
-        OptionalConfigStep<T> configStep = BeanAnnotationAccessors.isAnnotatedSingleton(clazz)
-                ? (BeanAnnotationAccessors.isAnnotatedEager(clazz)
-                ? BeanRegistrationConfiguration.builder(clazz).asEagerSingleton()
-                : BeanRegistrationConfiguration.builder(clazz).asLazySingleton())
-                : BeanRegistrationConfiguration.builder(clazz).prototype();
+        OptionalConfigStep<T> configStep;
+        if(BeanAnnotationAccessors.isAnnotatedSingleton(clazz)){
+            if(BeanAnnotationAccessors.isAnnotatedEager(clazz)){
+                configStep = BeanRegistrationConfiguration.builder(clazz).asEagerSingleton();
+            } else {
+                configStep = BeanRegistrationConfiguration.builder(clazz).asLazySingleton();
+            }
+        } else if(BeanAnnotationAccessors.isAnnotatedBean(clazz)){
+            configStep = BeanRegistrationConfiguration.builder(clazz).asLazySingleton();
+        } else {
+            configStep = BeanRegistrationConfiguration.builder(clazz).prototype();
+        }
 
         BeanRegistrationConfiguration<T> config;
         Optional<String> beanName = BeanAnnotationAccessors.extractAnnotatedBeanName(clazz);
@@ -106,7 +111,8 @@ public class AnnotationAwareDependencyContainer extends AbstractDependencyContai
     @Override
     protected <T> ConstructorResolver<T> getConstructorResolver() {
         return new FaillingConstructorResolver<>(
-                new AnnotationConstructorResolver<>()
+                new AnnotationConstructorResolver<T>()
+                        .fallback(new ParameterCountConstructorResolver<>())
         );
     }
 }
