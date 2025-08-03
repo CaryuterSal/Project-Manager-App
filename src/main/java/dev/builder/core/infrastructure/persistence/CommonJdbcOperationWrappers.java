@@ -27,6 +27,15 @@ public class CommonJdbcOperationWrappers {
     }
 
 
+    public static <T,Y, V> V wrapWithConnection(ConnectionManager connectionManager, Logger logger,@NotNull TransactionalBiOperation<T,Y, V> operation, T inOne, Y inTwo){
+        try(Connection conn = connectionManager.getConnection()){
+            return operation.execute(inOne, inTwo, conn);
+        } catch (SQLException e) {
+            logger.error(e.getMessage(), e);
+            throw new RepositoryException(e.getMessage(), e);
+        }
+    }
+
     public static <IN, V> V wrapWithConnection(ConnectionManager connectionManager, Logger logger,@NotNull TransactionalOperation<IN, V> operation, IN inParam){
         try(Connection conn = connectionManager.getConnection()){
             return operation.execute(inParam, conn);

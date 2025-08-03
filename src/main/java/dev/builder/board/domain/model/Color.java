@@ -69,6 +69,15 @@ public enum Color implements ValueObject<Color> {
     public String toString() {
         return this.name().toLowerCase();
     }
+
+    public static @NotNull Color fromName(String name) {
+        for(Color color : Color.values()) {
+            if(color.name().equalsIgnoreCase(name)) {
+                return color;
+            }
+        }
+        throw new IllegalArgumentException("Invalid color name: " + name);
+    }
     /**
      * Representa un código hexadecimal de color como un {@link ValueObject}.
      *

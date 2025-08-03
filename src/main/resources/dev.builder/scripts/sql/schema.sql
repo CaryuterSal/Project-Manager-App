@@ -77,6 +77,7 @@ CREATE TABLE ADMIN."FILE" (
                         id       RAW(16) NOT NULL,
                         NAME     VARCHAR2(63) NOT NULL,
                         mimetype VARCHAR2(31 CHAR) NOT NULL,
+                        active     number DEFAULT 1 NOT NULL,
                         purpose  VARCHAR2(15) NOT NULL
 );
 
@@ -164,6 +165,7 @@ CREATE TABLE ADMIN.task (
                       started_at  TIMESTAMP WITH TIME ZONE,
                       finished_at TIMESTAMP WITH TIME ZONE,
                       deadline    TIMESTAMP WITH TIME ZONE NOT NULL,
+                      active     number DEFAULT 1 NOT NULL,
                       clr_NAME    VARCHAR2(15) NOT NULL
 );
 

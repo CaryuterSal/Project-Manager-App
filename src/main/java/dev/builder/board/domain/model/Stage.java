@@ -2,6 +2,7 @@ package dev.builder.board.domain.model;
 
 import dev.builder.core.domain.AggregateRoot;
 import dev.builder.core.domain.ValueObject;
+import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
@@ -14,7 +15,7 @@ import java.util.*;
  * Cada Stage está identificado por un ID compuesto que incluye el ID del tablero
  * al que pertenece y el estado actual de la etapa.
  */
-public class Stage extends AggregateRoot<Stage.Id> {
+public class Stage extends AggregateRoot<Stage.Id>{
 
     private final TreeSet<Task> tasks = new TreeSet<>();
 
@@ -27,8 +28,20 @@ public class Stage extends AggregateRoot<Stage.Id> {
      * @param id Identificador único de la etapa.
      * @throws NullPointerException Si el id es null.
      */
-    public Stage(Stage.Id id) {
+    private Stage(Stage.Id id) {
         super(id);
+    }
+
+    /**
+     * <a href="https://refactoring.guru/design-patterns/factory-method">Factory</a> para crear una nueva etapa del tablero en base a un
+     * {@link Board} existente
+     * @param id el id del Stage
+     * @return un nuevo Stage
+     * @throws NullPointerException si el id es nulo
+     */
+    @Contract("_ -> new")
+    public static @NotNull Stage attachToBoard(Stage.Id id) {
+        return new Stage(id);
     }
 
     /**
@@ -87,7 +100,7 @@ public class Stage extends AggregateRoot<Stage.Id> {
             tasks.add(task);
             return true;
         }
-        double lastOrderValue = tasks.last().order().get().value();
+        double lastOrderValue = tasks.last().order().value();
         double newOrderValue = lastOrderValue + taskOrderStep;
         task.changeOrder(new Order(newOrderValue));
         return tasks.add(task);
@@ -101,7 +114,7 @@ public class Stage extends AggregateRoot<Stage.Id> {
      */
     public boolean shiftTask(Task task) {
         Objects.requireNonNull(task);
-        double firstOrderValue = tasks.first().order().get().value();
+        double firstOrderValue = tasks.first().order().value();
         double newOrderValue = firstOrderValue / 2;
         task.changeOrder(new Order(newOrderValue));
         return tasks.add(task);
@@ -138,8 +151,8 @@ public class Stage extends AggregateRoot<Stage.Id> {
      */
     public void swapTaskOrder(Task source, Task target) {
         validateTasksInStage(source, target);
-        Order originalSourceOrder = source.order().get();
-        source.changeOrder(target.order().get());
+        Order originalSourceOrder = source.order();
+        source.changeOrder(target.order());
         target.changeOrder(originalSourceOrder);
     }
 
@@ -154,8 +167,8 @@ public class Stage extends AggregateRoot<Stage.Id> {
     public boolean placeTaskBetween(Task source, Task previous, Task next) {
         validateTasksInStage(previous, next);
 
-        double previousOrderValue =  previous.order().get().value();
-        double nextOrderValue =  next.order().get().value();
+        double previousOrderValue =  previous.order().value();
+        double nextOrderValue =  next.order().value();
 
         if(previousOrderValue >= nextOrderValue) throw new IllegalArgumentException("previous task must not be placed after next task");
 
@@ -167,9 +180,9 @@ public class Stage extends AggregateRoot<Stage.Id> {
             return placeTaskBetween(source, previous, next);
         }
 
-        double originalOrderValue = source.order().map(Order::value).orElse(Double.NaN);
+        double originalOrderValue = source.order().value();
         source.changeOrder(new Order(newOrderValue));
-        return (!Double.isNaN(originalOrderValue) && Double.compare(originalOrderValue, newOrderValue) != 0) || tasks.add(source);
+        return Double.compare(originalOrderValue, newOrderValue) != 0 || tasks.add(source);
     }
 
     /**
@@ -234,10 +247,6 @@ public class Stage extends AggregateRoot<Stage.Id> {
          */
         public Id {
             validate(boardId, state);
-        }
-
-        public Id(String saeName) {
-            this(new Board.Id("default"), StageState.valueOf(saeName));
         }
 
         /**

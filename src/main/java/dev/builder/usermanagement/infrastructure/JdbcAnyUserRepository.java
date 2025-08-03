@@ -263,7 +263,7 @@ public class JdbcAnyUserRepository implements AnyUserRepository {
     }
 
     AuditInfo saveBaseUserInfo( @NotNull User<?> user, Connection conn) throws SQLException {
-        try(PreparedStatement ps = conn.prepareStatement(INSERT, new String[]{"created_at", "updated_at"})) {
+        try(PreparedStatement ps = conn.prepareStatement(INSERT, new String[]{UserJdbcMapper.UserColumns.CREATED_AT.columnName(), UserJdbcMapper.UserColumns.UPDATED_AT.columnName()})) {
             ps.setString(1, user.email().value());
             ps.setString(2, user.password());
             ps.setString(3, UserType.fromDomainEntity(user).dbType());
@@ -278,7 +278,7 @@ public class JdbcAnyUserRepository implements AnyUserRepository {
     }
 
     AuditInfo updateBaseUserInfo( @NotNull User<?> user, Connection conn) throws SQLException {
-        try(PreparedStatement ps = conn.prepareStatement(UPDATE, new String[]{"created_at", "updated_at"})) {
+        try(PreparedStatement ps = conn.prepareStatement(UPDATE,  new String[]{UserJdbcMapper.UserColumns.CREATED_AT.columnName(), UserJdbcMapper.UserColumns.UPDATED_AT.columnName()})) {
             ps.setString(1, user.password());
 
             boolean updated = ps.executeUpdate() > 0;
