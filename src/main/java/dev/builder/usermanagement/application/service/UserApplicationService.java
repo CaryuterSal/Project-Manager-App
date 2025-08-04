@@ -1,8 +1,11 @@
 package dev.builder.usermanagement.application.service;
 
+import dev.builder.auth.application.command.LoginCommand;
 import dev.builder.auth.application.service.UnauthorizedException;
+import dev.builder.auth.domain.port.in.AuthenticationService;
 import dev.builder.auth.infrastructure.Role;
 import dev.builder.auth.domain.port.out.SessionContext;
+import dev.builder.board.domain.port.in.BoardService;
 import dev.builder.core.application.Sort;
 import dev.builder.core.infrastructure.di.annotation.Bean;
 import dev.builder.core.infrastructure.di.annotation.Inject;
@@ -15,6 +18,7 @@ import dev.builder.usermanagement.application.view.AdminView;
 import dev.builder.usermanagement.application.view.ManagerView;
 import dev.builder.usermanagement.application.view.StudentView;
 import dev.builder.usermanagement.application.view.UserView;
+import dev.builder.usermanagement.domain.exception.UserNotFoundException;
 import dev.builder.usermanagement.domain.model.*;
 import dev.builder.usermanagement.domain.port.in.UserService;
 import dev.builder.usermanagement.domain.port.out.*;
@@ -44,6 +48,19 @@ public class UserApplicationService implements UserService {
     private final MessageLocalizer messageLocalizer;
     private final PasswordEncoder passwordEncoder;
 
+    private BoardService boardService;
+    private AuthenticationService authService;
+
+    @Inject
+    public void setBoardService(BoardService boardService) {
+        this.boardService = boardService;
+    }
+
+    @Inject
+    public void setAuthenticationService(AuthenticationService authService) {
+        this.authService = authService;
+    }
+
     @Inject
     public UserApplicationService(AnyUserRepository anyUserRepository, AdminRepository adminRepository, ManagerRepository managerRepository, StudentRepository studentRepository, SessionContext sessionContext, UserViewMapper mapper, ConnectionManager connectionManager, MessageLocalizer messageLocalizer, PasswordEncoder passwordEncoder) {
         this.anyUserRepository = anyUserRepository;
@@ -72,7 +89,7 @@ public class UserApplicationService implements UserService {
                 log,
                 con -> {
 
-                    Admin issuer = adminRepository.findById(new Admin.Id(command.email()), con)
+                    Admin issuer = adminRepository.findById(new Admin.Id(sessionContext.getCurrentUser()), con)
                             .orElseThrow(() -> {
                                 sessionContext.clear();
                                 return new UnauthorizedException(messageLocalizer.getMessage("auth.session.stale"));
@@ -95,7 +112,7 @@ public class UserApplicationService implements UserService {
                 log,
                 con -> {
 
-                    Manager issuer = managerRepository.findById(new Manager.Id(command.email()), con)
+                    Manager issuer = managerRepository.findById(new Manager.Id(sessionContext.getCurrentUser()), con)
                             .orElseThrow(() ->{
                                 sessionContext.clear();
                                 return new UnauthorizedException(messageLocalizer.getMessage("auth.session.stale"));
@@ -117,26 +134,32 @@ public class UserApplicationService implements UserService {
 
     @Override
     public void deleteUser(DeleteUserCommand command) {
-        if(!sessionContext.isAuthenticated()) throw new UnauthorizedException(messageLocalizer.getMessage("auth.session.required"));
+        sessionContext.requireRole(Role.MANAGER, messageLocalizer.getMessage("auth.session.requires.role", Role.ADMIN));
         anyUserRepository.deleteById(new User.Id<>(command.email()));
     }
 
     @Override
     public UserView completeRegistration(CompleteRegistrationCommand command) {
-        if(!sessionContext.isAuthenticated()) throw new UnauthorizedException(messageLocalizer.getMessage("auth.session.required"));
         User<?> registered = CommonJdbcOperationWrappers.runInTransaction(
                 connectionManager,
                 log,
                 con -> {
-                    User<?> invited = anyUserRepository.findById(new User.Id<>(sessionContext.getCurrentUser())).orElseThrow(
-                            () -> {
-                                sessionContext.clear();
-                                return new UnauthorizedException(messageLocalizer.getMessage("auth.session.stale"));
-                            });
+                    User.Id<?> id = new User.Id<>(command.email());
+                    User<?> invited = anyUserRepository.findById(id, con).orElseThrow(
+                            () ->  new UserNotFoundException(messageLocalizer, id)
+                    );
+                    if(invited.isVerified()){
+                        throw new IllegalStateException("Ya se verificó a este usuario");
+                    }
                     invited.completeRegistration(new Password(command.password()),passwordEncoder);
-                    return anyUserRepository.save(invited);
+                    User<?> savedUser = anyUserRepository.save(invited, con);
+                    if(savedUser instanceof Manager){
+                        boardService.createOwnBoard(con);
+                    }
+                    return savedUser;
                 }
         );
+        authService.login(new LoginCommand(registered.id().value(), command.password()));
         return mapper.fromUser(registered);
     }
 

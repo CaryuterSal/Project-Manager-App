@@ -10,6 +10,7 @@ import dev.builder.core.infrastructure.persistence.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.InputStream;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
@@ -104,18 +105,34 @@ public class JdbcImageRepository extends TransactionalJdbcCrudRepository<Image, 
 
     @Override
     public Image save(Image image, Connection connection) {
+        throw new UnsupportedOperationException("Saving image without its data is not supported");
+    }
+
+    @Override
+    public Image save(Image image, InputStream data) {
+        return wrapWithConnection(
+                connectionManager,
+                log,
+                this::save,
+                image,
+                data
+        );
+    }
+
+    @Override
+    public Image save(Image image, InputStream data, Connection connection) {
         if(existsById(image.id(), connection)){
             throw new RepositoryException("Update is not supported for images");
         }
         if(existsDeletedById(image.id(), connection)){
             throw new RepositoryException("Recover is not supported for images");
         }
-        return create(image, connection);
+        return create(image, data, connection);
     }
 
-    private Image create(Image image, Connection connection) {
+    private Image create(Image image, InputStream data, Connection connection) {
         try(PreparedStatement ps  = connection.prepareStatement(INSERT)) {
-            storedFileRepository.saveBaseFileInfo(image, connection);
+            storedFileRepository.saveBaseFileInfo(image, data, connection);
             ps.setBytes(1, UUIDMapper.UUIDtoByteArray(image.id().uuid()));
             ps.setBytes(2, UUIDMapper.UUIDtoByteArray(image.attachedTo().value()));
             boolean updated = ps.executeUpdate() > 0;

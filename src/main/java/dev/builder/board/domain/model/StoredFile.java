@@ -231,7 +231,7 @@ public abstract class StoredFile<ID extends StoredFile.Id<?>> extends AggregateR
             return Arrays.stream(values())
                     .filter(m -> m.text.equalsIgnoreCase(raw))
                     .findFirst()
-                    .orElseThrow(() -> new IllegalArgumentException("Invalid mime type: " + raw));
+                    .orElseThrow(() -> new IllegalArgumentException("No se soporta este formato de archivo"));
         }
 
 

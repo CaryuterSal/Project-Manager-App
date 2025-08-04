@@ -1,12 +1,14 @@
 package dev.builder.board.application.query;
 
+import dev.builder.board.application.view.BoardView;
+import dev.builder.core.application.Query;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Objects;
 import java.util.Optional;
 
-public final class GetBoardQuery {
+public final class GetBoardQuery implements Query<Optional<BoardView>> {
 
     private final String boardOwner;
 
@@ -41,4 +43,5 @@ public final class GetBoardQuery {
     public int hashCode() {
         return Objects.hashCode(boardOwner);
     }
+
 }

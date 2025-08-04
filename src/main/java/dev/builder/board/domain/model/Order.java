@@ -47,7 +47,7 @@ public record Order(Double value) implements ValueObject<Order> {
      * @return {@code true} si el valor es válido, {@code false} en caso contrario.
      */
     public static boolean isValid(Double value) {
-        return value != null && value > 0;
+        return value != null && value >= 0;
     }
 
     @Override

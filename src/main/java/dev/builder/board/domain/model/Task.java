@@ -54,7 +54,7 @@ public class Task extends LocalEntity<Task.Id> implements Comparable<Task> {
     }
 
     @Contract("_,_, _, _,_, _, _ -> new")
-    public static @NotNull Task createNew(Task.Id id, Stage.Id stage, Title title, TaskDescription description, Color color, Deadline deadline, Order order) {
+    static @NotNull Task createNew(Task.Id id, Stage.Id stage, Title title, TaskDescription description, Color color, Deadline deadline, Order order) {
         return new Task(id, stage, title, description, color, deadline, order);
     }
     /**
@@ -165,7 +165,7 @@ public class Task extends LocalEntity<Task.Id> implements Comparable<Task> {
      * @return verdadero si fue eliminado con éxito
      * @throws NullPointerException si el adjunto es nulo
      */
-    public boolean claimAssignation(Student.Id studentId){
+    public boolean revokeAssignation(Student.Id studentId){
         return assignedStudents.remove(Objects.requireNonNull(studentId));
     }
 

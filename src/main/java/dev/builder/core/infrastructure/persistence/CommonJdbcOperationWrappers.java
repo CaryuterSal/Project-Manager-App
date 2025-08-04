@@ -97,6 +97,27 @@ public class CommonJdbcOperationWrappers {
         }
     }
 
+    public static <T,Y,V> V runInTransaction(ConnectionManager connectionManager, Logger logger, TransactionalBiOperation<T,Y,V> operation, T inParam, Y inTwo) {
+        Connection connection = null;
+        try {
+            connection = connectionManager.getConnection();
+            connection.setAutoCommit(false);
+
+            V result = operation.execute(inParam, inTwo, connection);
+            connection.commit();
+            return result;
+
+        } catch (SQLException ex) {
+            rollBackIfNeeded(connection, logger);
+            throw new RepositoryException(ex.getMessage(), ex);
+        } catch (RepositoryException ex){
+            rollBackIfNeeded(connection, logger);
+            throw ex;
+        } finally {
+            closeConnectionIfNeeded(connection, logger);
+        }
+    }
+
     public static void rollBackIfNeeded(Connection connection, Logger logger) {
         if (connection != null) {
             try {

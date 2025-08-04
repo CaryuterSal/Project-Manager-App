@@ -10,6 +10,7 @@ import dev.builder.usermanagement.application.view.ManagerView;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.time.LocalDateTime;
 import java.util.Optional;
@@ -70,11 +71,12 @@ public class FindAllManagersQuery extends  FindAllUsersQuery<ManagerView, FindAl
     @Bean
     public static class FindAllManagersQueryValidator extends FindAllUsersQueryAbstractValidator<FindAllManagersQuery> {
 
+        private static final Logger log = LoggerFactory.getLogger(FindAllManagersQueryValidator.class);
         private final EmailValidator emailValidator;
 
         @Inject
-        public FindAllManagersQueryValidator(Logger logger, DateRangeValidator dateValidator, EmailValidator emailValidator) {
-            super(logger, dateValidator);
+        public FindAllManagersQueryValidator( DateRangeValidator dateValidator, EmailValidator emailValidator) {
+            super(log, dateValidator);
             this.emailValidator = emailValidator;
         }
 

@@ -13,6 +13,7 @@ import dev.builder.usermanagement.application.view.UserView;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -138,9 +139,11 @@ public class FindAllUsersQuery<T extends UserView, S extends  Enum<S> & SortFiel
     @Bean
     public static class FindAllUsersQueryValidator extends FindAllUsersQueryAbstractValidator<FindAllUsersQuery<UserView,UserSortableField>> {
 
+        private static final Logger log = LoggerFactory.getLogger(FindAllUsersQueryValidator.class);
+
         @Inject
-        public FindAllUsersQueryValidator(Logger logger, DateRangeValidator dateValidator) {
-            super(logger, dateValidator);
+        public FindAllUsersQueryValidator( DateRangeValidator dateValidator) {
+            super(log, dateValidator);
         }
 
         @Override

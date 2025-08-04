@@ -14,6 +14,7 @@ import dev.builder.usermanagement.domain.model.QuarterGroup;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.time.LocalDateTime;
 import java.util.Optional;
@@ -108,13 +109,14 @@ public class FindAllStudentsQuery extends FindAllUsersQuery<StudentView, FindAll
     @Bean
     public static class FindAllManagersQueryValidator extends FindAllUsersQueryAbstractValidator<FindAllStudentsQuery> {
 
+        private static final Logger log = LoggerFactory.getLogger(FindAllManagersQueryValidator.class);
         private final EmailValidator emailValidator;
         private final PositiveValidator positiveValidator;
         private final MessageLocalizer messageLocalizer;
 
         @Inject
-        public FindAllManagersQueryValidator(Logger logger, DateRangeValidator dateValidator, EmailValidator emailValidator, PositiveValidator positiveValidator, MessageLocalizer messageLocalizer) {
-            super(logger, dateValidator);
+        public FindAllManagersQueryValidator(DateRangeValidator dateValidator, EmailValidator emailValidator, PositiveValidator positiveValidator, MessageLocalizer messageLocalizer) {
+            super(log, dateValidator);
             this.emailValidator = emailValidator;
             this.positiveValidator = positiveValidator;
             this.messageLocalizer = messageLocalizer;

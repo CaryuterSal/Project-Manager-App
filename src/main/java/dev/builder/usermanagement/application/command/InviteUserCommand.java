@@ -8,6 +8,7 @@ import dev.builder.core.infrastructure.di.annotation.Inject;
 import dev.builder.usermanagement.application.validator.EmailValidator;
 import dev.builder.usermanagement.application.view.UserView;
 import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.Objects;
 
@@ -44,11 +45,12 @@ public abstract class InviteUserCommand<T extends UserView> implements Command<T
 
     protected static abstract class InviteUserCommandValidator<T extends InviteUserCommand<?>> extends BaseRequestValidator<T> {
 
+        private static final Logger log = LoggerFactory.getLogger(InviteUserCommandValidator.class);
         private final EmailValidator emailValidator;
 
         @Inject
-        public InviteUserCommandValidator(Logger logger, EmailValidator emailValidator) {
-            super(logger);
+        public InviteUserCommandValidator( EmailValidator emailValidator) {
+            super(log);
             this.emailValidator = emailValidator;
         }
 

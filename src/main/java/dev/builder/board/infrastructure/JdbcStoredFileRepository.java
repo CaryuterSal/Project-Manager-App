@@ -39,6 +39,10 @@ public class JdbcStoredFileRepository implements StoredFileRepository {
             INSERT INTO "FILE"(id, name, mimetype, purpose)
             VALUES (?, ?, ?, ?)
             """;
+
+    private static final String INSERT_DATA = """
+            INSERT INTO 
+            """;
     private static final String DELETE = """
             UPDATE "FILE"
             SET active = 0
@@ -69,13 +73,14 @@ public class JdbcStoredFileRepository implements StoredFileRepository {
             AND active = 1;
             """;
 
-    private static final String SELECT_FILE_SOURCE = """
-            SELECT fs.source
+    private static final String SELECT_FILE_SOURCE = String.format("""
+            SELECT
+                fs.source as %s
             FROM "FILE" f
             JOIN file_source fs ON fs.fle_id = f.id
-            WHERE id = ?
-            AND active = 1;
-    """;
+            WHERE f.id = ?
+            AND f.active = 1;
+    """, FileJdbcMapper.FileColumns.SOURCE.columnName());
 
     private final JdbcImageRepository imageRepository;
     private final JdbcAttachmentRepository attachmentRepository;
@@ -88,7 +93,7 @@ public class JdbcStoredFileRepository implements StoredFileRepository {
         this.attachmentRepository = attachmentRepository;
     }
 
-    void saveBaseFileInfo(@NotNull StoredFile<?> file, Connection conn) throws SQLException {
+    void saveBaseFileInfo(@NotNull StoredFile<?> file, InputStream data, Connection conn) throws SQLException {
         try(PreparedStatement ps = conn.prepareStatement(INSERT)) {
             ps.setBytes(1, UUIDMapper.UUIDtoByteArray(file.id().uuid()));
             ps.setString(2, file.name().value());
@@ -96,7 +101,19 @@ public class JdbcStoredFileRepository implements StoredFileRepository {
             ps.setString(4, FileType.fromDomain(file).dbValue());
 
             boolean updated = ps.executeUpdate() > 0;
-            if(!updated) throw new RepositoryException("Duplicate key on user insert");
+            if(!updated) throw new RepositoryException("Duplicate key on file insert");
+            createData(file.id(), data, conn);
+        }
+    }
+
+
+    private void createData(StoredFile.Id<?> fileId, InputStream data, Connection connection) throws SQLException {
+        try(PreparedStatement ps = connection.prepareStatement(INSERT_DATA)){
+            ps.setBytes(1, UUIDMapper.UUIDtoByteArray(fileId.uuid()));
+            ps.setBinaryStream(2, data);
+
+            boolean updated = ps.executeUpdate() > 0;
+            if(!updated) throw new RepositoryException("Duplicate key on file data insert");
         }
     }
 

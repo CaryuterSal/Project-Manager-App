@@ -40,7 +40,7 @@ public class StageJdbcMapper {
     }
 
     public static @NotNull Stage rowToStage(ResultSet resultSet, Set<Task> tasks) throws SQLException {
-        Board.Id boardId = new Board.Id(new Manager.Id(resultSet.getString(StageColumns.STAGE.columnName)));
+        Board.Id boardId = new Board.Id(new Manager.Id(resultSet.getString(StageColumns.BOARD_ID.columnName)));
         StageName stageName = StageName.fromDbValue(resultSet.getString(StageColumns.STAGE.columnName));
         return new Stage(
                 new Stage.Id(boardId, stageName.asDomain()),

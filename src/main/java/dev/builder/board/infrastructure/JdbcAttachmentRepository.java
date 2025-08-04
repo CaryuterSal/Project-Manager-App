@@ -11,6 +11,7 @@ import dev.builder.core.infrastructure.persistence.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.InputStream;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
@@ -94,18 +95,34 @@ public class JdbcAttachmentRepository extends TransactionalJdbcCrudRepository<At
 
     @Override
     public Attachment save(Attachment attachment, Connection connection) {
+        throw new UnsupportedOperationException("File saving is only supported with its data");
+    }
+
+    @Override
+    public Attachment save(Attachment attachment, InputStream data) {
+        return wrapWithConnection(
+                connectionManager,
+                log,
+                this::save,
+                attachment,
+                data
+        );
+    }
+
+    @Override
+    public Attachment save(Attachment attachment, InputStream data, Connection connection) {
         if(existsById(attachment.id(), connection)){
             throw new RepositoryException("Update is not supported for attachments");
         }
         if(existsDeletedById(attachment.id(), connection)){
             throw new RepositoryException("Recover is not supported for attachments");
         }
-        return create(attachment, connection);
+        return create(attachment, data, connection);
     }
 
-    private Attachment create(Attachment attachment, Connection connection) {
+    private Attachment create(Attachment attachment, InputStream data, Connection connection) {
         try(PreparedStatement ps  = connection.prepareStatement(INSERT)) {
-            storedFileRepository.saveBaseFileInfo(attachment, connection);
+            storedFileRepository.saveBaseFileInfo(attachment, data, connection);
             ps.setBytes(1, UUIDMapper.UUIDtoByteArray(attachment.id().uuid()));
             ps.setBytes(2, UUIDMapper.UUIDtoByteArray(attachment.attachedTo().value()));
             boolean updated = ps.executeUpdate() > 0;
