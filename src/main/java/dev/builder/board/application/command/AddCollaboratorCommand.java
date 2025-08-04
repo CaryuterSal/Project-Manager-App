@@ -36,5 +36,4 @@ public record AddCollaboratorCommand(String email) implements Command<Void> {
             throwIfAny();
         }
     }
-
 }

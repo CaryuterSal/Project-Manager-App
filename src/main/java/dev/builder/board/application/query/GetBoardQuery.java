@@ -43,5 +43,4 @@ public final class GetBoardQuery implements Query<Optional<BoardView>> {
     public int hashCode() {
         return Objects.hashCode(boardOwner);
     }
-
 }

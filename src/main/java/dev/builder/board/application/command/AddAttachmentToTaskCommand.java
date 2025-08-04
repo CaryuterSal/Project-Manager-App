@@ -2,6 +2,7 @@ package dev.builder.board.application.command;
 
 import dev.builder.board.application.view.FileView;
 import dev.builder.board.application.view.TaskView;
+
 import dev.builder.board.domain.model.Attachment;
 import dev.builder.board.domain.model.StoredFile;
 import dev.builder.core.application.Command;
@@ -12,17 +13,19 @@ import dev.builder.core.infrastructure.properties.MessageLocalizer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+
 import java.io.InputStream;
 import java.util.UUID;
 
 public record AddAttachmentToTaskCommand(UUID taskId, String filename, InputStream fileStream) implements Command<FileView> {
+
 
     public enum Fields{
         TASK_ID("taskId"), FILENAME("filename"), INPUT_STREAM("fileStream");
         private final String value;
         Fields(String value) {this.value = value;}
         public String value() {return value;}
-    }
+    }feat: add board application service
 
     @Bean
     public static class AddAttachmentToTaskCommandValidator extends BaseRequestValidator<AddAttachmentToTaskCommand> {

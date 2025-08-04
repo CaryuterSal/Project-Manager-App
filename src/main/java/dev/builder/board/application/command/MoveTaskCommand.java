@@ -27,7 +27,6 @@ public final class MoveTaskCommand implements Command<BoardView> {
         public String value() {return value;}
     }
 
-
     private final UUID taskId;
     private final Stage.StageState stage;
     private final Boolean placeAtStart;
