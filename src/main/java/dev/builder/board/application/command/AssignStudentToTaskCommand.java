@@ -40,5 +40,4 @@ public record AssignStudentToTaskCommand(UUID taskId, String studentEmail) imple
             throwIfAny();
         }
     }
-
 }

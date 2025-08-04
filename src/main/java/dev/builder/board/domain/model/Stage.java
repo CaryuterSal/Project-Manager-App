@@ -306,6 +306,10 @@ public class Stage extends AggregateRoot<Stage.Id>{
             validate(boardId, state);
         }
 
+        public Id(String saeName) {
+            this(new Board.Id("default"), StageState.valueOf(saeName));
+        }
+
         /**
          * Valida que los parámetros no sean nulos y sean válidos.
          *
