@@ -4,6 +4,7 @@ import dev.builder.board.domain.model.Board;
 import dev.builder.board.domain.model.BoardCollaborator;
 import dev.builder.core.infrastructure.di.annotation.Bean;
 import dev.builder.core.infrastructure.persistence.RepositoryException;
+import dev.builder.core.infrastructure.persistence.UUIDMapper;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -47,6 +48,14 @@ public class JdbcBoardCollaboratorRepository {
             BoardJdbcMapper.BoardColumns.COLLABORATOR_ID.columnName(),
             BoardJdbcMapper.BoardColumns.COLLABORATOR_ISSUED_AT.columnName());
 
+    private static final String SELECT_ISSUED_AT = String.format("""
+            SELECT
+                issued_at as %s
+            FROM student_board
+            WHERE sdt_email = ?
+            AND bad_email = ?
+            """, BoardJdbcMapper.BoardColumns.COLLABORATOR_ISSUED_AT.columnName());
+
     private static final Logger log = LoggerFactory.getLogger(JdbcBoardCollaboratorRepository.class);
 
     public Board save(@NotNull Board board, Connection connection) {
@@ -86,14 +95,19 @@ public class JdbcBoardCollaboratorRepository {
     }
 
     private void create(Board.@NotNull Id boardId, @NotNull BoardCollaborator boardCollaborator, Connection connection) throws SQLException{
-        try(PreparedStatement ps = connection.prepareStatement(INSERT, new String[]{"issued_at"})){
+        try(PreparedStatement ps = connection.prepareStatement(INSERT)){
             ps.setString(1, boardCollaborator.id().value());
             ps.setString(2,  boardId.userId().value());
             boolean updated = ps.executeUpdate() > 0;
             if(!updated) throw new RepositoryException("There was an error while inserting new Collaborator");
-            try(ResultSet rs = ps.getGeneratedKeys()){
-                if(!rs.next()) throw new RepositoryException("There was an error while inserting new Collaborator");
-                OffsetDateTime odt = rs.getObject("issued_at", OffsetDateTime.class);
+        }
+
+        try(PreparedStatement ps = connection.prepareStatement(SELECT_ISSUED_AT)){
+            ps.setString(1,  boardCollaborator.id().value());
+            ps.setString(2,  boardId.userId().value());
+            try(ResultSet rs = ps.executeQuery()){
+                rs.next();
+                OffsetDateTime odt = rs.getObject(BoardJdbcMapper.BoardColumns.COLLABORATOR_ISSUED_AT.columnName(), OffsetDateTime.class);
                 LocalDateTime issuedAt = odt.atZoneSameInstant(ZoneId.systemDefault()).toLocalDateTime();
                 boardCollaborator.hydrateWithAuditInfo(issuedAt);
             }

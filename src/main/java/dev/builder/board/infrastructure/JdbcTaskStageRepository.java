@@ -31,8 +31,9 @@ public class JdbcTaskStageRepository {
             SELECT COUNT(*) AS total
               FROM manager m
               JOIN app_user u ON u.email = m.email AND u.active = 1
-              JOIN stage_task sta ON sta.bse_bad_email = u.email;
-              WHERE tas.sbd_tsk_id = ?
+              JOIN stage_task sta ON sta.bse_bad_email = u.email
+              JOIN task t ON t.id = sta.tsk_id AND t.active = 1
+              WHERE t.id = ?
             """;
 
     private static final Logger log = LoggerFactory.getLogger(JdbcTaskStageRepository.class);

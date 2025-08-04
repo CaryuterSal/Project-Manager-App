@@ -41,36 +41,36 @@ public class JdbcStoredFileRepository implements StoredFileRepository {
             """;
 
     private static final String INSERT_DATA = """
-            INSERT INTO 
+            INSERT INTO FILE_SOURCE(fle_id, source) VALUES (?, ?)
             """;
     private static final String DELETE = """
             UPDATE "FILE"
             SET active = 0
             WHERE id = ?
-            AND active = 1;
+            AND active = 1
     """;
     private static final String RECOVER = """
             UPDATE "FILE"
             SET active = 1
             WHERE id = ?
-            AND active = 0;
+            AND active = 0
             """;
     private static final String SELECT_TYPE_BY_ID = """
             SELECT purpose
             FROM "FILE"
             WHERE id = ?
-            AND active = 1;
+            AND active = 1
             """;
     private static final String SELECT_ALL_TYPE = """
             SELECT purpose
             FROM "FILE"
-            WHERE active = 1;
+            WHERE active = 1
             """;
     private static final String EXISTS = """
             SELECT COUNT(*) AS total
             FROM "FILE"
             WHERE id = ?
-            AND active = 1;
+            AND active = 1
             """;
 
     private static final String SELECT_FILE_SOURCE = String.format("""
@@ -79,7 +79,7 @@ public class JdbcStoredFileRepository implements StoredFileRepository {
             FROM "FILE" f
             JOIN file_source fs ON fs.fle_id = f.id
             WHERE f.id = ?
-            AND f.active = 1;
+            AND f.active = 1
     """, FileJdbcMapper.FileColumns.SOURCE.columnName());
 
     private final JdbcImageRepository imageRepository;

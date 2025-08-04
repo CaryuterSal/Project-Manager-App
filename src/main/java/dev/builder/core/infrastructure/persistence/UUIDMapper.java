@@ -27,7 +27,7 @@ public class UUIDMapper {
 
     public static @Nullable UUID extractUUID(@NotNull ResultSet resultSet, String columnName) throws SQLException {
         byte[] bytes = resultSet.getBytes(columnName);
-        if(bytes.length == 0) return null;
+        if(bytes == null) return null;
         return byteArrayToUUID(bytes);
     }
 }

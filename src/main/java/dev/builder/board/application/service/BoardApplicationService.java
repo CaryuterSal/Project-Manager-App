@@ -213,7 +213,7 @@ public class BoardApplicationService implements BoardService, TaskService, FileS
             if(!queryBoard.equals(currentUserBoard)){
                 throw new UnauthorizedException("Solo puedes ver el tablero del que eres dueño");
             }
-        } else {
+        } else if(sessionContext.hasRole(Role.ADMIN)){
             throw new UnauthorizedException("Los administradores no pueden acceder a la información del tablero");
         }
 

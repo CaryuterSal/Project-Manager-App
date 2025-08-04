@@ -2,7 +2,7 @@ package dev.builder.core.infrastructure.properties;
 
 class PropertiesNamespaces {
 
-    static final String MODULE_CONTEXT_PATH = "/dev.builder/";
+    static final String MODULE_CONTEXT_PATH = "/dev/builder/";
     static final String FILE_PREFIX = "application";
     static final String FILE_POSTFIX = ".properties";
 

@@ -60,7 +60,7 @@ public class FileJdbcMapper {
         return new Attachment(
                 new Attachment.Id(baseFileInfo.id()),
                 baseFileInfo.attachedTo,
-                new Image.Filename(baseFileInfo.name()),
+                new Attachment.Filename(baseFileInfo.name()),
                 baseFileInfo.mimetype()
         );
     }

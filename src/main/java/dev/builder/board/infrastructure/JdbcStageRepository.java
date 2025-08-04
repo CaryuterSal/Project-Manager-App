@@ -56,7 +56,7 @@ public class JdbcStageRepository extends TransactionalJdbcCrudRepository<Stage, 
 
     private static final String SELECT_BY_TASK = String.format("""
             SELECT
-                stk.bse_sae_name as %s
+                stk.bse_sae_name as %s,
                 stk.bse_bad_email as %s
             FROM task t
             JOIN stage_task stk ON stk.tsk_id = t.id
@@ -64,8 +64,8 @@ public class JdbcStageRepository extends TransactionalJdbcCrudRepository<Stage, 
             JOIN app_user u ON u.email = m.email AND u.active = 1
             WHERE t.id = ?
             AND t.active = 1
-            """, StageJdbcMapper.StageColumns.BOARD_ID.columnName(),
-            StageJdbcMapper.StageColumns.STAGE.columnName());
+            """, StageJdbcMapper.StageColumns.STAGE.columnName(),
+            StageJdbcMapper.StageColumns.BOARD_ID.columnName());
 
     private static final Logger log = LoggerFactory.getLogger(JdbcStageRepository.class);
     protected Logger getLogger() {

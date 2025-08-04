@@ -72,7 +72,7 @@ public class JdbcTaskRepository extends TransactionalJdbcCrudRepository<Task, Ta
             LEFT JOIN (
                 SELECT
                     f.id as id,
-                    tca.tsk_id as tsk_id
+                    tac.tsk_id as tsk_id
                 FROM task_cover tac
                 JOIN "FILE" f ON f.id = tac.fle_id AND f.active = 1
             ) active_cover ON active_cover.tsk_id = t.id
@@ -133,7 +133,7 @@ public class JdbcTaskRepository extends TransactionalJdbcCrudRepository<Task, Ta
             LEFT JOIN (
                 SELECT
                     f.id as id,
-                    tca.tsk_id as tsk_id
+                    tac.tsk_id as tsk_id
                 FROM task_cover tac
                 JOIN "FILE" f ON f.id = tac.fle_id AND f.active = 1
             ) active_cover ON active_cover.tsk_id = t.id
@@ -193,7 +193,7 @@ public class JdbcTaskRepository extends TransactionalJdbcCrudRepository<Task, Ta
             LEFT JOIN (
                 SELECT
                     f.id as id,
-                    tca.tsk_id as tsk_id
+                    tac.tsk_id as tsk_id
                 FROM task_cover tac
                 JOIN "FILE" f ON f.id = tac.fle_id AND f.active = 1
             ) active_cover ON active_cover.tsk_id = t.id
@@ -232,7 +232,12 @@ public class JdbcTaskRepository extends TransactionalJdbcCrudRepository<Task, Ta
             TaskJdbcMapper.TaskColumns.ATTACHMENT.columnName(),
             TaskJdbcMapper.TaskColumns.ASSIGNED_TO.columnName());
 
-
+    private static final String SELECT_CREATED_AT = String.format("""
+            SELECT
+                created_at as %s
+            FROM task
+            WHERE id = ?
+            """, TaskJdbcMapper.TaskColumns.CREATED_AT.columnName());
     private static final String EXISTS = """
             SELECT COUNT(*) AS total
             FROM task
@@ -315,7 +320,7 @@ public class JdbcTaskRepository extends TransactionalJdbcCrudRepository<Task, Ta
     }
 
     private Task create(Task task, Connection connection) throws SQLException {
-        try(PreparedStatement ps = connection.prepareStatement(INSERT, new String[]{"created_at"})){
+        try(PreparedStatement ps = connection.prepareStatement(INSERT)){
             ps.setBytes(1, UUIDMapper.UUIDtoByteArray(task.id().value()));
             ps.setString(2, task.title().value());
             ps.setString(3, task.description().value());
@@ -328,8 +333,13 @@ public class JdbcTaskRepository extends TransactionalJdbcCrudRepository<Task, Ta
             ps.setString(7, task.color().toString());
             boolean updated = ps.executeUpdate() > 0;
             if(!updated) throw new RepositoryException("There was an error saving task");
-            try(ResultSet rs = ps.getGeneratedKeys()){
-                OffsetDateTime odt = rs.getObject("created_at", OffsetDateTime.class);
+        }
+
+        try(PreparedStatement ps = connection.prepareStatement(SELECT_CREATED_AT)){
+            ps.setBytes(1, UUIDMapper.UUIDtoByteArray(task.id().value()));
+            try(ResultSet rs = ps.executeQuery()){
+                rs.next();
+                OffsetDateTime odt = rs.getObject(TaskJdbcMapper.TaskColumns.CREATED_AT.columnName(), OffsetDateTime.class);
                 LocalDateTime createdAt = odt.atZoneSameInstant(ZoneId.systemDefault()).toLocalDateTime();
                 return task.hydratedWithAuditInfo(createdAt);
             }

@@ -5,7 +5,7 @@ import dev.builder.usermanagement.domain.model.User;
 
 import java.sql.Connection;
 
-public interface UserRepository<E extends User<ID>, ID extends User.Id> extends TransactionalCrudRepository<E, ID> {
+public interface UserRepository<E extends User<ID>, ID extends User.Id<ID>> extends TransactionalCrudRepository<E, ID> {
     boolean existsDeletedById(ID id);
     boolean existsDeletedById(ID id, Connection connection);
 }

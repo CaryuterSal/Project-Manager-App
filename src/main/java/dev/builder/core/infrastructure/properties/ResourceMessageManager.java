@@ -25,7 +25,7 @@ public class ResourceMessageManager implements MessageLocalizer, ColorLocalizer,
     private final ResourceBundle messages;
 
     public ResourceMessageManager() {
-        this.messages =  ResourceBundle.getBundle("message");
+        this.messages =  ResourceBundle.getBundle("/dev/builder/message");
     }
 
     @Override

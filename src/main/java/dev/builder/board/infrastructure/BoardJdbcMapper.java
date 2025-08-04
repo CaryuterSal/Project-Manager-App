@@ -13,6 +13,8 @@ import org.jetbrains.annotations.NotNull;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
+import java.time.ZoneId;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -80,7 +82,7 @@ public class BoardJdbcMapper {
                 BoardJdbcMapper::extractBoardId,
                 r -> {
                     Student.Id collaboratorId = new Student.Id(r.getString(BoardColumns.COLLABORATOR_ID.columnName));
-                    LocalDateTime issuedAt = r.getTimestamp(BoardColumns.COLLABORATOR_ISSUED_AT.columnName()).toLocalDateTime();
+                    LocalDateTime issuedAt = r.getObject(BoardColumns.COLLABORATOR_ISSUED_AT.columnName(), OffsetDateTime.class).atZoneSameInstant(ZoneId.systemDefault()).toLocalDateTime();
                     return new BoardCollaborator(issuedAt, collaboratorId);
                 }
         );

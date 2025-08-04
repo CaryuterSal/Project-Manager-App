@@ -67,7 +67,8 @@ public enum Color implements ValueObject<Color> {
      */
     @Override
     public String toString() {
-        return this.name().toLowerCase();
+        String lower = this.name().toLowerCase();
+        return lower.substring(0, 1).toUpperCase() + lower.substring(1);
     }
 
     public static @NotNull Color fromName(String name) {

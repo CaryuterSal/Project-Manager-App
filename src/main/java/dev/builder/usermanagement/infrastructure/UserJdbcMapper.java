@@ -143,7 +143,6 @@ public class UserJdbcMapper {
 
     public static List<Student> rowToStudents(ResultSet rs) throws SQLException {
         List<Student> students = new ArrayList<>();
-        Map<Manager.Id, Set<Student.Id>> studentsCreated = extractStudentsCreatedByManager(rs);
         do{
             CommonUserInfo baseInfo = CommonUserInfo.fromResultSet(rs);
             Student.Id id = new Student.Id(baseInfo.email());

@@ -49,7 +49,7 @@ public class JdbcImageRepository extends TransactionalJdbcCrudRepository<Image, 
                 f.id AS %s,
                 f.name as %s,
                 f.mimetype as %s,
-                tc.tsk_id AS %s,
+                tc.tsk_id AS %s
             FROM task_cover tc
             JOIN "FILE" f ON f.id = tc.fle_id
             WHERE tc.fle_id = ?
@@ -57,33 +57,36 @@ public class JdbcImageRepository extends TransactionalJdbcCrudRepository<Image, 
             """, FileJdbcMapper.FileColumns.ID.columnName(),
                 FileJdbcMapper.FileColumns.NAME.columnName(),
                 FileJdbcMapper.FileColumns.MIME_TYPE.columnName(),
-                FileJdbcMapper.FileColumns.ATTACHED_TO);
+                FileJdbcMapper.FileColumns.ATTACHED_TO.columnName());
     private static final String SELECT_ALL = String.format("""
             SELECT
                 f.id AS %s,
                 f.name as %s,
                 f.mimetype as %s,
-                tc.tsk_id AS %s,
+                tc.tsk_id AS %s
             FROM task_cover tc
             JOIN "FILE" f ON f.id = tc.fle_id
             WHERE f.active = 1;
             """, FileJdbcMapper.FileColumns.ID.columnName(),
             FileJdbcMapper.FileColumns.NAME.columnName(),
             FileJdbcMapper.FileColumns.MIME_TYPE.columnName(),
-            FileJdbcMapper.FileColumns.ATTACHED_TO);
+            FileJdbcMapper.FileColumns.ATTACHED_TO.columnName());
 
-    private static final String SELECT_BY_TASK = """
+    private static final String SELECT_BY_TASK = String.format("""
             SELECT
                 f.id AS %s,
                 f.name as %s,
                 f.mimetype as %s,
-                tc.tsk_id AS %s,
+                tc.tsk_id AS %s
             FROM task_cover tc
             JOIN "FILE" f ON f.id = tc.fle_id
-            JOIN task t ON t.id = tc.tsk_id AND t.active = 1;
+            JOIN task t ON t.id = tc.tsk_id AND t.active = 1
             WHERE t.id = ?
-            AND f.active = 1;
-            """;
+            AND f.active = 1
+            """,FileJdbcMapper.FileColumns.ID.columnName(),
+            FileJdbcMapper.FileColumns.NAME.columnName(),
+            FileJdbcMapper.FileColumns.MIME_TYPE.columnName(),
+            FileJdbcMapper.FileColumns.ATTACHED_TO.columnName());
 
     private static final Logger log = LoggerFactory.getLogger(JdbcImageRepository.class);
     @Override

@@ -44,12 +44,10 @@ public abstract class InviteUserCommand<T extends UserView> implements Command<T
     }
 
     protected static abstract class InviteUserCommandValidator<T extends InviteUserCommand<?>> extends BaseRequestValidator<T> {
-
-        private static final Logger log = LoggerFactory.getLogger(InviteUserCommandValidator.class);
         private final EmailValidator emailValidator;
 
         @Inject
-        public InviteUserCommandValidator( EmailValidator emailValidator) {
+        public InviteUserCommandValidator(Logger log, EmailValidator emailValidator) {
             super(log);
             this.emailValidator = emailValidator;
         }

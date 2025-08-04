@@ -36,7 +36,7 @@ public class JdbcAttachmentRepository extends TransactionalJdbcCrudRepository<At
             FROM task_attachement tc
             JOIN "FILE" f ON f.id = tc.fle_id
             WHERE tc.fle_id = ?
-            AND f.active = 1;
+            AND f.active = 1
             """;
 
     private static final String EXISTS_DELETED = """
@@ -44,18 +44,18 @@ public class JdbcAttachmentRepository extends TransactionalJdbcCrudRepository<At
             FROM task_attachement tc
             JOIN "FILE" f ON f.id = tc.fle_id
             WHERE tc.fle_id = ?
-            AND f.active = 0;
+            AND f.active = 0
             """;
     private static final String SELECT = String.format("""
             SELECT
                 f.id AS %s,
                 f.name as %s,
                 f.mimetype as %s,
-                tc.tsk_id AS %s,
+                tc.tsk_id AS %s
             FROM task_attachement tc
             JOIN "FILE" f ON f.id = tc.fle_id
             WHERE tc.fle_id = ?
-            AND f.active = 1;
+            AND f.active = 1
             """, FileJdbcMapper.FileColumns.ID.columnName(),
             FileJdbcMapper.FileColumns.NAME.columnName(),
             FileJdbcMapper.FileColumns.MIME_TYPE.columnName(),
@@ -65,10 +65,10 @@ public class JdbcAttachmentRepository extends TransactionalJdbcCrudRepository<At
                 f.id AS %s,
                 f.name as %s,
                 f.mimetype as %s,
-                tc.tsk_id AS %s,
+                tc.tsk_id AS %s
             FROM task_attachement tc
             JOIN "FILE" f ON f.id = tc.fle_id
-            AND f.active = 1;
+            AND f.active = 1
             """, FileJdbcMapper.FileColumns.ID.columnName(),
             FileJdbcMapper.FileColumns.NAME.columnName(),
             FileJdbcMapper.FileColumns.MIME_TYPE.columnName(),

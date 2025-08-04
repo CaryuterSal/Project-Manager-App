@@ -10,17 +10,20 @@ import org.jetbrains.annotations.NotNull;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
+import java.time.ZoneId;
 import java.util.*;
 
 import static dev.builder.core.infrastructure.persistence.CommonMappers.groupResultSetByKey;
 
 public class TaskJdbcMapper {
+
     public enum TaskColumns {
         ID("id"),
         BOARD("board"),
         STAGE("stage"),
         TITLE("title"),
-        ORDER("order"),
+        ORDER("task_order"),
         DESCRIPTION("description"),
         CREATED_AT("created_at"),
         STARTED_AT("started_at"),
@@ -68,10 +71,12 @@ public class TaskJdbcMapper {
         Stage.Id stage = extractStageId(resultSet);
         TaskDescription description = new TaskDescription(resultSet.getString(TaskColumns.DESCRIPTION.columnName));
         Order order = new Order(resultSet.getDouble(TaskColumns.ORDER.columnName));
-        LocalDateTime createdAt = resultSet.getTimestamp(TaskColumns.CREATED_AT.columnName).toLocalDateTime();
-        LocalDateTime startedAt = resultSet.getTimestamp(TaskColumns.STARTED_AT.columnName).toLocalDateTime();
-        LocalDateTime finishedAt = resultSet.getTimestamp(TaskColumns.FINISHED_AT.columnName).toLocalDateTime();
-        Deadline deadline = new Deadline(resultSet.getTimestamp(TaskColumns.DEADLINE.columnName).toLocalDateTime());
+        LocalDateTime createdAt = resultSet.getObject(TaskColumns.CREATED_AT.columnName, OffsetDateTime.class).atZoneSameInstant(ZoneId.systemDefault()).toLocalDateTime();
+        OffsetDateTime startedAtOffset = resultSet.getObject(TaskColumns.STARTED_AT.columnName, OffsetDateTime.class);
+        LocalDateTime startedAt = startedAtOffset == null ? null : startedAtOffset.atZoneSameInstant(ZoneId.systemDefault()).toLocalDateTime();
+        OffsetDateTime finishedAtOffset = resultSet.getObject(TaskColumns.FINISHED_AT.columnName, OffsetDateTime.class);
+        LocalDateTime finishedAt = finishedAtOffset == null ? null : finishedAtOffset.atZoneSameInstant(ZoneId.systemDefault()).toLocalDateTime();
+        Deadline deadline = new Deadline(resultSet.getObject(TaskColumns.DEADLINE.columnName, OffsetDateTime.class).atZoneSameInstant(ZoneId.systemDefault()).toLocalDateTime());
         Color color = Color.fromName(resultSet.getString(TaskColumns.COLOR.columnName));
         UUID coverImage = UUIDMapper.extractUUID(resultSet,TaskColumns.COVER_IMAGE.columnName);
         return new Task(
@@ -104,7 +109,11 @@ public class TaskJdbcMapper {
         return groupResultSetByKey(
                 rs,
                 TaskJdbcMapper::extractTaskId,
-                r -> new Attachment.Id(UUIDMapper.extractUUID(rs, TaskColumns.ATTACHMENT.columnName()))
+                r -> {
+                    UUID uuid = UUIDMapper.extractUUID(rs, TaskColumns.ATTACHMENT.columnName());
+                    if(uuid == null) return null;
+                    return new Attachment.Id(uuid);
+                }
         );
     }
 
@@ -116,7 +125,11 @@ public class TaskJdbcMapper {
         return groupResultSetByKey(
                 rs,
                 TaskJdbcMapper::extractTaskId,
-                r -> new Student.Id(r.getString(TaskColumns.ASSIGNED_TO.columnName))
+                r -> {
+                    String email = r.getString(TaskColumns.ASSIGNED_TO.columnName);
+                    if(email == null) return null;
+                    return new Student.Id(email);
+                }
         );
     }
 

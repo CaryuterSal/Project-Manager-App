@@ -38,7 +38,7 @@ public class JdbcTaskAssigneeRepository {
             JOIN task_assignee tas ON tas.sbd_sdt_email = su.email
             JOIN manager m ON m.email = tas.sbd_bad_email
             JOIN app_user u ON u.email = m.email AND u.active = 1
-            WHERE tas.sbd_tsk_id = ?
+            WHERE tas.tsk_id = ?
             """, TaskJdbcMapper.TaskColumns.ASSIGNED_TO.columnName());
 
     private static final Logger log = LoggerFactory.getLogger(JdbcTaskAssigneeRepository.class);

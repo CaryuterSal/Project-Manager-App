@@ -1,12 +1,10 @@
 package dev.builder.usermanagement.infrastructure;
 
+import dev.builder.board.infrastructure.TaskJdbcMapper;
 import dev.builder.core.domain.AuditInfo;
 import dev.builder.core.infrastructure.di.annotation.Bean;
 import dev.builder.core.infrastructure.di.annotation.Inject;
-import dev.builder.core.infrastructure.persistence.CommonJdbcOperationWrappers;
-import dev.builder.core.infrastructure.persistence.ConnectionManager;
-import dev.builder.core.infrastructure.persistence.PreparedStatementFiller;
-import dev.builder.core.infrastructure.persistence.RepositoryException;
+import dev.builder.core.infrastructure.persistence.*;
 import dev.builder.usermanagement.domain.model.Admin;
 import dev.builder.usermanagement.domain.model.Manager;
 import dev.builder.usermanagement.domain.model.Student;
@@ -23,6 +21,9 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
+import java.time.ZoneId;
 import java.util.*;
 
 import static dev.builder.core.infrastructure.persistence.CommonJdbcOperationWrappers.executeQuery;
@@ -74,6 +75,14 @@ public class JdbcAnyUserRepository implements AnyUserRepository {
             WHERE email = ?
               AND active = 0
             """;
+    private static final String SELECT_AUDIT_INFO = String.format("""
+            SELECT
+                created_at as %s
+                updated_at as %s
+            FROM app_user
+            WHERE email = ?
+            """, UserJdbcMapper.UserColumns.CREATED_AT.columnName(),
+            UserJdbcMapper.UserColumns.UPDATED_AT.columnName());
     private static final String DELETE = """
             UPDATE app_user
             SET active = 0
@@ -263,7 +272,7 @@ public class JdbcAnyUserRepository implements AnyUserRepository {
     }
 
     AuditInfo saveBaseUserInfo( @NotNull User<?> user, Connection conn) throws SQLException {
-        try(PreparedStatement ps = conn.prepareStatement(INSERT, new String[]{UserJdbcMapper.UserColumns.CREATED_AT.columnName(), UserJdbcMapper.UserColumns.UPDATED_AT.columnName()})) {
+        try(PreparedStatement ps = conn.prepareStatement(INSERT)) {
             ps.setString(1, user.email().value());
             ps.setString(2, user.password());
             ps.setString(3, UserType.fromDomainEntity(user).dbType());
@@ -271,19 +280,25 @@ public class JdbcAnyUserRepository implements AnyUserRepository {
             boolean updated = ps.executeUpdate() > 0;
             if(!updated) throw new RepositoryException("Duplicate key on user insert");
 
-            try(ResultSet rs = ps.getGeneratedKeys()){
+        }
+
+        try(PreparedStatement ps = conn.prepareStatement(SELECT_AUDIT_INFO)){
+            try(ResultSet rs = ps.executeQuery()){
                 return UserJdbcMapper.extractAuditInfo(rs);
             }
         }
     }
 
     AuditInfo updateBaseUserInfo( @NotNull User<?> user, Connection conn) throws SQLException {
-        try(PreparedStatement ps = conn.prepareStatement(UPDATE,  new String[]{UserJdbcMapper.UserColumns.CREATED_AT.columnName(), UserJdbcMapper.UserColumns.UPDATED_AT.columnName()})) {
+        try(PreparedStatement ps = conn.prepareStatement(UPDATE)) {
             ps.setString(1, user.password());
 
             boolean updated = ps.executeUpdate() > 0;
             if(!updated) throw new RepositoryException("Duplicate key on user insert");
-            try(ResultSet rs = ps.getGeneratedKeys()){
+        }
+
+        try(PreparedStatement ps = conn.prepareStatement(SELECT_AUDIT_INFO)){
+            try(ResultSet rs = ps.executeQuery()){
                 return UserJdbcMapper.extractAuditInfo(rs);
             }
         }
