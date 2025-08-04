@@ -45,7 +45,7 @@ public class DefaultConnectionManager extends BaseConnectionManager {
 
     private static Path unzipWallet() throws IOException {
         Path tempDir = Files.createTempDirectory("oracle_wallet");
-        try (InputStream zipStream = BaseConnectionManager.class.getResourceAsStream("/dev.builder/wallet/Wallet_SCYGSD4N0R0GZ0JW.zip");
+        try (InputStream zipStream = BaseConnectionManager.class.getResourceAsStream("/dev/builder/wallet/Wallet_SCYGSD4N0R0GZ0JW.zip");
              ZipInputStream zis = new ZipInputStream(zipStream)) {
 
             ZipEntry entry;

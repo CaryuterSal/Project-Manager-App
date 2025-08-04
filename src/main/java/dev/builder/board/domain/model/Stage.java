@@ -2,6 +2,8 @@ package dev.builder.board.domain.model;
 
 import dev.builder.core.domain.AggregateRoot;
 import dev.builder.core.domain.ValueObject;
+import oracle.net.jdbc.TNSAddress.Description;
+import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
@@ -14,7 +16,7 @@ import java.util.*;
  * Cada Stage está identificado por un ID compuesto que incluye el ID del tablero
  * al que pertenece y el estado actual de la etapa.
  */
-public class Stage extends AggregateRoot<Stage.Id> {
+public class Stage extends AggregateRoot<Stage.Id>{
 
     private final TreeSet<Task> tasks = new TreeSet<>();
 
@@ -27,8 +29,20 @@ public class Stage extends AggregateRoot<Stage.Id> {
      * @param id Identificador único de la etapa.
      * @throws NullPointerException Si el id es null.
      */
-    public Stage(Stage.Id id) {
+    private Stage(Stage.Id id) {
         super(id);
+    }
+
+    /**
+     * <a href="https://refactoring.guru/design-patterns/factory-method">Factory</a> para crear una nueva etapa del tablero en base a un
+     * {@link Board} existente
+     * @param id el id del Stage
+     * @return un nuevo Stage
+     * @throws NullPointerException si el id es nulo
+     */
+    @Contract("_ -> new")
+    public static @NotNull Stage attachToBoard(Stage.Id id) {
+        return new Stage(id);
     }
 
     /**
@@ -51,8 +65,14 @@ public class Stage extends AggregateRoot<Stage.Id> {
      *
      * @return Conjunto inmodificable de tareas.
      */
-    public Set<Task> tasks() {
-        return Collections.unmodifiableSet(tasks);
+    public NavigableSet<Task> tasks() {
+        return Collections.unmodifiableNavigableSet(tasks);
+    }
+
+    public Optional<Task> getTask(Task.Id taskId) {
+        return tasks.stream()
+                .filter(Objects::nonNull)
+                .findAny();
     }
 
     /**
@@ -75,6 +95,11 @@ public class Stage extends AggregateRoot<Stage.Id> {
         return tasks.contains(task);
     }
 
+    public boolean containsTask(Task.Id taskId){
+        return tasks.stream()
+                .anyMatch(t -> t.id().equals(taskId));
+    }
+
     /**
      * Añade una tarea al stage al final de la lista
      * @param task Tarea a agregar (no puede ser null).
@@ -83,12 +108,14 @@ public class Stage extends AggregateRoot<Stage.Id> {
      */
     public boolean pushTask(Task task) {
         Objects.requireNonNull(task);
-        if(tasks.isEmpty()) {
-            tasks.add(task);
-            return true;
+        Task lastTask = tasks.isEmpty() ? null : tasks.last();
+
+        double newOrderValue;
+        if(lastTask == null){
+            newOrderValue = taskOrderStep;
+        } else {
+            newOrderValue = calculateAverageOrder(lastTask.order(), new Order(taskOrderStep * 2));
         }
-        double lastOrderValue = tasks.last().order().get().value();
-        double newOrderValue = lastOrderValue + taskOrderStep;
         task.changeOrder(new Order(newOrderValue));
         return tasks.add(task);
     }
@@ -101,10 +128,22 @@ public class Stage extends AggregateRoot<Stage.Id> {
      */
     public boolean shiftTask(Task task) {
         Objects.requireNonNull(task);
-        double firstOrderValue = tasks.first().order().get().value();
-        double newOrderValue = firstOrderValue / 2;
+        Task firstTask = tasks.isEmpty() ? null : tasks.first();
+
+        double newOrderValue;
+        if(firstTask == null){
+            newOrderValue = taskOrderStep;
+        } else {
+            newOrderValue = calculateAverageOrder(new Order(0d), firstTask.order());
+        }
         task.changeOrder(new Order(newOrderValue));
         return tasks.add(task);
+    }
+
+    public Task createTask(Task.Id taskId, Title title, TaskDescription description, Color color, Deadline deadline){
+        Task task = Task.createNew(taskId, id(), title, description, color, deadline, new Order(0d));
+        pushTask(task);
+        return task;
     }
 
     /**
@@ -138,8 +177,8 @@ public class Stage extends AggregateRoot<Stage.Id> {
      */
     public void swapTaskOrder(Task source, Task target) {
         validateTasksInStage(source, target);
-        Order originalSourceOrder = source.order().get();
-        source.changeOrder(target.order().get());
+        Order originalSourceOrder = source.order();
+        source.changeOrder(target.order());
         target.changeOrder(originalSourceOrder);
     }
 
@@ -152,24 +191,55 @@ public class Stage extends AggregateRoot<Stage.Id> {
      * @throws IllegalArgumentException si la tarea previa está después de la tarea siguiente
      */
     public boolean placeTaskBetween(Task source, Task previous, Task next) {
-        validateTasksInStage(previous, next);
-
-        double previousOrderValue =  previous.order().get().value();
-        double nextOrderValue =  next.order().get().value();
-
-        if(previousOrderValue >= nextOrderValue) throw new IllegalArgumentException("previous task must not be placed after next task");
-
-        double range = nextOrderValue - previousOrderValue;
-        double average = range / 2;
-        double newOrderValue = average + previousOrderValue;
-        if(average < reindexEpsilonTrigger){
-            reindexOrder();
+        double newOrderValue = calculateNewOrderValue(previous, next);
+        if(reindexIfNecessary(newOrderValue)) {
             return placeTaskBetween(source, previous, next);
         }
 
-        double originalOrderValue = source.order().map(Order::value).orElse(Double.NaN);
+        double originalOrderValue = source.order().value();
         source.changeOrder(new Order(newOrderValue));
-        return (!Double.isNaN(originalOrderValue) && Double.compare(originalOrderValue, newOrderValue) != 0) || tasks.add(source);
+        return Double.compare(originalOrderValue, newOrderValue) != 0 || tasks.add(source);
+    }
+
+    private double calculateNewOrderValue(Task previous, Task next) {
+        if(previous != null && next != null) {
+            validateTasksInStage(previous, next);
+            return calculateAverageOrder(previous.order(), next.order());
+        } else if(previous != null){
+            validateTasksInStage(previous);
+            Task nextPreviousTask = tasks.lower(previous);
+            return calculateAverageOrder(nextPreviousTask != null ? nextPreviousTask.order() : new Order(0d), previous.order());
+        } else if(next != null){
+            validateTasksInStage(next);
+            Task nextNextTask = tasks.higher(next);
+            return calculateAverageOrder(next.order(), nextNextTask != null ? nextNextTask.order() : new Order(taskOrderStep * 2));
+        } else {
+            Task lastTask = tasks.isEmpty() ? null : tasks.last();
+            if(lastTask == null){
+                return taskOrderStep;
+            } else {
+                return  calculateAverageOrder(lastTask.order(), new Order(taskOrderStep * 2));
+            }
+        }
+    }
+
+    private double calculateAverageOrder(Order previousOrder, Order nextOrder) {
+        double previousOrderValue = previousOrder.value();
+        double nextOrderValue = nextOrder.value();
+        if (previousOrderValue >= nextOrderValue)
+            throw new IllegalArgumentException("previous task must not be placed after next task");
+
+        double range = nextOrderValue - previousOrderValue;
+        double average = range / 2;
+        return average + previousOrderValue;
+    }
+
+    private boolean reindexIfNecessary(double newOrderValue) {
+        if (newOrderValue < reindexEpsilonTrigger) {
+            reindexOrder();
+            return true;
+        }
+        return false;
     }
 
     /**

@@ -1,5 +1,7 @@
 package dev.builder.usermanagement.infrastructure;
 
+import dev.builder.board.domain.model.Board;
+import dev.builder.board.domain.model.Task;
 import dev.builder.core.domain.AuditInfo;
 import dev.builder.core.infrastructure.di.annotation.Bean;
 import dev.builder.core.infrastructure.di.annotation.Inject;
@@ -15,10 +17,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 import static dev.builder.core.infrastructure.persistence.CommonJdbcOperationWrappers.*;
 
@@ -41,7 +40,7 @@ public class JdbcStudentRepository extends TransactionalJdbcCrudRepository<Stude
                 s.qgp_aqr_number as %s,
                 s.created_by as %s
             FROM student s
-            JOIN app_user u ON u.email = s.email
+            JOIN app_user u ON u.email = s.email AND u.active = 1
             WHERE u.active = 1
             """,
             UserJdbcMapper.StudentColumns.ACADEMIC_GROUP.columnName(),
@@ -56,7 +55,7 @@ public class JdbcStudentRepository extends TransactionalJdbcCrudRepository<Stude
                 s.qgp_aqr_number as %s,
                 s.created_by as %s
             FROM student s
-            JOIN app_user u ON u.email = s.email
+            JOIN app_user u ON u.email = s.email AND u.active = 1
             WHERE u.email = ?
             AND
             u.active = 1
@@ -120,6 +119,48 @@ public class JdbcStudentRepository extends TransactionalJdbcCrudRepository<Stude
             WHERE u.ACTIVE = 0
             """;
 
+    private static String SELECT_ALL_BY_TASK = String.format("""
+           
+            SELECT
+                u.*,
+                s.first_name,
+                s.last_name,
+                s.qgp_agp_name as %s,
+                s.qgp_aqr_number as %s,
+                s.created_by as %s
+            FROM task t
+            JOIN task_assignee tae ON tae.tsk_id = t.id
+            JOIN manager m ON tae.sbd_bad_email = m.email
+            JOIN app_user mu ON mu.email = m.email AND mu.active = 1
+            JOIN student s ON s.email = tae.sbd_sdt_email
+            JOIN app_user u ON u.email = s.email AND u.active = 1
+            WHERE t.id = ?
+            """,
+            UserJdbcMapper.StudentColumns.ACADEMIC_GROUP.columnName(),
+            UserJdbcMapper.StudentColumns.ACADEMIC_QUARTER.columnName(),
+            UserJdbcMapper.StudentColumns.CREATED_BY.columnName());
+
+    private static String SELECT_ALL_BY_BOARD= String.format("""
+           
+            SELECT
+                u.*,
+                s.first_name,
+                s.last_name,
+                s.qgp_agp_name as %s,
+                s.qgp_aqr_number as %s,
+                s.created_by as %s
+            FROM board b
+            JOIN manager m ON b.mnr_email = m.email
+            JOIN app_user mu ON mu.email = m.email AND mu.active = 1
+            JOIN student_board sbd ON sbd.bad_email = mu.email
+            JOIN student s ON s.email = sbd.sdt_email
+            JOIN app_user u ON u.email = s.email AND u.active = 1
+            WHERE b.mnr_email = ?
+            """,
+            UserJdbcMapper.StudentColumns.ACADEMIC_GROUP.columnName(),
+            UserJdbcMapper.StudentColumns.ACADEMIC_QUARTER.columnName(),
+            UserJdbcMapper.StudentColumns.CREATED_BY.columnName());
+
     private JdbcAnyUserRepository anyUserRepository;
 
     @Inject
@@ -174,6 +215,48 @@ public class JdbcStudentRepository extends TransactionalJdbcCrudRepository<Stude
                 SELECT_BY_CREATOR,
                 ps -> ps.setString(1, id.value()),
                 rs -> rs.next() ? UserJdbcMapper.rowToStudents(rs) : Collections.emptyList(),
+                LOGGER,
+                connection
+        );
+    }
+
+    @Override
+    public Set<Student> findAssignedToTask(Task.Id id) {
+        return wrapWithConnection(
+                connectionManager,
+                LOGGER,
+                this::findAssignedToTask,
+                id
+        );
+    }
+
+    @Override
+    public Set<Student> findAssignedToTask(Task.Id id, Connection connection) {
+        return executeQuery(
+                SELECT_ALL_BY_TASK,
+                ps -> ps.setBytes(1, UUIDMapper.UUIDtoByteArray(id.value())),
+                rs -> rs.next() ? new HashSet<>(UserJdbcMapper.rowToStudents(rs)) : new HashSet<>(),
+                LOGGER,
+                connection
+        );
+    }
+
+    @Override
+    public Set<Student> findCollaboratingOnBoard(Board.Id id) {
+        return wrapWithConnection(
+                connectionManager,
+                LOGGER,
+                this::findCollaboratingOnBoard,
+                id
+        );
+    }
+
+    @Override
+    public Set<Student> findCollaboratingOnBoard(Board.Id id, Connection connection) {
+        return executeQuery(
+                SELECT_ALL_BY_BOARD,
+                ps -> ps.setString(1, id.userId().value()),
+                rs -> rs.next() ? new HashSet<>(UserJdbcMapper.rowToStudents(rs)) : new HashSet<>(),
                 LOGGER,
                 connection
         );

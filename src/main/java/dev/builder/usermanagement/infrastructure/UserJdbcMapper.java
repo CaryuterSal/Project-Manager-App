@@ -1,17 +1,23 @@
 package dev.builder.usermanagement.infrastructure;
 
 import dev.builder.core.domain.AuditInfo;
+import dev.builder.core.infrastructure.persistence.RepositoryException;
+import dev.builder.core.infrastructure.persistence.SQLFunction;
 import dev.builder.usermanagement.domain.model.*;
 import org.jetbrains.annotations.NotNull;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
+import java.time.ZoneId;
 import java.util.*;
+
+import static dev.builder.core.infrastructure.persistence.CommonMappers.groupResultSetByKey;
 
 public class UserJdbcMapper {
 
-    private enum UserColumns {
+    public enum UserColumns {
         EMAIL("email"),
         PASSWORD("password"),
         VERIFIED("verified"),
@@ -137,7 +143,6 @@ public class UserJdbcMapper {
 
     public static List<Student> rowToStudents(ResultSet rs) throws SQLException {
         List<Student> students = new ArrayList<>();
-        Map<Manager.Id, Set<Student.Id>> studentsCreated = extractStudentsCreatedByManager(rs);
         do{
             CommonUserInfo baseInfo = CommonUserInfo.fromResultSet(rs);
             Student.Id id = new Student.Id(baseInfo.email());
@@ -190,8 +195,11 @@ public class UserJdbcMapper {
 
 
     public static @NotNull AuditInfo extractAuditInfo(@NotNull ResultSet rs) throws SQLException {
-        LocalDateTime createdAt = rs.getTimestamp(UserColumns.CREATED_AT.columnName).toLocalDateTime();
-        LocalDateTime updatedAt = rs.getTimestamp(UserColumns.UPDATED_AT.columnName).toLocalDateTime();
+        if(!rs.next()) throw new RepositoryException("There was an error extracting audit info for user");
+        OffsetDateTime cOdt = rs.getObject(UserColumns.CREATED_AT.columnName, OffsetDateTime.class);
+        LocalDateTime createdAt = cOdt.atZoneSameInstant(ZoneId.systemDefault()).toLocalDateTime();
+        OffsetDateTime uOdt = rs.getObject(UserColumns.UPDATED_AT.columnName, OffsetDateTime.class);
+        LocalDateTime updatedAt = uOdt.atZoneSameInstant(ZoneId.systemDefault()).toLocalDateTime();
         return new AuditInfo(createdAt,updatedAt);
     }
 
@@ -205,7 +213,7 @@ public class UserJdbcMapper {
 
 
     private static @NotNull Map<Admin.Id, Set<Manager.Id>> extractManagersCreatedByAdmin(@NotNull ResultSet rs) throws SQLException {
-        return extractCreatedBy(
+        return groupResultSetByKey(
                 rs,
                 r -> new Admin.Id(extractEmail(r)),
                 r -> new Manager.Id(r.getString(ManagerColumns.AS_CREATED.columnName))
@@ -213,7 +221,7 @@ public class UserJdbcMapper {
     }
 
     private static @NotNull Map<Manager.Id, Set<Student.Id>> extractStudentsCreatedByManager(@NotNull ResultSet rs) throws SQLException {
-        return extractCreatedBy(
+        return groupResultSetByKey(
                 rs,
                 r -> new Manager.Id(extractEmail(r)),
                 r -> new Student.Id(r.getString(StudentColumns.AS_CREATED.columnName))
@@ -221,33 +229,11 @@ public class UserJdbcMapper {
     }
 
 
-    private static <K, V> @NotNull Map<K, Set<V>> extractCreatedBy(
-            @NotNull ResultSet rs,
-            @NotNull ThrowingFunction<ResultSet, K> keyExtractor,
-            @NotNull ThrowingFunction<ResultSet, V> valueExtractor
-    ) throws SQLException {
-        Map<K, Set<V>> result = new HashMap<>();
-        do {
-            K creator = keyExtractor.apply(rs);
-            V created = valueExtractor.apply(rs);
-            if(created != null){
-                result.computeIfAbsent(creator, k -> new HashSet<>()).add(created);
-            }
-        } while (rs.next());
-        rs.first();
-        return result;
-    }
+
 
 
 
     private static String extractEmail(@NotNull ResultSet rs) throws SQLException {
         return rs.getString(UserColumns.EMAIL.columnName);
     }
-
-    @FunctionalInterface
-    private interface ThrowingFunction<T, R> {
-        R apply(T t) throws SQLException;
-    }
-
-
 }

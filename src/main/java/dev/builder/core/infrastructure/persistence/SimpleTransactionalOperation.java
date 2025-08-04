@@ -1,6 +1,8 @@
 package dev.builder.core.infrastructure.persistence;
 
+import java.io.FileNotFoundException;
 import java.sql.Connection;
+import java.sql.SQLException;
 
 
 /**
@@ -9,5 +11,5 @@ import java.sql.Connection;
  */
 @FunctionalInterface
 public interface SimpleTransactionalOperation<V> {
-    V execute(Connection connection);
+    V execute(Connection connection) throws SQLException;
 }

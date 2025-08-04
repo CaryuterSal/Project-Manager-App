@@ -9,6 +9,7 @@ import dev.builder.usermanagement.application.view.UserView;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.time.LocalDateTime;
 
@@ -40,9 +41,11 @@ public class FindAllAdminsQuery extends FindAllUsersQuery<AdminView, FindAllUser
     @Bean
     public static class FindAllAdminsQueryValidator extends FindAllUsersQueryAbstractValidator<FindAllAdminsQuery> {
 
+        private static final Logger log = LoggerFactory.getLogger(FindAllAdminsQueryValidator.class);
+
         @Inject
-        public FindAllAdminsQueryValidator(Logger logger, DateRangeValidator dateValidator) {
-            super(logger, dateValidator);
+        public FindAllAdminsQueryValidator(DateRangeValidator dateValidator) {
+            super(log, dateValidator);
         }
 
         @Override

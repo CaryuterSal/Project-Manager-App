@@ -27,6 +27,15 @@ public class CommonJdbcOperationWrappers {
     }
 
 
+    public static <T,Y, V> V wrapWithConnection(ConnectionManager connectionManager, Logger logger,@NotNull TransactionalBiOperation<T,Y, V> operation, T inOne, Y inTwo){
+        try(Connection conn = connectionManager.getConnection()){
+            return operation.execute(inOne, inTwo, conn);
+        } catch (SQLException e) {
+            logger.error(e.getMessage(), e);
+            throw new RepositoryException(e.getMessage(), e);
+        }
+    }
+
     public static <IN, V> V wrapWithConnection(ConnectionManager connectionManager, Logger logger,@NotNull TransactionalOperation<IN, V> operation, IN inParam){
         try(Connection conn = connectionManager.getConnection()){
             return operation.execute(inParam, conn);
@@ -80,6 +89,27 @@ public class CommonJdbcOperationWrappers {
         } catch (SQLException ex) {
            rollBackIfNeeded(connection, logger);
            throw new RepositoryException(ex.getMessage(), ex);
+        } catch (RepositoryException ex){
+            rollBackIfNeeded(connection, logger);
+            throw ex;
+        } finally {
+            closeConnectionIfNeeded(connection, logger);
+        }
+    }
+
+    public static <T,Y,V> V runInTransaction(ConnectionManager connectionManager, Logger logger, TransactionalBiOperation<T,Y,V> operation, T inParam, Y inTwo) {
+        Connection connection = null;
+        try {
+            connection = connectionManager.getConnection();
+            connection.setAutoCommit(false);
+
+            V result = operation.execute(inParam, inTwo, connection);
+            connection.commit();
+            return result;
+
+        } catch (SQLException ex) {
+            rollBackIfNeeded(connection, logger);
+            throw new RepositoryException(ex.getMessage(), ex);
         } catch (RepositoryException ex){
             rollBackIfNeeded(connection, logger);
             throw ex;

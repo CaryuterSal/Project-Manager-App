@@ -6,6 +6,7 @@ import dev.builder.usermanagement.application.validator.EmailValidator;
 import dev.builder.usermanagement.application.view.StudentView;
 import dev.builder.usermanagement.application.view.UserView;
 import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class FindStudentQuery extends FindUserQuery<StudentView> {
 
@@ -20,9 +21,11 @@ public class FindStudentQuery extends FindUserQuery<StudentView> {
     @Bean
     public static class FindStudentQueryValidator extends FindUserQueryAbstractValidator<FindStudentQuery>{
 
+        private static final Logger log = LoggerFactory.getLogger(FindStudentQueryValidator.class);
+
         @Inject
-        public FindStudentQueryValidator(Logger logger, EmailValidator emailValidator) {
-            super(logger, emailValidator);
+        public FindStudentQueryValidator( EmailValidator emailValidator) {
+            super(log, emailValidator);
         }
 
         @Override

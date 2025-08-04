@@ -11,19 +11,19 @@ import java.util.regex.Pattern;
  *
  * El título solo puede contener caracteres alfanuméricos, expacio o símbolos
  */
-public record TaskTitle(String value) implements ValueObject<TaskTitle> {
+public record Title(String value) implements ValueObject<Title> {
 
     // Patrón regex para permitir solo letra,  números, espacios o símbolos
     private static final Pattern pattern = Pattern.compile("^[a-zA-Z0-9 -_]+$");
 
     /**
-     * Crea una nueva instancia de TaskTitle validando su formato.
+     * Crea una nueva instancia de Title validando su formato.
      *
      * @param value El título de la tarea.
      * @throws NullPointerException Si el título es null.
      * @throws IllegalArgumentException Si el título contiene caracteres no permitidos.
      */
-    public TaskTitle {
+    public Title {
         validate(value);
     }
 
@@ -54,7 +54,7 @@ public record TaskTitle(String value) implements ValueObject<TaskTitle> {
     }
 
     @Override
-    public int compareTo(@NotNull TaskTitle taskTitle) {
-        return taskTitle.value.compareTo(value);
+    public int compareTo(@NotNull Title title) {
+        return title.value.compareTo(value);
     }
 }

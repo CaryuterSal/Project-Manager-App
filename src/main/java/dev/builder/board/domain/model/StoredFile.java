@@ -2,7 +2,6 @@ package dev.builder.board.domain.model;
 
 import dev.builder.core.domain.AggregateRoot;
 import dev.builder.core.domain.ValueObject;
-import dev.builder.core.infrastructure.persistence.UUIDGenerator;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Arrays;
@@ -18,28 +17,18 @@ import java.util.regex.Pattern;
  * Este tipo base incluye un nombre de archivo validado y un tipo MIME,
  * y puede ser extendido para tipos específicos de archivos.
  */
-public abstract class StoredFile extends AggregateRoot<StoredFile.Id> {
+public abstract class StoredFile<ID extends StoredFile.Id<?>> extends AggregateRoot<ID> {
 
+    protected final Task.Id attachedTo;
     /**
      * Nombre del archivo, encapsulado en un objeto de valor {@link Filename}.
      */
-    protected Filename filename;
+    protected final Filename filename;
 
     /**
      * Tipo MIME que describe el formato del archivo.
      */
-    protected MimeType mimeType;
-
-    /**
-     * Crea un StoredFile con un ID generado automáticamente, nombre y tipo MIME.
-     *
-     * @param filename Nombre del archivo
-     * @param mimeType Tipo MIME del archivo
-     * @throws NullPointerException si alguno de los parámetros son nulos
-     */
-    protected StoredFile(Filename filename, MimeType mimeType) {
-        this(new Id(UUIDGenerator.generateUUID()), filename, mimeType);
-    }
+    protected final MimeType mimeType;
 
     /**
      * Crea un StoredFile con ID, nombre y tipo MIME especificados.
@@ -49,21 +38,11 @@ public abstract class StoredFile extends AggregateRoot<StoredFile.Id> {
      * @param mimeType Tipo MIME del archivo
      * @throws NullPointerException si alguno de los parámetros son nulos
      */
-    protected StoredFile(StoredFile.Id id, Filename filename, MimeType mimeType) {
+    public StoredFile(ID id, Task.Id attachedTo, Filename filename, MimeType mimeType) {
         super(id);
+        this.attachedTo = Objects.requireNonNull(attachedTo);
         this.filename = Objects.requireNonNull(filename, "filename must not be null");
         this.mimeType = Objects.requireNonNull(mimeType, "mimeType must not be null");
-    }
-
-    /**
-     * Renombra el archivo con un nuevo nombre válido.
-     *
-     * @param filename Nuevo nombre para el archivo
-     * @param <T> Tipo concreto que extiende {@link Filename}.
-     * @throws NullPointerException si el nombre del archivo es nulo
-     */
-    public <T extends Filename> void rename(T filename){
-        this.filename = Objects.requireNonNull(filename, "filename must not be null");
     }
 
     /**
@@ -82,6 +61,10 @@ public abstract class StoredFile extends AggregateRoot<StoredFile.Id> {
      */
     public MimeType mimeType() {
         return mimeType;
+    }
+
+    public Task.Id attachedTo() {
+        return attachedTo;
     }
 
     /**
@@ -148,16 +131,21 @@ public abstract class StoredFile extends AggregateRoot<StoredFile.Id> {
     /**
      * Identificador único de un StoredFile, basado en UUID.
      */
-    public record Id(UUID uuid) implements ValueObject<Id>{
+    public static class Id<ID extends Id<ID>> implements ValueObject<ID>{
 
+        private final UUID uuid;
         /**
          * Crea un nuevo Id validando el UUID.
          *
          * @param uuid UUID del identificador.
          * @throws IllegalArgumentException Si el UUID no es válido.
          */
-        public Id {
-            validate(uuid);
+        public Id(UUID uuid) {
+            this.uuid = validate(uuid);
+        }
+
+        public UUID uuid() {
+            return uuid;
         }
 
         /**
@@ -185,7 +173,7 @@ public abstract class StoredFile extends AggregateRoot<StoredFile.Id> {
         }
 
         @Override
-        public int compareTo(@NotNull StoredFile.Id id) {
+        public int compareTo(@NotNull ID id) {
             return uuid.compareTo(id.uuid());
         }
     }
@@ -217,10 +205,10 @@ public abstract class StoredFile extends AggregateRoot<StoredFile.Id> {
         GZ("application/gzip"),
         SEVENZ("application/x-7z-compressed");
 
-        private final String type;
+        private final String text;
 
         MimeType(String type) {
-            this.type = type;
+            this.text = type;
         }
 
         /**
@@ -228,8 +216,8 @@ public abstract class StoredFile extends AggregateRoot<StoredFile.Id> {
          *
          * @return El tipo MIME en formato texto.
          */
-        public String getType() {
-            return type;
+        public String asText() {
+            return text;
         }
 
         /**
@@ -239,12 +227,14 @@ public abstract class StoredFile extends AggregateRoot<StoredFile.Id> {
          * @return El enum correspondiente.
          * @throws IllegalArgumentException Si no se encuentra un tipo válido.
          */
-        public static MimeType fromType(String raw) {
+        public static MimeType fromValue(String raw) {
             return Arrays.stream(values())
-                    .filter(m -> m.type.equalsIgnoreCase(raw))
+                    .filter(m -> m.text.equalsIgnoreCase(raw))
                     .findFirst()
-                    .orElseThrow(() -> new IllegalArgumentException("Invalid mime type: " + raw));
+                    .orElseThrow(() -> new IllegalArgumentException("No se soporta este formato de archivo"));
         }
+
+
     }
 }
 

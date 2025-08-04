@@ -1,16 +1,32 @@
 package dev.builder.board.application.command;
 
+import dev.builder.board.application.view.BoardView;
 import dev.builder.board.application.view.TaskView;
 import dev.builder.board.domain.model.Stage;
 import dev.builder.core.application.Command;
+import dev.builder.core.application.validation.BaseRequestValidator;
+import dev.builder.core.application.validation.RequiredObjectValidator;
+import dev.builder.core.application.validation.ValidationException;
+import dev.builder.core.infrastructure.di.annotation.Bean;
+import dev.builder.core.infrastructure.di.annotation.Inject;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
 
-public final class MoveTaskCommand implements Command<Void> {
+public final class MoveTaskCommand implements Command<BoardView> {
+
+    public enum Fields{
+        TASK_ID("taskId"), STAGE("stage");
+        private final String value;
+        Fields(String value) {this.value = value;}
+        public String value() {return value;}
+    }
+
     private final UUID taskId;
     private final Stage.StageState stage;
     private final Boolean placeAtStart;
@@ -142,5 +158,24 @@ public final class MoveTaskCommand implements Command<Void> {
         BuilderBuildStage placeBefore(UUID nextTask);
         BuilderBuildStage placeAfter(UUID previousTask);
         MoveTaskCommand build();
+    }
+
+    @Bean
+    public static class MoveTaskCommandValidator extends BaseRequestValidator<MoveTaskCommand>{
+        private static final Logger log = LoggerFactory.getLogger(MoveTaskCommandValidator.class);
+        private final RequiredObjectValidator requiredObjectValidator;
+
+        @Inject
+        public MoveTaskCommandValidator(RequiredObjectValidator requiredObjectValidator) {
+            super(log);
+            this.requiredObjectValidator = requiredObjectValidator;
+        }
+
+        @Override
+        public void validate(MoveTaskCommand value) throws ValidationException {
+            validate(() -> requiredObjectValidator.validate(Fields.TASK_ID.value, value.taskId));
+            validate(() -> requiredObjectValidator.validate(Fields.STAGE.value, value.stage));
+            throwIfAny();
+        }
     }
 }

@@ -9,6 +9,7 @@ import dev.builder.usermanagement.application.validator.EmailValidator;
 import dev.builder.usermanagement.application.view.UserView;
 import dev.builder.usermanagement.domain.model.User;
 import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.Optional;
 
@@ -55,9 +56,11 @@ public class FindUserQuery<T extends UserView> implements Query<Optional<T>> {
     @Bean
     public static class FindUserQueryValidator extends FindUserQueryAbstractValidator<FindUserQuery<UserView>>{
 
+        private static final Logger log = LoggerFactory.getLogger(FindUserQueryValidator.class);
+
         @Inject
-        public FindUserQueryValidator(Logger logger, EmailValidator emailValidator) {
-            super(logger, emailValidator);
+        public FindUserQueryValidator(EmailValidator emailValidator) {
+            super(log, emailValidator);
         }
 
         @Override

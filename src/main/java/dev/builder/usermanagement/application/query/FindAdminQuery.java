@@ -6,6 +6,7 @@ import dev.builder.usermanagement.application.validator.EmailValidator;
 import dev.builder.usermanagement.application.view.AdminView;
 import dev.builder.usermanagement.application.view.UserView;
 import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class FindAdminQuery extends FindUserQuery<AdminView> {
 
@@ -20,9 +21,11 @@ public class FindAdminQuery extends FindUserQuery<AdminView> {
     @Bean
     public static class FindAdminQueryValidator extends FindUserQueryAbstractValidator<FindAdminQuery>{
 
+        private static final Logger log = LoggerFactory.getLogger(FindAdminQueryValidator.class);
+
         @Inject
-        public FindAdminQueryValidator(Logger logger, EmailValidator emailValidator) {
-            super(logger, emailValidator);
+        public FindAdminQueryValidator(EmailValidator emailValidator) {
+            super(log, emailValidator);
         }
 
         @Override

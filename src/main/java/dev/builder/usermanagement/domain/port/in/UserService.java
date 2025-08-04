@@ -2,10 +2,7 @@ package dev.builder.usermanagement.domain.port.in;
 
 import dev.builder.usermanagement.application.command.*;
 import dev.builder.usermanagement.application.query.*;
-import dev.builder.usermanagement.application.view.AdminView;
-import dev.builder.usermanagement.application.view.ManagerView;
-import dev.builder.usermanagement.application.view.StudentView;
-import dev.builder.usermanagement.application.view.UserView;
+import dev.builder.usermanagement.application.view.*;
 
 import java.util.List;
 import java.util.Optional;
@@ -24,5 +21,6 @@ public interface UserService {
     List<AdminView> getAllAdmins(FindAllAdminsQuery query);
     List<ManagerView> getAllManagers(FindAllManagersQuery query);
     List<StudentView> getAllStudents(FindAllStudentsQuery query);
+
 
 }

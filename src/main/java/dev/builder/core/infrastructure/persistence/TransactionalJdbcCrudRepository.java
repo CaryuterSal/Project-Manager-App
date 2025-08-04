@@ -4,6 +4,7 @@ package dev.builder.core.infrastructure.persistence;
 import static dev.builder.core.infrastructure.persistence.CommonJdbcOperationWrappers.*;
 
 import dev.builder.core.domain.AggregateRoot;
+import dev.builder.core.domain.Entity;
 import dev.builder.core.domain.port.TransactionalCrudRepository;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
@@ -15,7 +16,7 @@ import java.sql.SQLException;
 import java.util.List;
 import java.util.Optional;
 
-public abstract class TransactionalJdbcCrudRepository<T extends AggregateRoot<ID>, ID> implements TransactionalCrudRepository<T, ID> {
+public abstract class TransactionalJdbcCrudRepository<T extends Entity<ID>, ID> implements TransactionalCrudRepository<T, ID> {
 
     protected abstract Logger getLogger();
 

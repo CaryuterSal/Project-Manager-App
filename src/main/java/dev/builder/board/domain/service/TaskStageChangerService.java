@@ -1,18 +1,19 @@
-package dev.builder.board.domain;
+package dev.builder.board.domain.service;
 
 import dev.builder.board.domain.model.Stage;
 import dev.builder.board.domain.model.Task;
 import dev.builder.core.domain.DomainService;
+import dev.builder.core.infrastructure.di.annotation.Bean;
+import dev.builder.core.infrastructure.di.annotation.Inject;
+import dev.builder.core.infrastructure.properties.MessageLocalizer;
 
 public class TaskStageChangerService implements DomainService {
 
-    public static boolean changeTaskToStage(Stage sourceStage, Stage targetStage, Task sourceTask, Task previousTask, Task nextTask) {
-        if(!sourceStage.boardId().equals(targetStage.boardId())) {
-            throw new IllegalArgumentException("target board id not match");
-        }
+    public static boolean moveTask(Stage sourceStage, Stage targetStage, Task sourceTask, Task previousTask, Task nextTask) {
         if(!sourceStage.containsTask(sourceTask)){
-            throw new IllegalArgumentException("sourceTask is not part of source stage");
+            throw new IllegalArgumentException("La tarea a mover no pertenece a dicha etapa");
         }
+
         if(sourceStage.state().equals(Stage.StageState.DONE)) {
             return  false;
         } else if(sourceStage.equals(targetStage)){
@@ -23,4 +24,5 @@ public class TaskStageChangerService implements DomainService {
             return true;
         }
     }
+
 }

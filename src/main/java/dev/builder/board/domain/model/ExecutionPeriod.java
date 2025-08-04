@@ -18,8 +18,10 @@ import java.util.Optional;
  *
  * Puede representar períodos abiertos, donde la fecha de fin es null. Esto también puede interpretarse como un periodo que aún no ha tenido fin
  */
-public record ExecutionPeriod(LocalDateTime startTime, LocalDateTime endTime) implements ValueObject<ExecutionPeriod> {
+public class ExecutionPeriod implements ValueObject<ExecutionPeriod> {
 
+    private final LocalDateTime startTime;
+    private final LocalDateTime endTime;
     /**
      * Constructor auxiliar para crear un período con solo fecha de inicio.
      * El período queda abierto (sin fecha de fin).
@@ -33,12 +35,14 @@ public record ExecutionPeriod(LocalDateTime startTime, LocalDateTime endTime) im
     /**
      * Constructor principal que valida el período y asegura la inmutabilidad.
      *
-     * @param startTime Fecha y hora de inicio (no puede ser null).
-     * @param endTime Fecha y hora de fin (puede ser null para período abierto).
+     * @param start Fecha y hora de inicio (no puede ser null).
+     * @param end Fecha y hora de fin (puede ser null para período abierto).
      * @throws IllegalArgumentException si el período no es válido.
      */
-    public ExecutionPeriod {
-        validate(startTime, endTime);
+    public ExecutionPeriod(LocalDateTime start, LocalDateTime end) {
+        validate(start, end);
+        this.startTime = start;
+        this.endTime = end;
     }
 
     /**
