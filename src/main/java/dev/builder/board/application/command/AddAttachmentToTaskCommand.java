@@ -25,7 +25,7 @@ public record AddAttachmentToTaskCommand(UUID taskId, String filename, InputStre
         private final String value;
         Fields(String value) {this.value = value;}
         public String value() {return value;}
-    }feat: add board application service
+    }
 
     @Bean
     public static class AddAttachmentToTaskCommandValidator extends BaseRequestValidator<AddAttachmentToTaskCommand> {
