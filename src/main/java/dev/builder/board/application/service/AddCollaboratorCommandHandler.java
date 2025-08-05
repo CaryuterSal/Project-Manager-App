@@ -12,10 +12,10 @@ import dev.builder.core.infrastructure.di.annotation.Bean;
 @Bean
 public class AddCollaboratorCommandHandler implements RequestHandler<AddCollaboratorCommand, Void> {
 
-    private final RequestValidator<AddCollaboratorCommand> validator;
+    private final AddCollaboratorCommand.AddCollaboratorCommandValidator validator;
     private final BoardService boardService;
 
-    public AddCollaboratorCommandHandler(BoardService boardService, RequestValidator<AddCollaboratorCommand> requestValidator) {
+    public AddCollaboratorCommandHandler(BoardService boardService, AddCollaboratorCommand.AddCollaboratorCommandValidator requestValidator) {
         this.validator = requestValidator;
         this.boardService = boardService;
     }

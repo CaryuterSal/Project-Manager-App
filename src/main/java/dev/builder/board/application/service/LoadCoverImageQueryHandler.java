@@ -13,10 +13,10 @@ import java.util.Optional;
 
 @Bean
 public class LoadCoverImageQueryHandler implements RequestHandler<LoadCoverImageQuery, Optional<InputStream>> {
-    private final RequestValidator<LoadCoverImageQuery> validator;
+    private final LoadCoverImageQuery.LoadCoverImageQueryValidator validator;
     private final FileService fileService;
 
-    public LoadCoverImageQueryHandler(FileService fileService, RequestValidator<LoadCoverImageQuery> requestValidator) {
+    public LoadCoverImageQueryHandler(FileService fileService, LoadCoverImageQuery.LoadCoverImageQueryValidator requestValidator) {
         this.validator = requestValidator;
         this.fileService = fileService;
     }

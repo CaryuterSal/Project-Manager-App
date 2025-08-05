@@ -14,10 +14,10 @@ import java.util.Optional;
 
 @Bean
 public class GetTaskQueryHandler implements RequestHandler<GetTaskQuery, Optional<TaskView>> {
-    private final RequestValidator<GetTaskQuery> validator;
+    private final GetTaskQuery.GetTaskQueryValidator validator;
     private final TaskService taskService;
 
-    public GetTaskQueryHandler(TaskService taskService, RequestValidator<GetTaskQuery> requestValidator) {
+    public GetTaskQueryHandler(TaskService taskService, GetTaskQuery.GetTaskQueryValidator requestValidator) {
         this.validator = requestValidator;
         this.taskService = taskService;
     }

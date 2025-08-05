@@ -7,6 +7,7 @@ import dev.builder.board.domain.port.out.ImageRepository;
 import dev.builder.core.infrastructure.di.annotation.Bean;
 import dev.builder.core.infrastructure.di.annotation.Inject;
 import dev.builder.core.infrastructure.persistence.*;
+import dev.builder.core.infrastructure.properties.MessageLocalizer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -35,14 +36,14 @@ public class JdbcImageRepository extends TransactionalJdbcCrudRepository<Image, 
             FROM task_cover tc
             JOIN "FILE" f ON f.id = tc.fle_id
             WHERE tc.fle_id = ?
-            AND f.active = 1;
+            AND f.active = 1
             """;
     private static final String EXISTS_DELETED = """
             SELECT COUNT(*) AS total
             FROM task_cover tc
             JOIN "FILE" f ON f.id = tc.fle_id
             WHERE tc.fle_id = ?
-            AND f.active = 0;
+            AND f.active = 0
             """;
     private static final String SELECT = String.format("""
             SELECT
@@ -53,7 +54,7 @@ public class JdbcImageRepository extends TransactionalJdbcCrudRepository<Image, 
             FROM task_cover tc
             JOIN "FILE" f ON f.id = tc.fle_id
             WHERE tc.fle_id = ?
-            AND f.active = 1;
+            AND f.active = 1
             """, FileJdbcMapper.FileColumns.ID.columnName(),
                 FileJdbcMapper.FileColumns.NAME.columnName(),
                 FileJdbcMapper.FileColumns.MIME_TYPE.columnName(),
@@ -66,7 +67,7 @@ public class JdbcImageRepository extends TransactionalJdbcCrudRepository<Image, 
                 tc.tsk_id AS %s
             FROM task_cover tc
             JOIN "FILE" f ON f.id = tc.fle_id
-            WHERE f.active = 1;
+            WHERE f.active = 1
             """, FileJdbcMapper.FileColumns.ID.columnName(),
             FileJdbcMapper.FileColumns.NAME.columnName(),
             FileJdbcMapper.FileColumns.MIME_TYPE.columnName(),
@@ -95,6 +96,7 @@ public class JdbcImageRepository extends TransactionalJdbcCrudRepository<Image, 
     }
 
     private JdbcStoredFileRepository storedFileRepository;
+    private final MessageLocalizer messageLocalizer;
 
     @Inject
     public void setStoredFileRepository(JdbcStoredFileRepository storedFileRepository) {
@@ -102,8 +104,9 @@ public class JdbcImageRepository extends TransactionalJdbcCrudRepository<Image, 
     }
 
     @Inject
-    public JdbcImageRepository(ConnectionManager connectionManager) {
+    public JdbcImageRepository(ConnectionManager connectionManager, MessageLocalizer messageLocalizer) {
         super(connectionManager);
+        this.messageLocalizer = messageLocalizer;
     }
 
     @Override
@@ -162,7 +165,7 @@ public class JdbcImageRepository extends TransactionalJdbcCrudRepository<Image, 
                 rs -> {
                     List<Image> images = new ArrayList<>();
                     while(rs.next()){
-                        images.add(FileJdbcMapper.rowToImage(rs));
+                        images.add(FileJdbcMapper.rowToImage(messageLocalizer, rs));
                     }
                     return images;
                 },
@@ -176,7 +179,7 @@ public class JdbcImageRepository extends TransactionalJdbcCrudRepository<Image, 
         return executeQuery(
                 SELECT,
                 ps -> ps.setBytes(1, UUIDMapper.UUIDtoByteArray(id.uuid())),
-                rs -> rs.next() ? Optional.of(FileJdbcMapper.rowToImage(rs)) : Optional.empty(),
+                rs -> rs.next() ? Optional.of(FileJdbcMapper.rowToImage(messageLocalizer, rs)) : Optional.empty(),
                 log,
                 connection
         );
@@ -197,7 +200,7 @@ public class JdbcImageRepository extends TransactionalJdbcCrudRepository<Image, 
         return executeQuery(
                 SELECT_BY_TASK,
                 ps -> ps.setBytes(1, UUIDMapper.UUIDtoByteArray(taskId.value())),
-                rs -> rs.next() ? Optional.of(FileJdbcMapper.rowToImage(rs)) : Optional.empty(),
+                rs -> rs.next() ? Optional.of(FileJdbcMapper.rowToImage(messageLocalizer, rs)) : Optional.empty(),
                 log,
                 connection
         );

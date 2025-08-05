@@ -7,6 +7,7 @@ import dev.builder.board.domain.model.Task;
 import dev.builder.core.infrastructure.di.annotation.Bean;
 import dev.builder.core.infrastructure.persistence.UUIDGenerator;
 import dev.builder.core.infrastructure.persistence.UUIDMapper;
+import dev.builder.core.infrastructure.properties.MessageLocalizer;
 import org.jetbrains.annotations.NotNull;
 
 import java.sql.ResultSet;
@@ -36,17 +37,17 @@ public class FileJdbcMapper {
 
     private record BaseFileInfo(UUID id, Task.Id attachedTo, String name, StoredFile.MimeType mimetype){
 
-        private static @NotNull BaseFileInfo fromResultSet(@NotNull ResultSet rs) throws SQLException {
+        private static @NotNull BaseFileInfo fromResultSet(MessageLocalizer messageLocalizer,  @NotNull ResultSet rs) throws SQLException {
             UUID id = UUIDMapper.byteArrayToUUID(rs.getBytes(FileColumns.ID.columnName));
             Task.Id attachedTo = new Task.Id(UUIDMapper.byteArrayToUUID(rs.getBytes(FileColumns.ATTACHED_TO.columnName)));
             String name = rs.getString(FileColumns.NAME.columnName);
-            StoredFile.MimeType mimeType = StoredFile.MimeType.fromValue(rs.getString(FileColumns.MIME_TYPE.columnName));
+            StoredFile.MimeType mimeType = StoredFile.MimeType.fromValue(messageLocalizer, rs.getString(FileColumns.MIME_TYPE.columnName));
             return new  BaseFileInfo(id, attachedTo, name, mimeType);
         }
     }
 
-    public static @NotNull Image rowToImage(ResultSet rs) throws SQLException {
-        BaseFileInfo baseFileInfo = BaseFileInfo.fromResultSet(rs);
+    public static @NotNull Image rowToImage(MessageLocalizer messageLocalizer, ResultSet rs) throws SQLException {
+        BaseFileInfo baseFileInfo = BaseFileInfo.fromResultSet(messageLocalizer, rs);
         return new Image(
                 new Image.Id(baseFileInfo.id()),
                 baseFileInfo.attachedTo,
@@ -55,8 +56,8 @@ public class FileJdbcMapper {
         );
     }
 
-    public static @NotNull Attachment rowToAttachment(ResultSet rs) throws SQLException {
-        BaseFileInfo baseFileInfo = BaseFileInfo.fromResultSet(rs);
+    public static @NotNull Attachment rowToAttachment(MessageLocalizer messageLocalizer, ResultSet rs) throws SQLException {
+        BaseFileInfo baseFileInfo = BaseFileInfo.fromResultSet(messageLocalizer, rs);
         return new Attachment(
                 new Attachment.Id(baseFileInfo.id()),
                 baseFileInfo.attachedTo,

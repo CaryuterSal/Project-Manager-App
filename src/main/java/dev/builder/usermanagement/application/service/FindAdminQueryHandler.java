@@ -11,9 +11,9 @@ import java.util.Optional;
 
 public class FindAdminQueryHandler implements RequestHandler<FindAdminQuery, Optional<AdminView>> {
     private final UserService userService;
-    private final RequestValidator<FindAdminQuery> validator;
+    private final FindAdminQuery.FindAdminQueryValidator validator;
 
-    public FindAdminQueryHandler(UserService userService, RequestValidator<FindAdminQuery> validator) {
+    public FindAdminQueryHandler(UserService userService, FindAdminQuery.FindAdminQueryValidator validator) {
         this.userService = userService;
         this.validator = validator;
     }

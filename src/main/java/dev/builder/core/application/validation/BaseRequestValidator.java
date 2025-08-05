@@ -30,7 +30,10 @@ public abstract class BaseRequestValidator<T extends Request<?>> implements Requ
     }
 
     public void throwIfAny() throws ValidationException {
-        if (!violations.isEmpty()) throw new ValidationException(violations);
+        if (!violations.isEmpty()) {
+            violations.clear();
+            throw new ValidationException(violations);
+        }
     }
 
     @FunctionalInterface

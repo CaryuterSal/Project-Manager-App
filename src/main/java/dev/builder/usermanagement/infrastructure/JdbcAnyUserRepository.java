@@ -46,7 +46,7 @@ public class JdbcAnyUserRepository implements AnyUserRepository {
             SET password = ?,
             verified = ?
             WHERE email = ?
-            AND active = true
+            AND active = 1
             """;
     private static final String SELECT_ALL_WITH_TYPE= """
             SELECT
@@ -77,7 +77,7 @@ public class JdbcAnyUserRepository implements AnyUserRepository {
             """;
     private static final String SELECT_AUDIT_INFO = String.format("""
             SELECT
-                created_at as %s
+                created_at as %s,
                 updated_at as %s
             FROM app_user
             WHERE email = ?
@@ -283,6 +283,7 @@ public class JdbcAnyUserRepository implements AnyUserRepository {
         }
 
         try(PreparedStatement ps = conn.prepareStatement(SELECT_AUDIT_INFO)){
+            ps.setString(1, user.email().value());
             try(ResultSet rs = ps.executeQuery()){
                 return UserJdbcMapper.extractAuditInfo(rs);
             }
@@ -292,12 +293,15 @@ public class JdbcAnyUserRepository implements AnyUserRepository {
     AuditInfo updateBaseUserInfo( @NotNull User<?> user, Connection conn) throws SQLException {
         try(PreparedStatement ps = conn.prepareStatement(UPDATE)) {
             ps.setString(1, user.password());
+            ps.setBoolean(2, user.isVerified());
+            ps.setString(3, user.email().value());
 
             boolean updated = ps.executeUpdate() > 0;
             if(!updated) throw new RepositoryException("Duplicate key on user insert");
         }
 
         try(PreparedStatement ps = conn.prepareStatement(SELECT_AUDIT_INFO)){
+            ps.setString(1, user.email().value());
             try(ResultSet rs = ps.executeQuery()){
                 return UserJdbcMapper.extractAuditInfo(rs);
             }

@@ -12,10 +12,10 @@ import dev.builder.core.infrastructure.di.annotation.Bean;
 
 @Bean
 public class MoveTaskCommandHandler implements RequestHandler<MoveTaskCommand, BoardView> {
-    private final RequestValidator<MoveTaskCommand> validator;
+    private final MoveTaskCommand.MoveTaskCommandValidator validator;
     private final BoardService boardService;
 
-    public MoveTaskCommandHandler(BoardService boardService, RequestValidator<MoveTaskCommand> requestValidator) {
+    public MoveTaskCommandHandler(BoardService boardService, MoveTaskCommand.MoveTaskCommandValidator requestValidator) {
         this.validator = requestValidator;
         this.boardService = boardService;
     }

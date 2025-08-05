@@ -102,7 +102,7 @@ public class TaskJdbcMapper {
     }
 
     public static Set<Attachment.Id> extractAttachments(@NotNull ResultSet resultSet, Task.Id task) throws SQLException {
-        return extractAttachmentsByTask(resultSet).getOrDefault(task, Collections.emptySet());
+        return extractAttachmentsByTask(resultSet).getOrDefault(task, new HashSet<>());
     }
 
     public static @NotNull Map<Task.Id, Set<Attachment.Id>> extractAttachmentsByTask(ResultSet rs) throws SQLException {
@@ -118,7 +118,7 @@ public class TaskJdbcMapper {
     }
 
     public static Set<Student.Id> extractAssignations(@NotNull ResultSet resultSet, Task.Id task) throws SQLException {
-        return extractAssignationsByTask(resultSet).getOrDefault(task, Collections.emptySet());
+        return extractAssignationsByTask(resultSet).getOrDefault(task, new HashSet<>());
     }
 
     public static @NotNull Map<Task.Id, Set<Student.Id>> extractAssignationsByTask(ResultSet rs) throws SQLException {

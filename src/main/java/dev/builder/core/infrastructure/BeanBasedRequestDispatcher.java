@@ -4,6 +4,7 @@ import dev.builder.core.application.RequestDispatcher;
 import dev.builder.core.application.RequestHandler;
 import dev.builder.core.infrastructure.di.annotation.Bean;
 import dev.builder.core.infrastructure.di.annotation.Inject;
+import dev.builder.core.infrastructure.di.annotation.PostConstruct;
 import dev.builder.core.infrastructure.di.runtime.BeanRetriever;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -19,9 +20,9 @@ public class BeanBasedRequestDispatcher extends RequestDispatcher {
     @Inject
     public BeanBasedRequestDispatcher(BeanRetriever container) {
         this.container = container;
-        indexHandlers();
     }
 
+    @PostConstruct
     private void indexHandlers() {
         for (RequestHandler<?,?> handler : container.getInstancesOfType(RequestHandler.class)) {
             Class<?> requestType = extractRequestType(handler);

@@ -11,10 +11,10 @@ import dev.builder.core.infrastructure.di.annotation.Bean;
 
 @Bean
 public class AttachCoverImageToTaskCommandHandler implements RequestHandler<AttachCoverImageToTaskCommand, FileView> {
-    private final RequestValidator<AttachCoverImageToTaskCommand> validator;
+    private final AttachCoverImageToTaskCommand.AttachCoverImageToTaskCommandValidator validator;
     private final TaskService taskService;
 
-    public AttachCoverImageToTaskCommandHandler(TaskService taskService, RequestValidator<AttachCoverImageToTaskCommand> requestValidator) {
+    public AttachCoverImageToTaskCommandHandler(TaskService taskService, AttachCoverImageToTaskCommand.AttachCoverImageToTaskCommandValidator requestValidator) {
         this.validator = requestValidator;
         this.taskService = taskService;
     }

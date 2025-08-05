@@ -107,15 +107,15 @@ public class FindAllStudentsQuery extends FindAllUsersQuery<StudentView, FindAll
 
 
     @Bean
-    public static class FindAllManagersQueryValidator extends FindAllUsersQueryAbstractValidator<FindAllStudentsQuery> {
+    public static class FindAllStudentsQueryValidator extends FindAllUsersQueryAbstractValidator<FindAllStudentsQuery> {
 
-        private static final Logger log = LoggerFactory.getLogger(FindAllManagersQueryValidator.class);
+        private static final Logger log = LoggerFactory.getLogger(FindAllStudentsQueryValidator.class);
         private final EmailValidator emailValidator;
         private final PositiveValidator positiveValidator;
         private final MessageLocalizer messageLocalizer;
 
         @Inject
-        public FindAllManagersQueryValidator(DateRangeValidator dateValidator, EmailValidator emailValidator, PositiveValidator positiveValidator, MessageLocalizer messageLocalizer) {
+        public FindAllStudentsQueryValidator(DateRangeValidator dateValidator, EmailValidator emailValidator, PositiveValidator positiveValidator, MessageLocalizer messageLocalizer) {
             super(log, dateValidator);
             this.emailValidator = emailValidator;
             this.positiveValidator = positiveValidator;

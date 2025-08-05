@@ -1,6 +1,7 @@
 package dev.builder.board.infrastructure;
 
 import dev.builder.board.domain.model.Task;
+import dev.builder.core.infrastructure.di.annotation.Bean;
 import dev.builder.core.infrastructure.persistence.RepositoryException;
 import dev.builder.core.infrastructure.persistence.UUIDMapper;
 import org.jetbrains.annotations.NotNull;
@@ -13,6 +14,7 @@ import java.sql.SQLException;
 
 import static dev.builder.core.infrastructure.persistence.CommonJdbcOperationWrappers.executeQuery;
 
+@Bean
 public class JdbcTaskStageRepository {
 
     private static final String INSERT = """

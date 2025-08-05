@@ -8,6 +8,7 @@ import dev.builder.core.infrastructure.di.definition.*;
 import dev.builder.core.infrastructure.di.exception.BeanNotFoundException;
 import dev.builder.core.infrastructure.di.exception.ConstructorNotFoundException;
 import dev.builder.core.infrastructure.di.exception.UncertainBeanRetrievalException;
+import org.apache.poi.ss.formula.functions.T;
 import org.jetbrains.annotations.NotNull;
 
 import java.lang.reflect.Constructor;
@@ -28,6 +29,7 @@ abstract class AbstractDependencyContainer implements DependencyContainer {
      * Mantiene las referencias a beans como clave valor, siendo la clave el tipo del bean
      */
     protected final ConcurrentMultiValuedHashMap<Class<?>, BeanDefinition<?>> registryByType = new ConcurrentMultiValuedHashMap<>();
+
 
     /**
      * @throws BeanNotFoundException si no se encuentra el bean
@@ -59,11 +61,14 @@ abstract class AbstractDependencyContainer implements DependencyContainer {
      */
     @SuppressWarnings("unchecked")
     protected <T> BeanDefinition<T> getBeanDefinition(Class<T> clazz){
+        BeanDefinition<T> dependencyContainerBeanDefinition =  getDependencyContainerBean(clazz);
+        if(dependencyContainerBeanDefinition != null) return dependencyContainerBeanDefinition;
         Set<? extends BeanDefinition<?>> relatedBeans = registryByType.get(clazz);
         if(relatedBeans.isEmpty()) throw new BeanNotFoundException(clazz);
         if(relatedBeans.size() != 1) throw new UncertainBeanRetrievalException(clazz);
         return (BeanDefinition<T>) relatedBeans.iterator().next();
     }
+    protected abstract <T> BeanDefinition<T> getDependencyContainerBean(Class<T> clazz);
 
 
     /**
@@ -239,7 +244,7 @@ abstract class AbstractDependencyContainer implements DependencyContainer {
      * @param clazz la clase del bean
      * @return el nombre generado del bean
      */
-    private @NotNull String generateBeanName(@NotNull Class<?> clazz) {
+    protected @NotNull String generateBeanName(@NotNull Class<?> clazz) {
         String className = clazz.getSimpleName();
         char firstLetter = className.charAt(0);
         return Character.toLowerCase(firstLetter) + className.substring(1);

@@ -40,7 +40,7 @@ public class Board extends AggregateRoot<Board.Id> {
 
     @Contract("_,_,_ -> new")
     public static @NotNull Board createBoardForOwner(Board.Id boardId, Title title, Set<Stage.Id> stages){
-        return new Board(boardId, title, stages, Collections.emptySet());
+        return new Board(boardId, title, stages, new HashSet<>());
     }
 
     public void changeTitle(Title newTitle){

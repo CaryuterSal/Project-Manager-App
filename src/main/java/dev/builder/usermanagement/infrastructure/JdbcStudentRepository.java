@@ -28,7 +28,7 @@ public class JdbcStudentRepository extends TransactionalJdbcCrudRepository<Stude
 
     @Override
     protected Logger getLogger() {
-        return null;
+        return LOGGER;
     }
 
     private static final String SELECT_ALL = String.format("""
@@ -108,15 +108,15 @@ public class JdbcStudentRepository extends TransactionalJdbcCrudRepository<Stude
     private static final String EXISTS_BY_ID = """
             SELECT count(*) AS total
             FROM STUDENT s
-            JOIN APP_USER u ON u.email = s.email
-            WHERE u.ACTIVE = 1
+            JOIN APP_USER u ON u.email = s.email AND u.active = 1
+            WHERE s.email = ?
             """;
 
     private static final String EXISTS_DELETED_BY_ID = """
             SELECT count(*) AS total
             FROM STUDENT s
-            JOIN APP_USER u ON u.email = s.email
-            WHERE u.ACTIVE = 0
+            JOIN APP_USER u ON u.email = s.email AND u.active = 1
+            WHERE s.email = ?
             """;
 
     private static String SELECT_ALL_BY_TASK = String.format("""

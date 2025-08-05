@@ -22,7 +22,7 @@ public class JdbcQuarterGroupRepository {
     private static final String EXISTS = """
             SELECT count(*) AS total
             FROM ACADEMIC_GROUP
-            WHERE NAME = ?;
+            WHERE NAME = ?
             """;
 
     public boolean exists(QuarterGroup quarterGroup, Connection connection) throws SQLException {

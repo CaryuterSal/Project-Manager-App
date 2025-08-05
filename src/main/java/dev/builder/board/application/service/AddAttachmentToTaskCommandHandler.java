@@ -12,10 +12,10 @@ import dev.builder.core.infrastructure.di.annotation.Bean;
 @Bean
 public class AddAttachmentToTaskCommandHandler implements RequestHandler<AddAttachmentToTaskCommand, FileView> {
 
-    private final RequestValidator<AddAttachmentToTaskCommand> validator;
+    private final AddAttachmentToTaskCommand.AddAttachmentToTaskCommandValidator validator;
     private final TaskService taskService;
 
-    public AddAttachmentToTaskCommandHandler(TaskService taskService, RequestValidator<AddAttachmentToTaskCommand> requestValidator) {
+    public AddAttachmentToTaskCommandHandler(TaskService taskService, AddAttachmentToTaskCommand.AddAttachmentToTaskCommandValidator requestValidator) {
         this.validator = requestValidator;
         this.taskService = taskService;
     }

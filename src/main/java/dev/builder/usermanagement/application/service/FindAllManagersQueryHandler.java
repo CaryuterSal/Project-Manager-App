@@ -11,9 +11,9 @@ import java.util.List;
 
 public class FindAllManagersQueryHandler implements RequestHandler<FindAllManagersQuery, List<ManagerView>> {
     private final UserService userService;
-    private final RequestValidator<FindAllManagersQuery> validator;
+    private final FindAllManagersQuery.FindAllManagersQueryValidator validator;
 
-    public FindAllManagersQueryHandler(UserService userService, RequestValidator<FindAllManagersQuery> validator) {
+    public FindAllManagersQueryHandler(UserService userService, FindAllManagersQuery.FindAllManagersQueryValidator validator) {
         this.userService = userService;
         this.validator = validator;
     }
