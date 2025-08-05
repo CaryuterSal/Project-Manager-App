@@ -15,11 +15,8 @@ public class MainApplication extends Application {
 
     @Override
     public void start(Stage stage) throws IOException {
-        FXMLLoader fxmlLoader = new FXMLLoader(MainApplication.class.getResource("/dev/builder/login.fxml"));
-        fxmlLoader.setControllerFactory(cat -> {
-            System.out.printf("OBTENIENDO PARA: %s%n", cat);
-            return dependencyContainer.getInstance(cat);
-        });
+        FXMLLoader fxmlLoader = new FXMLLoader(MainApplication.class.getResource("/dev/builder/views/hello-view.fxml"));
+        fxmlLoader.setControllerFactory(dependencyContainer::getInstance);
         Scene scene = new Scene(fxmlLoader.load());
         stage.setTitle("KED");
         stage.setScene(scene);
