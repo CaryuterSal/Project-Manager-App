@@ -27,11 +27,17 @@ public class FindUserQuery<T extends UserView> implements Query<Optional<T>> {
     }
 
     public static FindUserQuery<UserView> generic(String email) {
-        return new FindUserQuery<>(email);
+        return new FindGenericUserQuery(email);
     }
 
     public String email() {
         return email;
+    }
+
+    public static class FindGenericUserQuery extends FindUserQuery<UserView> {
+        private FindGenericUserQuery(String email) {
+            super(email);
+        }
     }
 
     public static abstract class FindUserQueryAbstractValidator<T extends FindUserQuery<?>> extends BaseRequestValidator<T>  {
