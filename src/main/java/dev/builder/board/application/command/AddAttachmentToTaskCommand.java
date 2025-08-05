@@ -3,6 +3,7 @@ package dev.builder.board.application.command;
 import dev.builder.board.application.view.FileView;
 import dev.builder.board.application.view.TaskView;
 
+import dev.builder.board.domain.exception.TaskNotFoundException;
 import dev.builder.board.domain.model.Attachment;
 import dev.builder.board.domain.model.StoredFile;
 import dev.builder.core.application.Command;
@@ -17,6 +18,19 @@ import org.slf4j.LoggerFactory;
 import java.io.InputStream;
 import java.util.UUID;
 
+/**
+ * Comando para agregar archivos adjuntos a una tarea existente
+ * @param taskId el ID de la tarea a la que adjuntar el archivo
+ * @param filename el nombre lógico del archivo (puede ser cualquiera)
+ * @param fileStream un stream de datos con el contenido del archivo
+ * </br> </br>
+ *   Posibles excepciones que pueden ser lanzadas
+ *                   <ul>
+ *    <li>{@link TaskNotFoundException} - si no se encuentra la tarea con el ISD</li>
+ *    <li>{@link java.io.IOException} - si ocurre un error al leer el stream de datos</li>
+ *    <li>{@link }</li>
+ *                   </ul>
+ */
 public record AddAttachmentToTaskCommand(UUID taskId, String filename, InputStream fileStream) implements Command<FileView> {
 
 

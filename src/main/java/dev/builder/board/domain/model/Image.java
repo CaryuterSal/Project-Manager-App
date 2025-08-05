@@ -48,6 +48,7 @@ public final class Image extends StoredFile<Image.Id> {
      */
     public static final class Filename extends StoredFile.Filename {
 
+
         /**
          * Patrón regex para validar extensiones de archivo de imagen soportadas:
          * GIF, JPEG/JPG, TIFF, PNG, BMP.
@@ -90,5 +91,7 @@ public final class Image extends StoredFile<Image.Id> {
         public static boolean isValid(String value) {
             return value != null && extensionPattern.matcher(value).find();
         }
+
+
     }
 }

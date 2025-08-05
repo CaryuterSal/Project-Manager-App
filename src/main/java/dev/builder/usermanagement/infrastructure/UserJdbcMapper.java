@@ -216,7 +216,11 @@ public class UserJdbcMapper {
         return groupResultSetByKey(
                 rs,
                 r -> new Admin.Id(extractEmail(r)),
-                r -> new Manager.Id(r.getString(ManagerColumns.AS_CREATED.columnName))
+                r -> {
+                    String email = r.getString(ManagerColumns.AS_CREATED.columnName);
+                    if(email == null) return null;
+                    return new Manager.Id(email);
+                }
         );
     }
 
@@ -224,7 +228,11 @@ public class UserJdbcMapper {
         return groupResultSetByKey(
                 rs,
                 r -> new Manager.Id(extractEmail(r)),
-                r -> new Student.Id(r.getString(StudentColumns.AS_CREATED.columnName))
+                r -> {
+                    String email = r.getString(StudentColumns.AS_CREATED.columnName);
+                    if(email == null) return null;
+                    return new Student.Id(email);
+                }
         );
     }
 

@@ -32,14 +32,17 @@ public class JdbcTaskAssigneeRepository {
     """;
     private static final String SELECT_FOR_TASK = String.format("""
             SELECT
+                t.id as %s,
                 tas.sbd_sdt_email as %s
             FROM student s
             JOIN app_user su ON su.email = s.email AND su.active = 1
             JOIN task_assignee tas ON tas.sbd_sdt_email = su.email
+            JOIN task t ON t.id = tas.tsk_id AND t.active = 1
             JOIN manager m ON m.email = tas.sbd_bad_email
             JOIN app_user u ON u.email = m.email AND u.active = 1
             WHERE tas.tsk_id = ?
-            """, TaskJdbcMapper.TaskColumns.ASSIGNED_TO.columnName());
+            """, TaskJdbcMapper.TaskColumns.ID.columnName(),
+            TaskJdbcMapper.TaskColumns.ASSIGNED_TO.columnName());
 
     private static final Logger log = LoggerFactory.getLogger(JdbcTaskAssigneeRepository.class);
 

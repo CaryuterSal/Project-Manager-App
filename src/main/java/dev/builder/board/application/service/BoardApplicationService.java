@@ -173,24 +173,17 @@ public class BoardApplicationService implements BoardService, TaskService, FileS
                     Stage sourceStage = assertCanEditTask(taskId, conn);
                     Stage targetStage = stageRepository.findById(new Stage.Id(sourceStage.boardId(), command.stage()), conn)
                                     .orElseThrow();
-                    Task previousTask = command.placeAtEnd()
+                    Optional<Task> previousTask = command.placeAtEnd()
                                     .flatMap(s -> targetStage.tasks().isEmpty() ? Optional.empty() : Optional.of(targetStage.tasks().last()))
-                                    .orElse(
-                                        command.previousTask()
-                                        .flatMap(prev -> targetStage.getTask(new Task.Id(prev)))
-                                        .orElse(null)
+                                    .or( () -> command.previousTask().flatMap(prev -> targetStage.getTask(new Task.Id(prev)))
                                     );
-                    Task nextTask =  command.placeAtEnd()
+                    previousTask.ifPresent(t -> assertCanEditTask(t.id(), conn));
+                    Optional<Task> nextTask =  command.placeAtEnd()
                             .flatMap(s -> targetStage.tasks().isEmpty() ? Optional.empty() : Optional.of(targetStage.tasks().first()))
-                            .orElse(
-                                    command.nextTask()
-                                            .flatMap(next -> targetStage.getTask(new Task.Id(next)))
-                                            .orElse(null)
-                            );
+                            .or(() -> command.nextTask().flatMap(next -> targetStage.getTask(new Task.Id(next))));
+                    nextTask.ifPresent(t -> assertCanEditTask(t.id(), conn));
 
-
-
-                    boolean moved = TaskStageChangerService.moveTask(sourceStage, targetStage, sourceStage.getTask(taskId).get(), previousTask, nextTask);
+                    boolean moved = TaskStageChangerService.moveTask(sourceStage, targetStage, sourceStage.getTask(taskId).get(), previousTask.orElse(null), nextTask.orElse(null));
                     if(moved){
                         stageRepository.save(sourceStage, conn);
                         stageRepository.save(targetStage, conn);
@@ -465,7 +458,7 @@ public class BoardApplicationService implements BoardService, TaskService, FileS
                 new Attachment.Id(UUIDGenerator.generateUUID()),
                 forTask,
                 filename,
-                StoredFile.MimeType.fromValue(mimeTypeGenerator.generateMimeType(data))
+                StoredFile.MimeType.fromValue(messageLocalizer, mimeTypeGenerator.generateMimeType(data))
         );
         return attachmentRepository.save(attachment, data, connection);
     }
@@ -475,7 +468,7 @@ public class BoardApplicationService implements BoardService, TaskService, FileS
                 new Image.Id(UUIDGenerator.generateUUID()),
                 forTask,
                 filename,
-                StoredFile.MimeType.fromValue(mimeTypeGenerator.generateMimeType(data))
+                StoredFile.MimeType.fromValue(messageLocalizer, mimeTypeGenerator.generateMimeType(data))
         );
         return imageRepository.save(image, data, connection);
     }

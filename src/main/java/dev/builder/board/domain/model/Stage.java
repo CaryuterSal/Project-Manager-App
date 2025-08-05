@@ -71,7 +71,7 @@ public class Stage extends AggregateRoot<Stage.Id>{
 
     public Optional<Task> getTask(Task.Id taskId) {
         return tasks.stream()
-                .filter(Objects::nonNull)
+                .filter(t -> t.id().equals(taskId))
                 .findAny();
     }
 
@@ -117,6 +117,7 @@ public class Stage extends AggregateRoot<Stage.Id>{
             newOrderValue = calculateAverageOrder(lastTask.order(), new Order(taskOrderStep * 2));
         }
         task.changeOrder(new Order(newOrderValue));
+        task.changeStage(id);
         return tasks.add(task);
     }
 
@@ -137,6 +138,7 @@ public class Stage extends AggregateRoot<Stage.Id>{
             newOrderValue = calculateAverageOrder(new Order(0d), firstTask.order());
         }
         task.changeOrder(new Order(newOrderValue));
+        task.changeStage(id);
         return tasks.add(task);
     }
 
@@ -198,7 +200,8 @@ public class Stage extends AggregateRoot<Stage.Id>{
 
         double originalOrderValue = source.order().value();
         source.changeOrder(new Order(newOrderValue));
-        return Double.compare(originalOrderValue, newOrderValue) != 0 || tasks.add(source);
+        source.changeStage(id);
+        return tasks.add(source) || Double.compare(originalOrderValue, newOrderValue) != 0 ;
     }
 
     private double calculateNewOrderValue(Task previous, Task next) {

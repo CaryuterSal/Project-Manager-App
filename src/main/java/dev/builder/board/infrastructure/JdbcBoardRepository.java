@@ -116,7 +116,7 @@ public class JdbcBoardRepository extends TransactionalJdbcCrudRepository<Board, 
     private Board create(Board board, Connection connection) {
         try(PreparedStatement ps = connection.prepareStatement(INSERT)){
             ps.setString(1, board.title().value());
-            ps.setString(1, board.id().userId().value());
+            ps.setString(2, board.id().userId().value());
             boolean updated =  ps.executeUpdate() > 0;
             if(!updated) throw new RepositoryException("Board already exists");
             for(Stage.StageState stage : Stage.StageState.values()){

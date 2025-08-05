@@ -20,7 +20,7 @@ public abstract class User<ID extends User.Id<ID>> extends AggregateRoot<ID> imp
     public User(ID id, String password, boolean verified) {
         super(id);
         this.id = Objects.requireNonNull(id);
-        this.password = Objects.requireNonNull(password);
+        this.password = password;
         this.verified = verified;
     }
 

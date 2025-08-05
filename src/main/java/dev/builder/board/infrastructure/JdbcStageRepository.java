@@ -107,9 +107,8 @@ public class JdbcStageRepository extends TransactionalJdbcCrudRepository<Stage, 
     @Contract("_, _ -> param1")
     private @NotNull Stage update(Stage stage, Connection connection) {
         Set<Task> existingTasks = new HashSet<>(taskRepository.findByStageId(stage.id(), connection));
-        Set<Task> missingTasks = new HashSet<>(stage.tasks());
-        missingTasks.removeAll(existingTasks);
-        for(Task task: missingTasks){
+
+        for(Task task: stage.tasks()){
             taskRepository.save(task, connection);
         }
         Set<Task> surplusTasks = new HashSet<>(existingTasks);
@@ -126,8 +125,8 @@ public class JdbcStageRepository extends TransactionalJdbcCrudRepository<Stage, 
             String boardDbId = stage.id().boardId().userId().value();
             ps.setString(1, boardDbId);
             String stageDbValue = StageName.fromDomain(stage.state()).getDbValue();
-            ps.setString(1, stageDbValue );
-            boolean updated = ps.executeUpdate() > 1;
+            ps.setString(2, stageDbValue );
+            boolean updated = ps.executeUpdate() > 0;
             if(!updated) throw new RepositoryException("Stage %s could not be created for board owned by %s".formatted(stageDbValue, boardDbId));
             for(Task task : stage.tasks()) {
                 taskRepository.save(task, connection);
