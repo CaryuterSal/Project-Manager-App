@@ -14,10 +14,10 @@ import java.util.Optional;
 
 @Bean
 public class LoadAttachmentQueryHandler implements RequestHandler<LoadAttachmentQuery, Optional<InputStream>> {
-    private final RequestValidator<LoadAttachmentQuery> validator;
+    private final LoadAttachmentQuery.LoadAttachmentQueryValidator validator;
     private final FileService fileService;
 
-    public LoadAttachmentQueryHandler(FileService fileService, RequestValidator<LoadAttachmentQuery> requestValidator) {
+    public LoadAttachmentQueryHandler(FileService fileService, LoadAttachmentQuery.LoadAttachmentQueryValidator requestValidator) {
         this.validator = requestValidator;
         this.fileService = fileService;
     }

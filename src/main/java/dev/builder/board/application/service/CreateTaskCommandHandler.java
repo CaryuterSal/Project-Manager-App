@@ -12,10 +12,10 @@ import dev.builder.core.infrastructure.di.annotation.Bean;
 
 @Bean
 public class CreateTaskCommandHandler implements RequestHandler<CreateTaskCommand, StageView> {
-    private final RequestValidator<CreateTaskCommand> validator;
+    private final CreateTaskCommand.CreateTaskCommandValidator validator;
     private final BoardService boardService;
 
-    public CreateTaskCommandHandler(BoardService boardService, RequestValidator<CreateTaskCommand> requestValidator) {
+    public CreateTaskCommandHandler(BoardService boardService, CreateTaskCommand.CreateTaskCommandValidator requestValidator) {
         this.validator = requestValidator;
         this.boardService = boardService;
     }

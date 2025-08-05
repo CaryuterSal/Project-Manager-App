@@ -12,10 +12,10 @@ import dev.builder.core.infrastructure.di.annotation.Bean;
 
 @Bean
 public class RemoveAttachmentCommandHandler implements RequestHandler<RemoveAttachmentCommand, Void> {
-    private final RequestValidator<RemoveAttachmentCommand> validator;
+    private final RemoveAttachmentCommand.RemoveAttachmentCommandValidator validator;
     private final TaskService taskService;
 
-    public RemoveAttachmentCommandHandler(TaskService taskService, RequestValidator<RemoveAttachmentCommand> requestValidator) {
+    public RemoveAttachmentCommandHandler(TaskService taskService, RemoveAttachmentCommand.RemoveAttachmentCommandValidator requestValidator) {
         this.validator = requestValidator;
         this.taskService = taskService;
     }

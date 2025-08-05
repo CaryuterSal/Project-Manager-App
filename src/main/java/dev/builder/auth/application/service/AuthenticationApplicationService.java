@@ -5,6 +5,7 @@ import dev.builder.auth.infrastructure.SessionToken;
 import dev.builder.auth.domain.port.in.AuthenticationService;
 import dev.builder.auth.domain.port.out.SessionContext;
 import dev.builder.auth.domain.port.out.SessionStorage;
+import dev.builder.core.infrastructure.di.annotation.Bean;
 import dev.builder.core.infrastructure.properties.MessageLocalizer;
 import dev.builder.usermanagement.domain.model.Password;
 import dev.builder.usermanagement.domain.model.User;
@@ -13,6 +14,7 @@ import dev.builder.usermanagement.domain.port.out.PasswordMatcher;
 
 import java.util.Optional;
 
+@Bean
 public class AuthenticationApplicationService implements AuthenticationService {
 
     private final AnyUserRepository userRepository;

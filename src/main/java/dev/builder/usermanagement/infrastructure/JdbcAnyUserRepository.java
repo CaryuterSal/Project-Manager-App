@@ -46,7 +46,7 @@ public class JdbcAnyUserRepository implements AnyUserRepository {
             SET password = ?,
             verified = ?
             WHERE email = ?
-            AND active = true
+            AND active = 1
             """;
     private static final String SELECT_ALL_WITH_TYPE= """
             SELECT

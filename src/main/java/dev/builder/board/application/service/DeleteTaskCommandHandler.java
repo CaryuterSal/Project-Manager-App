@@ -12,10 +12,10 @@ import dev.builder.core.infrastructure.di.annotation.Bean;
 
 @Bean
 public class DeleteTaskCommandHandler implements RequestHandler<DeleteTaskCommand, StageView> {
-    private final RequestValidator<DeleteTaskCommand> validator;
+    private final DeleteTaskCommand.DeleteTaskCommandValidator validator;
     private final BoardService boardService;
 
-    public DeleteTaskCommandHandler(BoardService boardService, RequestValidator<DeleteTaskCommand> requestValidator) {
+    public DeleteTaskCommandHandler(BoardService boardService, DeleteTaskCommand.DeleteTaskCommandValidator requestValidator) {
         this.validator = requestValidator;
         this.boardService = boardService;
     }

@@ -10,9 +10,9 @@ import dev.builder.usermanagement.domain.port.in.UserService;
 public class InviteAdminCommandHandler implements RequestHandler<InviteAdminCommand, AdminView> {
 
     private final UserService userService;
-    private final RequestValidator<InviteAdminCommand> validator;
+    private final InviteAdminCommand.InviteAdminCommandValidator validator;
 
-    public InviteAdminCommandHandler(UserService userService, RequestValidator<InviteAdminCommand> validator) {
+    public InviteAdminCommandHandler(UserService userService, InviteAdminCommand.InviteAdminCommandValidator validator) {
         this.userService = userService;
         this.validator = validator;
     }

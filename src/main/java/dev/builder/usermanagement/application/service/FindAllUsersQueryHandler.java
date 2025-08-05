@@ -13,9 +13,9 @@ import java.util.Optional;
 
 public class FindAllUsersQueryHandler implements RequestHandler<FindAllUsersQuery<UserView, FindAllUsersQuery.UserSortableField>, List<UserView>> {
     private final UserService userService;
-    private final RequestValidator<FindAllUsersQuery<UserView, FindAllUsersQuery.UserSortableField>> validator;
+    private final FindAllUsersQuery.FindAllUsersQueryValidator validator;
 
-    public FindAllUsersQueryHandler(UserService userService, RequestValidator<FindAllUsersQuery<UserView, FindAllUsersQuery.UserSortableField>> validator) {
+    public FindAllUsersQueryHandler(UserService userService, FindAllUsersQuery.FindAllUsersQueryValidator validator) {
         this.userService = userService;
         this.validator = validator;
     }

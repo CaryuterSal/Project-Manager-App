@@ -11,10 +11,10 @@ import dev.builder.core.infrastructure.di.annotation.Bean;
 
 @Bean
 public class AssignStudentToTaskCommandHandler implements RequestHandler<AssignStudentToTaskCommand, Void> {
-    private final RequestValidator<AssignStudentToTaskCommand> validator;
+    private final AssignStudentToTaskCommand.AssignStudentToTaskCommandValidator validator;
     private final TaskService taskService;
 
-    public AssignStudentToTaskCommandHandler(TaskService taskService, RequestValidator<AssignStudentToTaskCommand> requestValidator) {
+    public AssignStudentToTaskCommandHandler(TaskService taskService, AssignStudentToTaskCommand.AssignStudentToTaskCommandValidator requestValidator) {
         this.validator = requestValidator;
         this.taskService = taskService;
     }

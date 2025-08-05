@@ -5,6 +5,7 @@ import dev.builder.core.infrastructure.di.exception.BeanNotFoundException;
 import dev.builder.core.infrastructure.di.exception.ConstructorNotFoundException;
 import dev.builder.core.infrastructure.di.exception.UnsupportedFieldInjectionException;
 import dev.builder.core.infrastructure.di.runtime.AnnotationAwareDependencyContainer;
+import dev.builder.core.infrastructure.di.runtime.BeanRetriever;
 import dev.builder.core.infrastructure.di.runtime.DependencyContainer;
 import dev.builder.di.scanner.mock.MockBean;
 import dev.builder.di.scanner.mock.MockSingleton;
@@ -228,5 +229,12 @@ public class AnnotationAwareDependencyContainerTest {
         assertNotNull(publicConstructorBean);
         assertNotNull(publicConstructorBean.getFooClass());
         assertThat(publicConstructorBean.getFooClass()).isNotNull();
+    }
+
+    @Test
+    void test_inject_dependency_container(){
+        container.register(DependantOnContainer.class);
+        BeanRetriever beanRetriever = container.getInstance(BeanRetriever.class);
+        assertThat(beanRetriever).isEqualTo(container);
     }
 }

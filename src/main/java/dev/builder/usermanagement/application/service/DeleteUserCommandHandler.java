@@ -13,10 +13,10 @@ import dev.builder.usermanagement.domain.port.in.UserService;
 public class DeleteUserCommandHandler implements RequestHandler<DeleteUserCommand, Void> {
 
     private final UserService userService;
-    private final RequestValidator<DeleteUserCommand> validator;
+    private final DeleteUserCommand.DeleteUserCommandValidator validator;
 
     @Inject
-    public DeleteUserCommandHandler(UserService userService, RequestValidator<DeleteUserCommand> validator) {
+    public DeleteUserCommandHandler(UserService userService, DeleteUserCommand.DeleteUserCommandValidator validator) {
         this.userService = userService;
         this.validator = validator;
     }

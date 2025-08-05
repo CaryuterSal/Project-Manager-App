@@ -11,11 +11,11 @@ import dev.builder.core.infrastructure.di.annotation.Inject;
 @Bean
 public class LoginCommandHandler implements RequestHandler<LoginCommand, Void> {
 
-    private final RequestValidator<LoginCommand> validator;
+    private final LoginCommand.LoginCommandValidator validator;
     private final AuthenticationService authenticationService;
 
     @Inject
-    public LoginCommandHandler(RequestValidator<LoginCommand> validator, AuthenticationService authenticationService) {
+    public LoginCommandHandler(LoginCommand.LoginCommandValidator validator, AuthenticationService authenticationService) {
         this.validator = validator;
         this.authenticationService = authenticationService;
     }
