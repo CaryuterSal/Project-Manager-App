@@ -16,7 +16,7 @@ import java.util.regex.Pattern;
  * Cada color está asociado a su código hexadecimal mediante la clase {@code HexCode}, la cual
  * encapsula y valida dicho valor.
  */
-public enum Color implements ValueObject {
+public enum Color implements ValueObject<Color> {
 
     // Colores disponibles
     AMBER(new HexCode("#F59E0B")),
@@ -67,7 +67,17 @@ public enum Color implements ValueObject {
      */
     @Override
     public String toString() {
-        return this.name().toLowerCase();
+        String lower = this.name().toLowerCase();
+        return lower.substring(0, 1).toUpperCase() + lower.substring(1);
+    }
+
+    public static @NotNull Color fromName(String name) {
+        for(Color color : Color.values()) {
+            if(color.name().equalsIgnoreCase(name)) {
+                return color;
+            }
+        }
+        throw new IllegalArgumentException("Invalid color name: " + name);
     }
     /**
      * Representa un código hexadecimal de color como un {@link ValueObject}.
@@ -79,7 +89,7 @@ public enum Color implements ValueObject {
      * Es utilizado comúnmente en sistemas donde los colores son configurables o parte
      * del dominio visual (por ejemplo, para representar colores de tarjetas o listas).
      */
-    public record HexCode(String value) implements ValueObject {
+    public record HexCode(String value) implements ValueObject<HexCode> {
 
         /**
          * Expresión regular para validar códigos hexadecimales válidos.
@@ -138,6 +148,11 @@ public enum Color implements ValueObject {
          */
         public static boolean isValid(String value) {
             return value != null && hexPattern.matcher(value).matches();
+        }
+
+        @Override
+        public int compareTo(@NotNull Color.HexCode hexCode) {
+            return value.compareTo(hexCode.value());
         }
     }
 }

@@ -6,6 +6,7 @@ import org.jetbrains.annotations.NotNull;
 import java.io.File;
 import java.io.InputStream;
 import java.util.Objects;
+import java.util.UUID;
 import java.util.regex.Pattern;
 /**
  * Representa un archivo de imagen almacenado en el sistema.
@@ -16,17 +17,7 @@ import java.util.regex.Pattern;
  * Proporciona validación específica para nombres de archivo que deben
  * tener extensiones válidas de imágenes comunes.
  */
-public final class Image extends StoredFile {
-
-    /**
-     * Crea una nueva instancia de {@code Image} con nombre y tipo MIME.
-     *
-     * @param name Nombre del archivo de imagen (validado).
-     * @param mimeType Tipo MIME correspondiente al archivo.
-     */
-    public Image(Filename name, MimeType mimeType) {
-        super(name, mimeType);
-    }
+public final class Image extends StoredFile<Image.Id> {
 
     /**
      * Crea una nueva instancia de {@code Image} con identificador, nombre y tipo MIME.
@@ -35,10 +26,20 @@ public final class Image extends StoredFile {
      * @param name Nombre del archivo de imagen (validado).
      * @param mimeType Tipo MIME correspondiente al archivo.
      */
-    public Image(StoredFile.Id id, Filename name, MimeType mimeType) {
-        super(id, name, mimeType);
+    public Image(Image.Id id, Task.Id attachedTo, Filename name, MimeType mimeType) {
+        super(id, attachedTo, name, mimeType);
     }
 
+    public static class Id extends StoredFile.Id<Id> {
+        public Id(UUID uuid) {
+            super(uuid);
+        }
+
+        @Override
+        public int compareTo(Image.@NotNull Id  id) {
+            return id.compareTo(this);
+        }
+    }
     /**
      * Clase interna que representa un nombre válido para un archivo de imagen.
      *
@@ -46,6 +47,7 @@ public final class Image extends StoredFile {
      * para formatos de imagen soportados.
      */
     public static final class Filename extends StoredFile.Filename {
+
 
         /**
          * Patrón regex para validar extensiones de archivo de imagen soportadas:
@@ -89,5 +91,7 @@ public final class Image extends StoredFile {
         public static boolean isValid(String value) {
             return value != null && extensionPattern.matcher(value).find();
         }
+
+
     }
 }

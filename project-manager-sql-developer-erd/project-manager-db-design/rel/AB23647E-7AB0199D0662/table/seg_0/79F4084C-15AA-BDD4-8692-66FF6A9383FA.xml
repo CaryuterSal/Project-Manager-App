@@ -1,0 +1,147 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<Table class="oracle.dbtools.crest.model.design.relational.Table" directorySegmentName="seg_0" id="79F4084C-15AA-BDD4-8692-66FF6A9383FA" name="STUDENT">
+<createdBy>caryuter</createdBy>
+<createdTime>2025-06-27 17:56:12 UTC</createdTime>
+<generatorID>E7D9BC0E-EBF1-D265-C538-3DD9B3ECD49A</generatorID>
+<ownerDesignName>project-manager-db-design</ownerDesignName>
+<ordsAlias>students</ordsAlias>
+<abbreviation>sdt</abbreviation>
+<allowColumnReorder>false</allowColumnReorder>
+<existDependencyGenerateInDDl>true</existDependencyGenerateInDDl>
+<parsed>true</parsed>
+<columns itemClass="oracle.dbtools.crest.model.design.relational.Column">
+<Column name="email" id="58174BBE-B5C8-9EDD-6CA9-33C6AAC1845A">
+<createdBy>caryuter</createdBy>
+<createdTime>2025-06-27 17:56:12 UTC</createdTime>
+<generatorID>D300C36E-65BC-7C3A-03AC-0FF2B5DC80F0</generatorID>
+<ownerDesignName>project-manager-db-design</ownerDesignName>
+<useDomainConstraints>false</useDomainConstraints>
+<use>1</use>
+<logicalDatatype>LOGDT024</logicalDatatype>
+<dataTypeSize>63 CHAR</dataTypeSize>
+<ownDataTypeParameters>,,</ownDataTypeParameters>
+<autoIncrementCycle>false</autoIncrementCycle>
+<associations>
+<colAssociation fkAssociation="24A9E856-6E5F-6AF4-0B0B-33378FAF1932" referredColumn="C70B86F4-9406-3900-9DDC-3CFF8F2AB5A4"/>
+</associations>
+</Column>
+<Column name="first_name" id="E08D8F4F-DB78-A535-9455-A577DBBBBD13">
+<createdBy>caryuter</createdBy>
+<createdTime>2025-06-27 17:56:12 UTC</createdTime>
+<generatorID>DE5CDCC5-E229-5505-D6CA-78AEE10AFBBD</generatorID>
+<ownerDesignName>project-manager-db-design</ownerDesignName>
+<useDomainConstraints>false</useDomainConstraints>
+<use>1</use>
+<logicalDatatype>LOGDT024</logicalDatatype>
+<dataTypeSize>63</dataTypeSize>
+<ownDataTypeParameters>63,,</ownDataTypeParameters>
+<autoIncrementCycle>false</autoIncrementCycle>
+</Column>
+<Column name="last_name" id="76BD2865-2A56-194F-1796-74EA59CABB81">
+<createdBy>caryuter</createdBy>
+<createdTime>2025-06-27 17:56:12 UTC</createdTime>
+<generatorID>9AFF218B-CE8F-700A-1882-5E7B88950858</generatorID>
+<ownerDesignName>project-manager-db-design</ownerDesignName>
+<useDomainConstraints>false</useDomainConstraints>
+<use>1</use>
+<logicalDatatype>LOGDT024</logicalDatatype>
+<dataTypeSize>63</dataTypeSize>
+<ownDataTypeParameters>63,,</ownDataTypeParameters>
+<autoIncrementCycle>false</autoIncrementCycle>
+</Column>
+<Column name="created_by" id="A6E7A543-A6A5-4A72-7C47-84A5C82AC26D">
+<createdBy>caryuter</createdBy>
+<createdTime>2025-06-27 17:56:12 UTC</createdTime>
+<generatorID>942A30EB-DAC2-6D38-A14A-52B8C8EC167D</generatorID>
+<ownerDesignName>project-manager-db-design</ownerDesignName>
+<useDomainConstraints>false</useDomainConstraints>
+<use>1</use>
+<logicalDatatype>LOGDT024</logicalDatatype>
+<dataTypeSize>63 CHAR</dataTypeSize>
+<ownDataTypeParameters>,,</ownDataTypeParameters>
+<previousColumn>false</previousColumn>
+<autoIncrementCycle>false</autoIncrementCycle>
+<associations>
+<colAssociation fkAssociation="2CA00FED-F7F5-68D1-4592-32CB1E21549F" referredColumn="618D2C73-ADC9-A243-851C-9E291F2A670D"/>
+</associations>
+</Column>
+<Column name="qgp_agp_name" id="D01D3BEA-1542-2ED7-18E1-CCD0726D650B">
+<createdBy>caryuter</createdBy>
+<createdTime>2025-06-27 17:56:12 UTC</createdTime>
+<generatorID>0E381092-B0B6-22C3-5068-83B454F489FB</generatorID>
+<ownerDesignName>project-manager-db-design</ownerDesignName>
+<useDomainConstraints>false</useDomainConstraints>
+<use>1</use>
+<logicalDatatype>LOGDT025</logicalDatatype>
+<dataTypeSize>1 CHAR</dataTypeSize>
+<ownDataTypeParameters>,,</ownDataTypeParameters>
+<previousColumn>false</previousColumn>
+<autoIncrementCycle>false</autoIncrementCycle>
+<associations>
+<colAssociation fkAssociation="620432C2-912C-9DC4-DED6-3F08B8BB0343" referredColumn="F5D34481-9A08-F1B3-4712-21A2C267DC9F"/>
+</associations>
+</Column>
+<Column name="qgp_aqr_number" id="99120BFD-69A3-D622-6E46-9BA25DBF87B1">
+<createdBy>caryuter</createdBy>
+<createdTime>2025-06-27 22:09:46 UTC</createdTime>
+<ownerDesignName>project-manager-db-design</ownerDesignName>
+<useDomainConstraints>false</useDomainConstraints>
+<use>1</use>
+<logicalDatatype>LOGDT011</logicalDatatype>
+<ownDataTypeParameters>,,</ownDataTypeParameters>
+<previousColumn>false</previousColumn>
+<autoIncrementCycle>false</autoIncrementCycle>
+<associations>
+<colAssociation fkAssociation="620432C2-912C-9DC4-DED6-3F08B8BB0343" referredColumn="75668E9E-1679-31CC-9CC4-2F23827CBCCC"/>
+</associations>
+</Column>
+</columns>
+<indexes itemClass="oracle.dbtools.crest.model.design.relational.Index">
+<ind_PK_UK id="47152301-72F4-8828-5A2F-B8223A686983" name="STUDENTS_PK">
+<createdBy>caryuter</createdBy>
+<createdTime>2025-06-27 17:56:12 UTC</createdTime>
+<generatorID>43D5688D-7A76-CB0B-7B92-2BF393E49347</generatorID>
+<ownerDesignName>project-manager-db-design</ownerDesignName>
+<pk>true</pk>
+<indexState>Primary Constraint</indexState>
+<isSurrogateKey>false</isSurrogateKey>
+<indexColumnUsage>
+<colUsage columnID="58174BBE-B5C8-9EDD-6CA9-33C6AAC1845A"/>
+</indexColumnUsage>
+</ind_PK_UK>
+<ind_PK_UK id="731CAD68-3A26-AECF-6A9E-3B8EB4F14B89" name="STUDENTS_APP_USERS_FK">
+<createdBy>caryuter</createdBy>
+<createdTime>2025-06-27 17:56:12 UTC</createdTime>
+<generatorID>E20977F0-C9F0-82E6-8CDD-B7817B861E6A</generatorID>
+<ownerDesignName>project-manager-db-design</ownerDesignName>
+<indexState>Foreign Key</indexState>
+<isSurrogateKey>false</isSurrogateKey>
+<indexColumnUsage>
+<colUsage columnID="58174BBE-B5C8-9EDD-6CA9-33C6AAC1845A"/>
+</indexColumnUsage>
+</ind_PK_UK>
+<ind_PK_UK id="390E657F-4C3E-7225-6BA9-53DFA9E9A959" name="STUDENTS_MANAGERS_FK">
+<createdBy>caryuter</createdBy>
+<createdTime>2025-06-27 17:56:12 UTC</createdTime>
+<generatorID>7EFDD53F-17E0-F781-FDB1-90D2C9045DC1</generatorID>
+<ownerDesignName>project-manager-db-design</ownerDesignName>
+<indexState>Foreign Key</indexState>
+<isSurrogateKey>false</isSurrogateKey>
+<indexColumnUsage>
+<colUsage columnID="A6E7A543-A6A5-4A72-7C47-84A5C82AC26D"/>
+</indexColumnUsage>
+</ind_PK_UK>
+<ind_PK_UK id="40033149-542B-E0BE-45BA-DEBAA3E4979B" name="STUDENTS_QUARTER_GROUPS_FK">
+<createdBy>caryuter</createdBy>
+<createdTime>2025-06-27 17:56:12 UTC</createdTime>
+<generatorID>FF5972E7-A0B5-9AA4-C18C-38EA6FA86362</generatorID>
+<ownerDesignName>project-manager-db-design</ownerDesignName>
+<indexState>Foreign Key</indexState>
+<isSurrogateKey>false</isSurrogateKey>
+<indexColumnUsage>
+<colUsage columnID="D01D3BEA-1542-2ED7-18E1-CCD0726D650B"/>
+<colUsage columnID="99120BFD-69A3-D622-6E46-9BA25DBF87B1"/>
+</indexColumnUsage>
+</ind_PK_UK>
+</indexes>
+</Table>

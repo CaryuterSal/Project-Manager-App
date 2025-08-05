@@ -1,7 +1,10 @@
 package dev.builder.core.infrastructure.properties;
 
+import dev.builder.core.infrastructure.di.annotation.Bean;
+
 import java.util.Optional;
 
+@Bean
 public class EnvActiveProfileProvider implements ActiveProfileProvider {
 
     private final String activeProfile;

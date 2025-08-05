@@ -34,4 +34,8 @@ public abstract class Entity<ID> implements DomainObject {
                 .add("id=" + id)
                 .toString();
     }
+
+
+
+    
 }

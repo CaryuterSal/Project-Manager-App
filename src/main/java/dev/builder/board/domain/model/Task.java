@@ -1,7 +1,8 @@
 package dev.builder.board.domain.model;
 
 import dev.builder.core.domain.LocalEntity;
-import dev.builder.usermanagement.domain.GlobalIdentityManager;
+import dev.builder.usermanagement.domain.model.Student;
+import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
 import java.time.LocalDateTime;
@@ -19,29 +20,17 @@ import java.util.*;
  */
 public class Task extends LocalEntity<Task.Id> implements Comparable<Task> {
 
-    private TaskTitle title;
+    private Stage.Id stage;
+    private Title title;
     private TaskDescription description;
     private Color color;
     private Order order;
-    private final LocalDateTime createdAt;
+    private LocalDateTime createdAt;
     private Deadline deadline;
     private ExecutionPeriod executionPeriod;
-    private Image coverImage;
-    private final Set<Attachment> attachments = new HashSet<>();
-
-    /**
-     * Constructor para crear una tarea con título, descripción, color y fecha límite.
-     * El id se genera automáticamente.
-     *
-     * @param title Título de la tarea
-     * @param description Descripción de la tarea
-     * @param color Color asociado a la tarea
-     * @param deadline Fecha límite para la tarea
-     * @throws NullPointerException si alguno de los parámetros es nulo
-     */
-    public Task(TaskTitle title, TaskDescription description, Color color, Deadline deadline) {
-        this(new Task.Id(GlobalIdentityManager.generateUUID()), title, description, color, deadline);
-    }
+    private Image.Id coverImage;
+    private final Set<Attachment.Id> attachments = new HashSet<>();
+    private final Set<Student.Id>  assignedStudents = new HashSet<>();
 
     /**
      * Constructor con id explícito y atributos básicos.
@@ -53,19 +42,33 @@ public class Task extends LocalEntity<Task.Id> implements Comparable<Task> {
      * @param deadline Fecha límite para la tarea
      * @throws NullPointerException si alguno de los parámetros es nulo
      */
-    public Task(Task.Id id, TaskTitle title, TaskDescription description, Color color, Deadline deadline) {
+    private Task(Task.Id id, Stage.Id stage, Title title, TaskDescription description, Color color, Deadline deadline, Order order) {
         super(id);
+        this.stage = Objects.requireNonNull(stage);
         this.title = Objects.requireNonNull(title);
         this.description = Objects.requireNonNull(description);
         this.color = Objects.requireNonNull(color);
         this.deadline = Objects.requireNonNull(deadline);
         this.createdAt = LocalDateTime.now();
+        this.order = Objects.requireNonNull(order);
     }
 
+    @Contract("_,_, _, _,_, _, _ -> new")
+    static @NotNull Task createNew(Task.Id id, Stage.Id stage, Title title, TaskDescription description, Color color, Deadline deadline, Order order) {
+        Task created = new Task(id, stage, title, description, color, deadline, order);
+        if(!stage.state().equals(Stage.StageState.TO_DO)){
+            created.start();
+        }
+        if(stage.state().isFinal()){
+            created.finish();
+        }
+        return created;
+    }
     /**
      * Constructor completo que incluye imagen de portada y adjuntos.
      *
      * @param id Identificador único de la tarea
+     * @param stage El Id del tablero y etapa en la que se encuentra la tarea
      * @param title Título de la tarea
      * @param description Descripción de la tarea
      * @param order el órden de la tarea
@@ -75,18 +78,22 @@ public class Task extends LocalEntity<Task.Id> implements Comparable<Task> {
      * @param attachments Conjunto de archivos adjuntos
      * @throws NullPointerException si alguno de los parámetros es nulo
      */
-    public Task(Task.Id id, TaskTitle title, TaskDescription description, Order order, Color color, Deadline deadline, Image coverImage, Set<Attachment> attachments) {
-        this(id, title, description, color, deadline);
-        this.order = Objects.requireNonNull(order);
-        this.coverImage = Objects.requireNonNull(coverImage);
+    public Task(Task.Id id, Stage.Id stage, Title title, TaskDescription description, LocalDateTime createdAt, Order order, Color color, Deadline deadline, ExecutionPeriod executionPeriod, Image.Id coverImage, Set<Attachment.Id> attachments, Set<Student.Id> assignedStudents) {
+        this(id, stage, title, description, color, deadline, order);
+        this.createdAt = Objects.requireNonNull(createdAt);
+        this.coverImage = coverImage;
+        this.executionPeriod = executionPeriod;
         Objects.requireNonNull(attachments);
         attachments.forEach(Objects::requireNonNull);
         this.attachments.addAll(attachments);
+        Objects.requireNonNull(assignedStudents);
+        assignedStudents.forEach(Objects::requireNonNull);
+        this.assignedStudents.addAll(assignedStudents);
     }
 
     // Métodos para modificar atributos (con validación de no nulos)
 
-    public void changeTitle(TaskTitle title) {
+    public void changeTitle(Title title) {
         this.title = Objects.requireNonNull(title);
     }
 
@@ -102,14 +109,22 @@ public class Task extends LocalEntity<Task.Id> implements Comparable<Task> {
         this.deadline = Objects.requireNonNull(deadline);
     }
 
-    public void changeCoverImage(Image coverImage) {
+    public void changeCoverImage(Image.Id coverImage) {
         this.coverImage = Objects.requireNonNull(coverImage);
     }
 
-    public void changeOrder(Order order) {
+    void changeOrder(Order order) {
         this.order = Objects.requireNonNull(order);
     }
 
+    void changeStage(Stage.Id stage) {
+        this.stage = Objects.requireNonNull(stage);
+    }
+
+    public Task hydratedWithAuditInfo(LocalDateTime createdAt){
+        this.createdAt = Objects.requireNonNull(createdAt);
+        return this;
+    }
     /**
      * Añade un archivo adjunto a la tarea.
      *
@@ -117,7 +132,7 @@ public class Task extends LocalEntity<Task.Id> implements Comparable<Task> {
      * @return true si fue agregado, false si ya existía.
      * @throws NullPointerException si el adjunto es nulo
      */
-    public boolean addAttachment(Attachment attachment) {
+    public boolean addAttachment(Attachment.Id attachment) {
         return attachments.add(Objects.requireNonNull(attachment));
     }
 
@@ -129,19 +144,40 @@ public class Task extends LocalEntity<Task.Id> implements Comparable<Task> {
      * @throws NullPointerException si el adjunto es nulo
      */
     public boolean removeAttachment(Attachment attachment) {
-        return attachments.remove(Objects.requireNonNull(attachment));
+        return removeAttachment(attachment.id());
     }
 
     /**
-     * Elimina un archivo adjunto identificado por su nombre.
+     * Elimina un archivo adjunto identificado por su id.
      *
-     * @param filename Nombre del archivo adjunto a eliminar
+     * @param id id del archivo adjunto a eliminar
      * @return true si fue eliminado, false si no existía.
      * @throws NullPointerException si el adjunto es nulo
      */
-    public boolean removeAttachment(StoredFile.Filename filename){
-        Objects.requireNonNull(filename);
-        return attachments.removeIf(el -> el.name().equals(filename));
+    public boolean removeAttachment(Attachment.Id id){
+        Objects.requireNonNull(id);
+        return attachments.remove(Objects.requireNonNull(id));
+    }
+
+    /**
+     * Asigna un estudiante a la tarea
+     * @param studentId El id del estudiante
+     * @return verdadero si fue agregado con éxito
+     * @throws NullPointerException si el adjunto es nulo
+     */
+    public boolean assignStudent(Student.Id studentId){
+        return assignedStudents.add(Objects.requireNonNull(studentId));
+    }
+
+
+    /**
+     * Revoca la asignación de estudiante a la tarea
+     * @param studentId el id del estudiante
+     * @return verdadero si fue eliminado con éxito
+     * @throws NullPointerException si el adjunto es nulo
+     */
+    public boolean revokeAssignation(Student.Id studentId){
+        return assignedStudents.remove(Objects.requireNonNull(studentId));
     }
 
     /**
@@ -160,6 +196,7 @@ public class Task extends LocalEntity<Task.Id> implements Comparable<Task> {
      */
     public void start(LocalDateTime point){
         if(hasStarted()) throw new IllegalStateException("Task already started");
+        if(hasFinished()) throw new IllegalStateException("Task already finished");
         executionPeriod = new ExecutionPeriod(point);
     }
 
@@ -229,30 +266,25 @@ public class Task extends LocalEntity<Task.Id> implements Comparable<Task> {
      */
     @Override
     public int compareTo(@NotNull Task task) {
-        // Considerar que cast a int puede causar truncamiento si el valor es muy grande
-        return (int)(order.value() - task.order.value());
+        return Double.compare(order.value(), task.order.value());
     }
 
     // Getters
 
-    public Task.Id id() {
-        return id;
-    }
-
-    public TaskTitle title() {
+    public Title title() {
         return title;
     }
 
-    public Optional<Order> order() {
-        return Optional.ofNullable(order);
+    public Order order() {
+        return order;
     }
 
     public TaskDescription description() {
         return description;
     }
 
-    public Optional<Color> color() {
-        return Optional.ofNullable(color);
+    public Color color() {
+        return color;
     }
 
     public Deadline deadline() {
@@ -263,7 +295,7 @@ public class Task extends LocalEntity<Task.Id> implements Comparable<Task> {
         return Optional.ofNullable(executionPeriod);
     }
 
-    public Optional<Image> coverImage() {
+    public Optional<Image.Id> coverImage() {
         return Optional.ofNullable(coverImage);
     }
 
@@ -271,8 +303,14 @@ public class Task extends LocalEntity<Task.Id> implements Comparable<Task> {
         return createdAt;
     }
 
-    public Set<StoredFile> attachments() {
+    public Set<Attachment.Id> attachments() {
         return Collections.unmodifiableSet(attachments);
+    }
+
+    public Set<Student.Id> assignedStudents() {return Collections.unmodifiableSet(assignedStudents);}
+
+    public Stage.Id stage() {
+        return stage;
     }
 
     /**

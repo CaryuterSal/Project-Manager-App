@@ -1,4 +1,4 @@
-module dev.builder {
+open module dev.builder {
     requires javafx.controls;
     requires javafx.fxml;
     requires javafx.web;
@@ -18,11 +18,12 @@ module dev.builder {
     requires com.fasterxml.jackson.databind;
     requires org.hibernate.validator;
     requires org.reflections;
-
-    opens dev.builder to javafx.fxml;
-    opens dev.builder.auth.application.controller to javafx.fxml;
-    opens dev.builder.usermanagement.application.controller to javafx.fxml;
-    opens dev.builder.board.application.controller to javafx.fxml;
+    requires ucp;
+    requires org.apache.poi.poi;
+    requires org.slf4j;
+    requires jdk.unsupported;
+    requires ojdbc8;
+    requires password4j;
 
     exports dev.builder;
 }

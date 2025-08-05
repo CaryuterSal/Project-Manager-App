@@ -16,6 +16,7 @@ import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.function.Supplier;
+import java.util.stream.Collectors;
 
 abstract class AbstractDependencyContainer implements DependencyContainer {
 
@@ -318,5 +319,11 @@ abstract class AbstractDependencyContainer implements DependencyContainer {
     @Override
     public Set<String> getRegisteredBeanNames() {
         return Collections.unmodifiableSet(registryByName.keySet());
+    }
+
+    @Override
+    @SuppressWarnings("unchecked")
+    public <T> Set<T> getInstancesOfType(Class<T> type) {
+        return registryByType.get(type).stream().map(bean -> (T) bean.getBean()).collect(Collectors.toUnmodifiableSet());
     }
 }
