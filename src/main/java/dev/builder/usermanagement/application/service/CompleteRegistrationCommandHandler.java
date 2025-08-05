@@ -14,10 +14,10 @@ import dev.builder.usermanagement.domain.port.in.UserService;
 public class CompleteRegistrationCommandHandler implements RequestHandler<CompleteRegistrationCommand, UserView> {
 
     private final UserService userService;
-    private final RequestValidator<CompleteRegistrationCommand> requestValidator;
+    private final CompleteRegistrationCommand.CompleteRegistrationCommandValidator requestValidator;
 
     @Inject
-    public CompleteRegistrationCommandHandler(UserService userService, RequestValidator<CompleteRegistrationCommand> requestValidator) {
+    public CompleteRegistrationCommandHandler(UserService userService, CompleteRegistrationCommand.CompleteRegistrationCommandValidator requestValidator) {
         this.userService = userService;
         this.requestValidator = requestValidator;
     }

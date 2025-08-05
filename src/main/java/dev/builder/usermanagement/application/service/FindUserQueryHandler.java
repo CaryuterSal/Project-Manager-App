@@ -13,9 +13,9 @@ import java.util.Optional;
 
 public class FindUserQueryHandler implements RequestHandler<FindUserQuery<UserView>, Optional<UserView>> {
     private final UserService userService;
-    private final RequestValidator<FindUserQuery<UserView>> validator;
+    private final FindUserQuery.FindUserQueryValidator validator;
 
-    public FindUserQueryHandler(UserService userService, RequestValidator<FindUserQuery<UserView>> validator) {
+    public FindUserQueryHandler(UserService userService, FindUserQuery.FindUserQueryValidator validator) {
         this.userService = userService;
         this.validator = validator;
     }

@@ -11,9 +11,9 @@ import java.util.List;
 
 public class FindAllStudentsQueryHandler implements RequestHandler<FindAllStudentsQuery, List<StudentView>> {
     private final UserService userService;
-    private final RequestValidator<FindAllStudentsQuery> validator;
+    private final FindAllStudentsQuery.FindAllStudentsQueryValidator validator;
 
-    public FindAllStudentsQueryHandler(UserService userService, RequestValidator<FindAllStudentsQuery> validator) {
+    public FindAllStudentsQueryHandler(UserService userService, FindAllStudentsQuery.FindAllStudentsQueryValidator validator) {
         this.userService = userService;
         this.validator = validator;
     }

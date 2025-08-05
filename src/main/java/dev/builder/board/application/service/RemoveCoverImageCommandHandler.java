@@ -11,10 +11,10 @@ import dev.builder.core.infrastructure.di.annotation.Bean;
 
 @Bean
 public class RemoveCoverImageCommandHandler implements RequestHandler<RemoveCoverImageCommand, Void> {
-    private final RequestValidator<RemoveCoverImageCommand> validator;
+    private final RemoveCoverImageCommand.RemoveCoverImageCommandValidator validator;
     private final TaskService taskService;
 
-    public RemoveCoverImageCommandHandler(TaskService taskService, RequestValidator<RemoveCoverImageCommand> requestValidator) {
+    public RemoveCoverImageCommandHandler(TaskService taskService, RemoveCoverImageCommand.RemoveCoverImageCommandValidator requestValidator) {
         this.validator = requestValidator;
         this.taskService = taskService;
     }

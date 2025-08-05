@@ -11,10 +11,10 @@ import dev.builder.core.infrastructure.di.annotation.Bean;
 
 @Bean
 public class RevokeAssignmentFromTaskCommandHandler implements RequestHandler<RevokeAssignmentFromTaskCommand, Void> {
-    private final RequestValidator<RevokeAssignmentFromTaskCommand> validator;
+    private final RevokeAssignmentFromTaskCommand.RevokeAssignmentFromTaskCommandValidator validator;
     private final TaskService taskService;
 
-    public RevokeAssignmentFromTaskCommandHandler(TaskService taskService, RequestValidator<RevokeAssignmentFromTaskCommand> requestValidator) {
+    public RevokeAssignmentFromTaskCommandHandler(TaskService taskService, RevokeAssignmentFromTaskCommand.RevokeAssignmentFromTaskCommandValidator requestValidator) {
         this.validator = requestValidator;
         this.taskService = taskService;
     }

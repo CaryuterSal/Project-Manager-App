@@ -11,9 +11,9 @@ import dev.builder.usermanagement.domain.port.in.UserService;
 
 public class InviteStudentCommandHandler implements RequestHandler<InviteStudentCommand, StudentView> {
     private final UserService userService;
-    private final RequestValidator<InviteStudentCommand> validator;
+    private final InviteStudentCommand.InviteStudentCommandValidator validator;
 
-    public InviteStudentCommandHandler(UserService userService, RequestValidator<InviteStudentCommand> validator) {
+    public InviteStudentCommandHandler(UserService userService, InviteStudentCommand.InviteStudentCommandValidator validator) {
         this.userService = userService;
         this.validator = validator;
     }

@@ -13,9 +13,9 @@ import java.util.Optional;
 
 public class FindStudentQueryHandler implements RequestHandler<FindStudentQuery, Optional<StudentView>> {
     private final UserService userService;
-    private final RequestValidator<FindStudentQuery> validator;
+    private final FindStudentQuery.FindStudentQueryValidator validator;
 
-    public FindStudentQueryHandler(UserService userService, RequestValidator<FindStudentQuery> validator) {
+    public FindStudentQueryHandler(UserService userService, FindStudentQuery.FindStudentQueryValidator validator) {
         this.userService = userService;
         this.validator = validator;
     }

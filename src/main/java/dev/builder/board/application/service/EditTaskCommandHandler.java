@@ -12,10 +12,10 @@ import dev.builder.core.infrastructure.di.annotation.Bean;
 
 @Bean
 public class EditTaskCommandHandler implements RequestHandler<EditTaskCommand, TaskView> {
-    private final RequestValidator<EditTaskCommand> validator;
+    private final EditTaskCommand.EditTaskCommandValidator validator;
     private final TaskService taskService;
 
-    public EditTaskCommandHandler(TaskService taskService, RequestValidator<EditTaskCommand> requestValidator) {
+    public EditTaskCommandHandler(TaskService taskService, EditTaskCommand.EditTaskCommandValidator requestValidator) {
         this.validator = requestValidator;
         this.taskService = taskService;
     }
