@@ -45,7 +45,7 @@ public class AnnotationAwareDependencyContainer extends AbstractDependencyContai
     }
 
     private void executePostConstruct(BeanDefinition<?> beanDefinition){
-        for(Method m: beanDefinition.getType().getDeclaredMethods()){
+        for(Method m: beanDefinition.getBean().getClass().getDeclaredMethods()){
             if(m.isAnnotationPresent(PostConstruct.class)) {
                 try {
                     m.setAccessible(true);
@@ -67,7 +67,7 @@ public class AnnotationAwareDependencyContainer extends AbstractDependencyContai
     }
 
     private void injectSetters(BeanDefinition<?> beanDefinition){
-        for(Method m: beanDefinition.getType().getDeclaredMethods()){
+        for(Method m: beanDefinition.getBean().getClass().getDeclaredMethods()){
             if(m.isAnnotationPresent(Inject.class)){
                 List<? extends BeanDefinition<?>> paramBeans = getBeanDefinitionForSetter(m);
                 Object[] paramInstances = paramBeans.stream().map(this::getInstance).toArray();

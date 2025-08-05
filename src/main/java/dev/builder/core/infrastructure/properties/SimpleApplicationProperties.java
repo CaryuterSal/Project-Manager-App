@@ -17,13 +17,13 @@ import java.util.logging.Logger;
 @Bean
 public class SimpleApplicationProperties implements ApplicationProperties {
 
-    private final ActiveProfileProvider activeProfileProvider;
+    private final ActiveProfileManager activeProfileProvider;
 
     private static final Properties applicationProperties = new Properties();
     private static final Logger logger = Logger.getLogger(SimpleApplicationProperties.class.getSimpleName());
 
 
-    public SimpleApplicationProperties(@NotNull ActiveProfileProvider activeProfileProvider){
+    public SimpleApplicationProperties(@NotNull ActiveProfileManager activeProfileProvider){
         this.activeProfileProvider = activeProfileProvider;
         loadProperties();
     }
