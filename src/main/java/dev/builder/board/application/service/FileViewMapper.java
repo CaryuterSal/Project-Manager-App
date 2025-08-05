@@ -9,6 +9,6 @@ import org.jetbrains.annotations.NotNull;
 public class FileViewMapper {
 
     public FileView toView(@NotNull StoredFile<?> file){
-        return new FileView(file.id().uuid(), file.name().value(), file.mimeType().asText());
+        return new FileView(file.id().uuid(), file.name().value(), file.mimeType());
     }
 }

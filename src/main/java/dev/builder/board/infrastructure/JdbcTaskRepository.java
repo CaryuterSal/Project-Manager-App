@@ -46,7 +46,7 @@ public class JdbcTaskRepository extends TransactionalJdbcCrudRepository<Task, Ta
             deadline = ?,
             clr_name = ?
             WHERE id = ?
-            AND active = 165
+            AND active = 1
             """;
 
     private static final String SELECT = String.format("""
@@ -256,7 +256,7 @@ public class JdbcTaskRepository extends TransactionalJdbcCrudRepository<Task, Ta
             UPDATE task
             SET active = 0
             WHERE id = ?
-            AND active = 1;
+            AND active = 1
             """;
 
     private static final String RECOVER = """

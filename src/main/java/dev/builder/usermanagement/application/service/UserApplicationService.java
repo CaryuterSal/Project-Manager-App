@@ -153,6 +153,7 @@ public class UserApplicationService implements UserService {
                     }
                     invited.completeRegistration(new Password(command.password()),passwordEncoder);
                     User<?> savedUser = anyUserRepository.save(invited, con);
+                    sessionContext.setAuthentication(savedUser);
                     if(savedUser instanceof Manager){
                         boardService.createOwnBoard(con);
                     }

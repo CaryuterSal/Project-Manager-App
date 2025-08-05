@@ -39,7 +39,7 @@ public class JdbcBoardCollaboratorRepository {
             SELECT
                 sb.bad_email as %s,
                 sb.sdt_email as %s,
-                sb.issued_at as %s,
+                sb.issued_at as %s
             FROM student s
             JOIN app_user su ON su.email = s.email AND su.active = 1
             JOIN student_board sb ON sb.sdt_email = su.email

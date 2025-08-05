@@ -86,7 +86,7 @@ public final class MoveTaskCommand implements Command<BoardView> {
     }
 
     @Contract(value = " -> new", pure = true)
-    public static @NotNull BuilderStateStage builder(){
+    public static @NotNull BuilderTaskIdStage builder(){
         return new Builder();
     }
 

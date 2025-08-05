@@ -8,6 +8,7 @@ import dev.builder.board.domain.port.out.AttachmentRepository;
 import dev.builder.core.infrastructure.di.annotation.Bean;
 import dev.builder.core.infrastructure.di.annotation.Inject;
 import dev.builder.core.infrastructure.persistence.*;
+import dev.builder.core.infrastructure.properties.MessageLocalizer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -15,10 +16,7 @@ import java.io.InputStream;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 
 import static dev.builder.core.infrastructure.persistence.CommonJdbcOperationWrappers.executeQuery;
 import static dev.builder.core.infrastructure.persistence.CommonJdbcOperationWrappers.wrapWithConnection;
@@ -51,10 +49,10 @@ public class JdbcAttachmentRepository extends TransactionalJdbcCrudRepository<At
                 f.id AS %s,
                 f.name as %s,
                 f.mimetype as %s,
-                tc.tsk_id AS %s
-            FROM task_attachement tc
-            JOIN "FILE" f ON f.id = tc.fle_id
-            WHERE tc.fle_id = ?
+                ta.tsk_id AS %s
+            FROM task_attachement ta
+            JOIN "FILE" f ON f.id = ta.fle_id
+            WHERE ta.fle_id = ?
             AND f.active = 1
             """, FileJdbcMapper.FileColumns.ID.columnName(),
             FileJdbcMapper.FileColumns.NAME.columnName(),
@@ -65,14 +63,31 @@ public class JdbcAttachmentRepository extends TransactionalJdbcCrudRepository<At
                 f.id AS %s,
                 f.name as %s,
                 f.mimetype as %s,
-                tc.tsk_id AS %s
-            FROM task_attachement tc
-            JOIN "FILE" f ON f.id = tc.fle_id
+                ta.tsk_id AS %s
+            FROM task_attachement ta
+            JOIN "FILE" f ON f.id = ta.fle_id
             AND f.active = 1
             """, FileJdbcMapper.FileColumns.ID.columnName(),
             FileJdbcMapper.FileColumns.NAME.columnName(),
             FileJdbcMapper.FileColumns.MIME_TYPE.columnName(),
             FileJdbcMapper.FileColumns.ATTACHED_TO);
+
+
+    private static final String SELECT_BY_TASK = String.format("""
+            SELECT
+                f.id AS %s,
+                f.name as %s,
+                f.mimetype as %s,
+                ta.tsk_id AS %s
+            FROM task_attachement ta
+            JOIN "FILE" f ON f.id = ta.fle_id
+            JOIN task t ON t.id = ta.tsk_id AND t.active = 1
+            WHERE t.id = ?
+            AND f.active = 1
+            """,FileJdbcMapper.FileColumns.ID.columnName(),
+            FileJdbcMapper.FileColumns.NAME.columnName(),
+            FileJdbcMapper.FileColumns.MIME_TYPE.columnName(),
+            FileJdbcMapper.FileColumns.ATTACHED_TO.columnName());
 
     private static final Logger log = LoggerFactory.getLogger(JdbcAttachmentRepository.class);
 
@@ -82,6 +97,7 @@ public class JdbcAttachmentRepository extends TransactionalJdbcCrudRepository<At
     }
 
     private JdbcStoredFileRepository storedFileRepository;
+    private final MessageLocalizer messageLocalizer;
 
     @Inject
     public void setJdbcStoredFileRepository(JdbcStoredFileRepository storedFileRepository) {
@@ -89,8 +105,9 @@ public class JdbcAttachmentRepository extends TransactionalJdbcCrudRepository<At
     }
 
     @Inject
-    public JdbcAttachmentRepository(ConnectionManager connectionManager) {
+    public JdbcAttachmentRepository(ConnectionManager connectionManager, MessageLocalizer messageLocalizer) {
         super(connectionManager);
+        this.messageLocalizer = messageLocalizer;
     }
 
     @Override
@@ -149,7 +166,7 @@ public class JdbcAttachmentRepository extends TransactionalJdbcCrudRepository<At
                 rs -> {
                     List<Attachment> attachments = new ArrayList<>();
                     while(rs.next()){
-                        attachments.add(FileJdbcMapper.rowToAttachment(rs));
+                        attachments.add(FileJdbcMapper.rowToAttachment(messageLocalizer, rs));
                     }
                     return attachments;
                 },
@@ -163,7 +180,7 @@ public class JdbcAttachmentRepository extends TransactionalJdbcCrudRepository<At
         return executeQuery(
                 SELECT,
                 ps -> ps.setBytes(1, UUIDMapper.UUIDtoByteArray(id.uuid())),
-                rs -> rs.next() ? Optional.of(FileJdbcMapper.rowToAttachment(rs)) : Optional.empty(),
+                rs -> rs.next() ? Optional.of(FileJdbcMapper.rowToAttachment(messageLocalizer, rs)) : Optional.empty(),
                 log,
                 connection
         );
@@ -181,7 +198,19 @@ public class JdbcAttachmentRepository extends TransactionalJdbcCrudRepository<At
 
     @Override
     public Set<Attachment> findByTaskId(Task.Id taskId, Connection connection) {
-        return Set.of();
+        return executeQuery(
+                SELECT_BY_TASK,
+                ps -> ps.setBytes(1, UUIDMapper.UUIDtoByteArray(taskId.value())),
+                rs -> {
+                    Set<Attachment> attachments = new HashSet<>();
+                    while(rs.next()){
+                        attachments.add(FileJdbcMapper.rowToAttachment(messageLocalizer, rs));
+                    }
+                    return attachments;
+                    },
+                log,
+                connection
+        );
     }
 
     @Override

@@ -24,7 +24,7 @@ public class JdbcAcademicQuarterRepository {
     private static final String EXISTS = """
             SELECT count(*) AS total
             FROM ACADEMIC_QUARTER
-            WHERE "number" = ?;
+            WHERE "number" = ?
             """;
 
     public boolean exists(AcademicQuarter academicQuarter, Connection connection) throws SQLException {
