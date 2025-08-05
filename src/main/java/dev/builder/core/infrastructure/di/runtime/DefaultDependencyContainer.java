@@ -1,5 +1,9 @@
 package dev.builder.core.infrastructure.di.runtime;
 
+import dev.builder.core.infrastructure.di.definition.BeanDefinition;
+import dev.builder.core.infrastructure.di.definition.InstantiationMode;
+import dev.builder.core.infrastructure.di.definition.SingletonBeanDefinition;
+
 public class DefaultDependencyContainer extends AbstractDependencyContainer {
 
     private DefaultDependencyContainer() {
@@ -25,5 +29,14 @@ public class DefaultDependencyContainer extends AbstractDependencyContainer {
     @Override
     public void scanPackage(String packageName) throws UnsupportedOperationException{
         throw new UnsupportedOperationException("Cannot scan package for " + getClass().getSimpleName());
+    }
+
+    @Override
+    @SuppressWarnings("unchecked")
+    protected <T> BeanDefinition<T> getDependencyContainerBean(Class<T> clazz) {
+        if(clazz.isAssignableFrom(DefaultDependencyContainer.class)){
+            return new SingletonBeanDefinition<>(clazz, generateBeanName(getClass()), () -> (T) getInstance(), InstantiationMode.LAZY );
+        }
+        return null;
     }
 }

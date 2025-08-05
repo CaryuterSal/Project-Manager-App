@@ -4,6 +4,7 @@ import dev.builder.core.infrastructure.di.annotation.*;
 import dev.builder.core.infrastructure.di.constructor.*;
 import dev.builder.core.infrastructure.di.definition.*;
 import dev.builder.core.infrastructure.di.exception.BeanNotFoundException;
+import org.apache.poi.ss.formula.functions.T;
 import org.jetbrains.annotations.NotNull;
 
 import java.lang.reflect.*;
@@ -35,6 +36,55 @@ public class AnnotationAwareDependencyContainer extends AbstractDependencyContai
         BeanPackageScanner beanPackageScanner = new BeanPackageScanner(packageName);
         beanPackageScanner.scan()
                 .forEach(this::register);
+        for(BeanDefinition<?> bean: registryByName.values()){
+            injectSetters(bean);
+        }
+        for(BeanDefinition<?> bean: registryByName.values()){
+            executePostConstruct(bean);
+        }
+    }
+
+    private void executePostConstruct(BeanDefinition<?> beanDefinition){
+        for(Method m: beanDefinition.getType().getDeclaredMethods()){
+            if(m.isAnnotationPresent(PostConstruct.class)) {
+                try {
+                    m.setAccessible(true);
+                    m.invoke(beanDefinition.getBean());
+                } catch (IllegalAccessException | InvocationTargetException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+        }
+    }
+
+    @Override
+    @SuppressWarnings("unchecked")
+    protected <T> BeanDefinition<T> getDependencyContainerBean(Class<T> clazz) {
+        if(clazz.isAssignableFrom(AnnotationAwareDependencyContainer.class)){
+            return new SingletonBeanDefinition<>(clazz, generateBeanName(getClass()), () -> (T) getInstance(), InstantiationMode.LAZY );
+        }
+        return null;
+    }
+
+    private void injectSetters(BeanDefinition<?> beanDefinition){
+        for(Method m: beanDefinition.getType().getDeclaredMethods()){
+            if(m.isAnnotationPresent(Inject.class)){
+                List<? extends BeanDefinition<?>> paramBeans = getBeanDefinitionForSetter(m);
+                Object[] paramInstances = paramBeans.stream().map(this::getInstance).toArray();
+                try {
+                    m.setAccessible(true);
+                    m.invoke(beanDefinition.getBean(), paramInstances);
+                } catch (IllegalAccessException | InvocationTargetException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+        }
+    }
+
+    private List<? extends BeanDefinition<?>> getBeanDefinitionForSetter(Method setter){
+        return Arrays.stream(setter.getParameterTypes())
+                .map(this::getBeanDefinition)
+                .toList();
     }
     /**
      * Crea la configuración por defecto de creación tomando en cuenta las anotaciones presentes:

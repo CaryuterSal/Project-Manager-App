@@ -116,9 +116,13 @@ public class BeanAnnotationAccessors {
      */
     public static Optional<String> extractAnnotatedBeanName(Class<?> clazz) {
         if(isBeanAnnotationPresent(clazz)) {
-            return Optional.ofNullable(clazz.getAnnotation(Bean.class).name());
+            String beanName = clazz.getAnnotation(Bean.class).name();
+            if(beanName == null || beanName.isEmpty()) return Optional.empty();
+            return Optional.of(beanName);
         } else if(isAnnotatedSingleton(clazz)) {
-            return Optional.ofNullable(clazz.getAnnotation(Singleton.class).name());
+            String beanName = clazz.getAnnotation(Singleton.class).name();
+            if(beanName == null || beanName.isEmpty()) return Optional.empty();
+            return Optional.of(beanName);
         }
         return Optional.empty();
     }
