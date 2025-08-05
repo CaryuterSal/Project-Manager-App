@@ -37,7 +37,7 @@ public class AuthenticationApplicationService implements AuthenticationService {
                 () -> new UnauthorizedException(messageLocalizer.getMessage("auth.bad.credentials"))
         );
         if(!currentUser.login(new Password(loginCommand.password()), passwordMatcher)){
-            throw new UnauthorizedException(messageLocalizer.getMessage("auth.bad.password"));
+            throw new UnauthorizedException(messageLocalizer.getMessage("auth.bad.credentials"));
         }
         sessionContext.setAuthentication(currentUser);
         sessionStorage.saveSession();
