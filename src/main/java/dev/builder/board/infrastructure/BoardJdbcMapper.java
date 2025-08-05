@@ -81,7 +81,10 @@ public class BoardJdbcMapper {
                 rs,
                 BoardJdbcMapper::extractBoardId,
                 r -> {
-                    Student.Id collaboratorId = new Student.Id(r.getString(BoardColumns.COLLABORATOR_ID.columnName));
+
+                    String email = r.getString(BoardColumns.COLLABORATOR_ID.columnName);
+                    if(email == null) return null;
+                    Student.Id collaboratorId =  new Student.Id(email);
                     LocalDateTime issuedAt = r.getObject(BoardColumns.COLLABORATOR_ISSUED_AT.columnName(), OffsetDateTime.class).atZoneSameInstant(ZoneId.systemDefault()).toLocalDateTime();
                     return new BoardCollaborator(issuedAt, collaboratorId);
                 }

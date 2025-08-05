@@ -55,7 +55,14 @@ public class Task extends LocalEntity<Task.Id> implements Comparable<Task> {
 
     @Contract("_,_, _, _,_, _, _ -> new")
     static @NotNull Task createNew(Task.Id id, Stage.Id stage, Title title, TaskDescription description, Color color, Deadline deadline, Order order) {
-        return new Task(id, stage, title, description, color, deadline, order);
+        Task created = new Task(id, stage, title, description, color, deadline, order);
+        if(!stage.state().equals(Stage.StageState.TO_DO)){
+            created.start();
+        }
+        if(stage.state().isFinal()){
+            created.finish();
+        }
+        return created;
     }
     /**
      * Constructor completo que incluye imagen de portada y adjuntos.
@@ -106,8 +113,12 @@ public class Task extends LocalEntity<Task.Id> implements Comparable<Task> {
         this.coverImage = Objects.requireNonNull(coverImage);
     }
 
-    public void changeOrder(Order order) {
+    void changeOrder(Order order) {
         this.order = Objects.requireNonNull(order);
+    }
+
+    void changeStage(Stage.Id stage) {
+        this.stage = Objects.requireNonNull(stage);
     }
 
     public Task hydratedWithAuditInfo(LocalDateTime createdAt){

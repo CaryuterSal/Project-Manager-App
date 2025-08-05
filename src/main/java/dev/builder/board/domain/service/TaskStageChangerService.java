@@ -14,15 +14,23 @@ public class TaskStageChangerService implements DomainService {
             throw new IllegalArgumentException("La tarea a mover no pertenece a dicha etapa");
         }
 
-        if(sourceStage.state().equals(Stage.StageState.DONE)) {
+        boolean updated;
+        if(sourceTask.hasFinished()) {
             return  false;
         } else if(sourceStage.equals(targetStage)){
-            return sourceStage.placeTaskBetween(sourceTask,previousTask, nextTask);
+             updated = sourceStage.placeTaskBetween(sourceTask,previousTask, nextTask);
         } else {
             sourceStage.removeTask(sourceTask);
             targetStage.placeTaskBetween(sourceTask, previousTask, nextTask);
-            return true;
+            updated = true;
         }
+        if(updated && !targetStage.state().equals(Stage.StageState.TO_DO) && !sourceTask.hasStarted()){
+            sourceTask.start();
+        }
+        if(updated && targetStage.state().isFinal()){
+            sourceTask.finish();
+        }
+        return updated;
     }
 
 }

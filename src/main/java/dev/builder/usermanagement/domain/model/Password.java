@@ -77,7 +77,7 @@ public final class Password implements ValueObject<Password> {
         public static @NotNull Strength forPassword(@NotNull String password){
             String trimmed = password.trim();
             int score = 0;
-            if(trimmed.length() < 6) return INVALID;
+            if(trimmed.length() <= 6) return INVALID;
             if(trimmed.matches(".*[a-z].*")) score++;
             if(trimmed.matches(".*[A-Z].*")) score++;
             if(trimmed.matches(".*[0-9].*")) score++;

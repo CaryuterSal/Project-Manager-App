@@ -1,7 +1,9 @@
 package dev.builder.board.domain.model;
 
+import dev.builder.board.domain.exception.FileUnsupportedException;
 import dev.builder.core.domain.AggregateRoot;
 import dev.builder.core.domain.ValueObject;
+import dev.builder.core.infrastructure.properties.MessageLocalizer;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Arrays;
@@ -77,7 +79,7 @@ public abstract class StoredFile<ID extends StoredFile.Id<?>> extends AggregateR
 
         private final String value;
 
-        private static final Pattern pattern = Pattern.compile("^[\\w-_]+(\\.\\w+)+$");
+        private static final Pattern pattern = Pattern.compile("^[a-zA-Z0-9_-]+(\\.[a-zA-Z0-9]+)+$");
 
         /**
          * Crea un nuevo nombre de archivo validando su formato.
@@ -125,6 +127,19 @@ public abstract class StoredFile<ID extends StoredFile.Id<?>> extends AggregateR
         @Override
         public int compareTo(@NotNull StoredFile.Filename filename) {
             return value.compareTo(filename.value());
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (o == null || getClass() != o.getClass()) return false;
+
+            Filename filename = (Filename) o;
+            return value.equals(filename.value);
+        }
+
+        @Override
+        public int hashCode() {
+            return value.hashCode();
         }
     }
 
@@ -175,6 +190,19 @@ public abstract class StoredFile<ID extends StoredFile.Id<?>> extends AggregateR
         @Override
         public int compareTo(@NotNull ID id) {
             return uuid.compareTo(id.uuid());
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (o == null || getClass() != o.getClass()) return false;
+
+            Id<?> id = (Id<?>) o;
+            return uuid.equals(id.uuid);
+        }
+
+        @Override
+        public int hashCode() {
+            return uuid.hashCode();
         }
     }
 
@@ -227,11 +255,11 @@ public abstract class StoredFile<ID extends StoredFile.Id<?>> extends AggregateR
          * @return El enum correspondiente.
          * @throws IllegalArgumentException Si no se encuentra un tipo válido.
          */
-        public static MimeType fromValue(String raw) {
+        public static MimeType fromValue(MessageLocalizer messageLocalizer, String raw) {
             return Arrays.stream(values())
                     .filter(m -> m.text.equalsIgnoreCase(raw))
                     .findFirst()
-                    .orElseThrow(() -> new IllegalArgumentException("No se soporta este formato de archivo"));
+                    .orElseThrow(() -> new FileUnsupportedException(messageLocalizer));
         }
 
 
