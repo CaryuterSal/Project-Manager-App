@@ -14,6 +14,26 @@ import org.slf4j.LoggerFactory;
 import java.io.InputStream;
 import java.util.UUID;
 
+/**
+ * Añade una imágen de portada a la tarea especificada. Devuelve un {@link FileView} con los metadatos del archivo subido
+ * </br>
+ * Posibles excepciones lanzadas:
+ *  <ul>
+ *      <li>{@link dev.builder.auth.application.service.UnauthorizedException} Si el usuario activo no es {@code Manager} dueño del tablero o un {@code Student} que colabora en la tarea</li>
+ *      <li>{@link dev.builder.board.domain.exception.TaskNotFoundException} si no se encuentra una tarea con dicho ID en el tablero del Manager</li>
+ *      <li>{@link IllegalStateException} si la tarea ya tiene una imágen de portada designada</li>
+ *      <li>{@link java.io.IOException} si ocurre un error al leer el stream de datos</li>
+ *      <li>{@link dev.builder.board.domain.exception.FileUnsupportedException} si el formato de archivo es inválido o no es soportado</li>
+ *      <li>Posibles violaciones de validación</li>
+ *      <ul>
+ *          <li>{@link dev.builder.core.application.validation.RequiredFieldViolation} si algún campo es {@code null} o solo contiene espacios</li>
+ *          <li>{@link dev.builder.core.application.validation.FormatViolation} si el formato de nombre de archivo es inválido</li>
+ *      </ul>
+ *  </ul>
+ * @param taskId el ID de la tarea
+ * @param filename el nombre del archivo
+ * @param imageStream el archivo en forma de stream
+ */
 public record AttachCoverImageToTaskCommand(UUID taskId, String filename, InputStream imageStream) implements Command<FileView> {
 
     public enum Fields{

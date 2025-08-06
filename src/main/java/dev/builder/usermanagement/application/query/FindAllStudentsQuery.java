@@ -19,6 +19,18 @@ import org.slf4j.LoggerFactory;
 import java.time.LocalDateTime;
 import java.util.Optional;
 
+/**
+ * Obtiene la información de varios estudiantes administradores como {@link java.util.List} de {@link dev.builder.usermanagement.application.view.StudentView}.
+ * Usar el método <b>Builder/b> {@code builder()}
+ *  Posibles excepciones lanzadas:
+ *   <ul>
+ *       <li>Posibles violaciones de validación</li>
+ *       <ul>
+ *           <li>{@link dev.builder.core.application.validation.RequiredFieldViolation} si algún campo es {@code null} o solo contiene espacios</li>
+ *           <li>{@link dev.builder.core.application.validation.FormatViolation} si el correo electrónico no tiene un formato válido</li>
+ *       </ul>
+ *   </ul>
+ **/
 public class FindAllStudentsQuery extends FindAllUsersQuery<StudentView, FindAllStudentsQuery.StudentSortableField> {
 
 

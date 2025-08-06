@@ -12,6 +12,20 @@ import org.slf4j.LoggerFactory;
 
 import java.util.UUID;
 
+/**
+ * Elimina una tarea del tablero. Devuelve el {@link StageView} que previamente contenía la tarea que fue eliminada
+ * </br>
+ * Posibles excepciones lanzadas:
+ *  <ul>
+ *      <li>{@link dev.builder.auth.application.service.UnauthorizedException} Si el usuario activo no es {@code Manager}</li>
+ *      <li>{@link dev.builder.board.domain.exception.TaskNotFoundException} si no se encuentra una tarea con dicho ID en el tablero del Manager</li>
+ *      <li>Posibles violaciones de validación</li>
+ *      <ul>
+ *          <li>{@link dev.builder.core.application.validation.RequiredFieldViolation} si el ID de la tarea es {@code null}</li>
+ *      </ul>
+ *  </ul>
+ * @param taskId el ID de la tarea
+ */
 public record DeleteTaskCommand(UUID taskId) implements Command<StageView> {
     public enum Fields{
         TASK_ID("taskId");

@@ -20,8 +20,38 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
+/**
+ * Obtiene la información de varios usuarios como {@link java.util.List} de {@link dev.builder.usermanagement.application.view.UserView}.
+ * Usar el método <b>factory</b> {@code builder()}
+ *  Posibles excepciones lanzadas:
+ *   <ul>
+ *       <li>Posibles violaciones de validación</li>
+ *       <ul>
+ *           <li>{@link dev.builder.core.application.validation.RequiredFieldViolation} si algún campo es {@code null} o solo contiene espacios</li>
+ *           <li>{@link dev.builder.core.application.validation.FormatViolation} si el correo electrónico no tiene un formato válido</li>
+ *       </ul>
+ *   </ul>
+ **/
 public class FindAllUsersQuery<T extends UserView, S extends  Enum<S> & SortField> implements Query<List<T>> {
 
+    public static class FindAllUsersGenericQuery extends FindAllUsersQuery<UserView, FindAllUsersQuery.UserSortableField> {
+        private FindAllUsersGenericQuery(Sort<UserSortableField> sort, LocalDateTime minCreatedDate, LocalDateTime maxCreatedDate) {
+            super(sort, minCreatedDate, maxCreatedDate);
+        }
+
+        @Contract(value = " -> new", pure = true)
+        public static @NotNull FindAllUsersGenericQuery.Builder builder() {
+            return new FindAllUsersGenericQuery.Builder();
+        }
+
+
+        public static class Builder extends FindAllUsersQuery.Builder<FindAllUsersQuery.UserSortableField> {
+            @Override
+            public FindAllUsersQuery<?, UserSortableField> build() {
+                return new FindAllUsersGenericQuery(super.sort, super.minCreatedDate, super.maxCreatedDate);
+            }
+        }
+    }
     public enum Fields{
         MIN_CREATED_DATE("minCreatedDate"), MAX_CREATED_DATE("maxCreatedDate");
         private final String value;

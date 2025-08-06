@@ -19,17 +19,22 @@ import java.io.InputStream;
 import java.util.UUID;
 
 /**
- * Comando para agregar archivos adjuntos a una tarea existente
+ * Comando para agregar archivos adjuntos a una tarea existente. Devuelve un {@link FileView} con los metadatos del archivo subido
  * @param taskId el ID de la tarea a la que adjuntar el archivo
  * @param filename el nombre lógico del archivo (puede ser cualquiera)
  * @param fileStream un stream de datos con el contenido del archivo
  * </br> </br>
  *   Posibles excepciones que pueden ser lanzadas
- *                   <ul>
- *    <li>{@link TaskNotFoundException} - si no se encuentra la tarea con el ISD</li>
+ *  <ul>
+ *    <li>{@link TaskNotFoundException} - si no se encuentra la tarea con el ID indicado</li>
  *    <li>{@link java.io.IOException} - si ocurre un error al leer el stream de datos</li>
- *    <li>{@link }</li>
- *                   </ul>
+ *    <li>{@link dev.builder.board.domain.exception.FileUnsupportedException} - si el tipo de archivo no es soportado</li>
+ *    <li>Las violaciones de validación pueden ser de tipo:</li>
+ *    <ul>
+ *       <li>{@link RequiredFieldViolation} si alguno de los campos es {@code null}, o solo contiene espacios</li>
+ *       <li>{@link FormatViolation} si el nombre de archivo no tiene formato de extensión válido</li>
+ *    </ul>
+ *  </ul>
  */
 public record AddAttachmentToTaskCommand(UUID taskId, String filename, InputStream fileStream) implements Command<FileView> {
 

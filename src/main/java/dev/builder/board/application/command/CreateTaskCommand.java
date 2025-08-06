@@ -16,6 +16,26 @@ import org.slf4j.LoggerFactory;
 
 import java.time.LocalDateTime;
 
+/**
+ * Crea una nueva tarea en una determinada etapa del tablero. Esta nueva tarea se agrega al final de la columna. Devuelve un {@link StageView} con la nueva tarea creada dentro de el, además de las ya existentes
+ *
+ * </br>
+ * Posibles excepciones lanzadas:
+ *  <ul>
+ *      <li>{@link dev.builder.auth.application.service.UnauthorizedException} Si el usuario activo no es {@code Manager}</li>
+ *      <li>Posibles violaciones de validación</li>
+ *      <ul>
+ *          <li>{@link dev.builder.core.application.validation.RequiredFieldViolation} si algún campo es {@code null} o solo contiene espacios</li>
+ *          <li>{@link dev.builder.core.application.validation.FormatViolation} si el formato de título de la tarea es inválido</li>
+ *          <li>{@link DateFutureViolation} si la fecha límite para completar la tarea no se encuentra en el futuro</li>
+ *      </ul>
+ *  </ul>
+ * @param stage la etapa en la que se debe crear la tarea
+ * @param title el título de la tarea
+ * @param description la descripción de la tarea
+ * @param color el color de marcado de la tarea
+ * @param deadline la fecha límite para completar la tarea
+ */
 public record CreateTaskCommand(Stage.StageState stage, String title, String description, Color color, LocalDateTime deadline) implements Command<StageView> {
     public enum Fields{
         STAGE("stage"), TITLE("title"), DESCRIPTION("description"), COLOR("color"), DEADLINE("deadline");

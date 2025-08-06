@@ -13,6 +13,18 @@ import org.slf4j.LoggerFactory;
 
 import java.util.Optional;
 
+/**
+ * Obtiene la información de un usuario cualquiera como {@link java.util.Optional} de {@link dev.builder.usermanagement.application.view.UserView}.
+ * Usar el método <b>factory</b> {@code generic(String email)}
+ *  Posibles excepciones lanzadas:
+ *   <ul>
+ *       <li>Posibles violaciones de validación</li>
+ *       <ul>
+ *           <li>{@link dev.builder.core.application.validation.RequiredFieldViolation} si algún campo es {@code null} o solo contiene espacios</li>
+ *           <li>{@link dev.builder.core.application.validation.FormatViolation} si el correo electrónico no tiene un formato válido</li>
+ *       </ul>
+ *   </ul>
+ **/
 public class FindUserQuery<T extends UserView> implements Query<Optional<T>> {
     public enum Fields{
         EMAIL("email");
