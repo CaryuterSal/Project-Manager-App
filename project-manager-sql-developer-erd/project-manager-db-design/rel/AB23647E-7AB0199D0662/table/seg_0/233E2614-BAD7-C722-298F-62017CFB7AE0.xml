@@ -1,0 +1,78 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<Table class="oracle.dbtools.crest.model.design.relational.Table" directorySegmentName="seg_0" id="233E2614-BAD7-C722-298F-62017CFB7AE0" name="BOARD">
+<createdBy>caryuter</createdBy>
+<createdTime>2025-06-27 17:56:12 UTC</createdTime>
+<generatorID>21A594C7-2907-73F4-71B5-A03C702CA8C6</generatorID>
+<ownerDesignName>project-manager-db-design</ownerDesignName>
+<ordsAlias>boards</ordsAlias>
+<abbreviation>bad</abbreviation>
+<allowColumnReorder>false</allowColumnReorder>
+<existDependencyGenerateInDDl>true</existDependencyGenerateInDDl>
+<parsed>true</parsed>
+<columns itemClass="oracle.dbtools.crest.model.design.relational.Column">
+<Column name="title" id="81FA03A1-152C-4BBF-6A6C-CE6647D3D0D6">
+<createdBy>caryuter</createdBy>
+<createdTime>2025-06-27 17:56:12 UTC</createdTime>
+<generatorID>36C15DC3-EA3E-CA4C-EF5A-5870A48B2637</generatorID>
+<ownerDesignName>project-manager-db-design</ownerDesignName>
+<useDomainConstraints>false</useDomainConstraints>
+<use>1</use>
+<logicalDatatype>LOGDT024</logicalDatatype>
+<dataTypeSize>63</dataTypeSize>
+<ownDataTypeParameters>63,,</ownDataTypeParameters>
+<autoIncrementCycle>false</autoIncrementCycle>
+</Column>
+<Column name="created_at" id="40792197-6F54-6199-B808-42CAF6F24366">
+<createdBy>caryuter</createdBy>
+<createdTime>2025-06-27 17:56:12 UTC</createdTime>
+<generatorID>A23288BD-D3B8-3C33-31DD-8ACB61A5D29E</generatorID>
+<ownerDesignName>project-manager-db-design</ownerDesignName>
+<useDomainConstraints>false</useDomainConstraints>
+<use>1</use>
+<logicalDatatype>LOGDT046</logicalDatatype>
+<ownDataTypeParameters>,,</ownDataTypeParameters>
+<autoIncrementCycle>false</autoIncrementCycle>
+</Column>
+<Column name="mnr_email" id="F08E92B0-9F6A-EDB6-1A15-E1981BF40B70">
+<createdBy>caryuter</createdBy>
+<createdTime>2025-06-27 17:56:12 UTC</createdTime>
+<generatorID>69366603-505D-B3D0-28A1-9D5D1D113FDA</generatorID>
+<ownerDesignName>project-manager-db-design</ownerDesignName>
+<useDomainConstraints>false</useDomainConstraints>
+<use>1</use>
+<logicalDatatype>LOGDT024</logicalDatatype>
+<dataTypeSize>63 CHAR</dataTypeSize>
+<ownDataTypeParameters>,,</ownDataTypeParameters>
+<previousColumn>false</previousColumn>
+<autoIncrementCycle>false</autoIncrementCycle>
+<associations>
+<colAssociation fkAssociation="338D9536-DEB8-3547-76CD-11D5C6FFC084" referredColumn="618D2C73-ADC9-A243-851C-9E291F2A670D"/>
+</associations>
+</Column>
+</columns>
+<indexes itemClass="oracle.dbtools.crest.model.design.relational.Index">
+<ind_PK_UK id="579C4EF5-359A-6ABD-3A26-8C48D1EBF475" name="BOARDS_PK">
+<createdBy>caryuter</createdBy>
+<createdTime>2025-06-27 17:56:12 UTC</createdTime>
+<generatorID>4A05A58B-967E-0BA2-AE0D-17BBD6A07EAB</generatorID>
+<ownerDesignName>project-manager-db-design</ownerDesignName>
+<pk>true</pk>
+<indexState>Primary Constraint</indexState>
+<isSurrogateKey>false</isSurrogateKey>
+<indexColumnUsage>
+<colUsage columnID="F08E92B0-9F6A-EDB6-1A15-E1981BF40B70"/>
+</indexColumnUsage>
+</ind_PK_UK>
+<ind_PK_UK id="298EEF9A-7B82-F2C0-4D54-D07FBECF37BB" name="BOARDS_MANAGERS_FK">
+<createdBy>caryuter</createdBy>
+<createdTime>2025-06-27 17:56:12 UTC</createdTime>
+<generatorID>809B6310-0951-E917-32BB-36D357884BB2</generatorID>
+<ownerDesignName>project-manager-db-design</ownerDesignName>
+<indexState>Foreign Key</indexState>
+<isSurrogateKey>false</isSurrogateKey>
+<indexColumnUsage>
+<colUsage columnID="F08E92B0-9F6A-EDB6-1A15-E1981BF40B70"/>
+</indexColumnUsage>
+</ind_PK_UK>
+</indexes>
+</Table>

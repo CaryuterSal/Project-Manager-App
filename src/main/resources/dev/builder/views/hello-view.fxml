@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+
+<ScrollPane fx:id="scrollPane" fitToWidth="true" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" >
+   <content>
+      <VBox alignment="CENTER" fillWidth="true" spacing="20.0">
+         <padding>
+            <Insets bottom="30" left="20" right="20" top="30" />
+         </padding>
+
+         <!-- Imagen -->
+         <ImageView fitHeight="92.0" fitWidth="96.0" pickOnBounds="true" preserveRatio="true">
+            <image>
+               <Image url="@../assets/images/logo.png" />
+            </image>
+         </ImageView>
+
+         <!-- Título Kedu -->
+         <Label text="Kedu">
+            <font>
+               <Font name="System Bold" size="18.0" />
+            </font>
+         </Label>
+
+         <!-- Bienvenida -->
+         <Label text="Bienvenido">
+            <font>
+               <Font name="System Bold" size="22.5" />
+            </font>
+         </Label>
+
+         <!-- Campo Correo -->
+         <TextField fx:id="txtCorreo" maxWidth="300.0" prefHeight="30.0" promptText="Correo">
+            <font>
+               <Font size="12.0" />
+            </font>
+         </TextField>
+
+         <!-- Campo Contraseña -->
+         <PasswordField fx:id="txtContra" disable="true" editable="false" maxWidth="300.0" prefHeight="28.0" promptText="Contraseña" visible="false">
+            <font>
+               <Font size="12.0" />
+            </font>
+         </PasswordField>
+
+         <!-- Botón -->
+         <Button fx:id="btnLogin" maxWidth="300.0" prefHeight="26.0" style="-fx-background-color: black;" text="Iniciar sesión" textFill="WHITE">
+            <font>
+               <Font size="12.0" />
+            </font>
+         </Button>
+         <Label fx:id="labelError" />
+      </VBox>
+   </content>
+</ScrollPane>

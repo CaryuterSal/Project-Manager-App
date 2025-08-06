@@ -2,34 +2,32 @@ services:
   app:
     build: .
     depends_on:
-      mysql:
+      oracle-db:
         condition: service_healthy
     environment:
-      DB_PORT: '3308'
+      DB_PORT: '1521'
     volumes:
       - ~/.m2:/root/.m2
     profiles:
       - 'dev'
-
-  mysql:
-    image: mysql:8
-    restart: always
+  oracle-db:
+    image: container-registry.oracle.com/database/express:latest
+    container_name: oracle-ex
     healthcheck:
-      test: [ "CMD", "mysqladmin" ,"ping", "-h", "localhost" ]
-      timeout: 5s
-      retries: 10
+      test: [ "CMD-SHELL", "echo 'SELECT 1 FROM DUAL;' | sqlplus -S system/Oracle123@XEPDB1" ]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+    restart: always
     ports:
-      - "3308:3306"
+      - "1521:1521"
+      - "5500:5500"
     env_file:
-      .env
+      - .env
     volumes:
-      - db_data
-      - ./scripts/sql/schema.sql:/docker-entrypoint-initdb.d/1.sql
-      - ./scripts/sql/insert_dummy_data.sql:/docker-entrypoint-initdb.d/2.sql
-    profiles:
-      - 'dev'
+      - oracle-data:/opt/oracle/oradata
 
 volumes:
-   db:
-   cache:
+  oracle-data:
+  cache:
     driver: local
