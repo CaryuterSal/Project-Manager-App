@@ -1,365 +1,151 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.geometry.Insets?>
-<?import javafx.geometry.Rectangle2D?>
-<?import javafx.scene.Cursor?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.BorderPane?>
-<?import javafx.scene.layout.ColumnConstraints?>
-<?import javafx.scene.layout.FlowPane?>
-<?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.Pane?>
-<?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<GridPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="1224.0" prefWidth="1440.0" style="-fx-background-color: #FFFFFF;" stylesheets="../styles/board-view.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1">
-  <children>
-    <FlowPane id="sidebar" fx:id="sidebar" orientation="VERTICAL" rowValignment="TOP" style="-fx-background-color: #F7F7F7;" styleClass="../styles/board-view.css" vgap="40.0" GridPane.rowSpan="3">
-      <children>
-        <HBox alignment="CENTER_LEFT" cacheShape="false" disable="false" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" spacing="30.0">
-          <children>
-            <ImageView disable="false" fitHeight="80.0" fitWidth="80.0" opacity="1.0" pickOnBounds="true" preserveRatio="true" smooth="false">
-              <image>
-                <Image url="@../assets/images/logo.png" />
-              </image>
-            </ImageView>
-            <Label text="Kedu">
-                     <HBox.margin>
-                        <Insets />
-                     </HBox.margin>
-                     <font>
-                        <Font name="System Bold" size="47.0" />
-                     </font></Label>
-          </children>
-               <cursor>
-                  <Cursor fx:constant="DEFAULT" />
-               </cursor>
-        </HBox>
-            <VBox fillWidth="false" maxHeight="-Infinity" spacing="30.0">
+<BorderPane prefHeight="609.0" prefWidth="1053.0" style="-fx-background-color: #ffffff;" xmlns="http://javafx.com/javafx/24.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="dev.builder.board.application.controller.ManagerBoardController">
+   <center>
+      <BorderPane prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER">
+         <top>
+            <HBox prefHeight="139.0" prefWidth="795.0" BorderPane.alignment="CENTER">
                <children>
-                  <HBox alignment="CENTER" style="-fx-background-color: black; -fx-background-radius: 50;">
+                  <VBox prefHeight="100.0" prefWidth="380.0">
                      <children>
-                        <BorderPane style="-fx-background-color: white; -fx-background-radius: 50;">
-                           <center>
-                               <ImageView fitHeight="43.0" fitWidth="43.0" pickOnBounds="true" preserveRatio="true" styleClass="sidebar_button_icon">
-                                   <Image url="@../assets/images/board_icon.png" />
-                               </ImageView>
-                           </center>
-                           <padding>
-                              <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
-                           </padding>
-                        </BorderPane>
-                      <Button mnemonicParsing="false" style="-fx-background-color: transparent;" text="Tablero" textFill="WHITE">
+                        <Label text="Tablero">
                            <font>
-                              <Font size="26.0" />
+                              <Font name="System Bold" size="32.0" />
                            </font>
-                        </Button>
+                           <padding>
+                              <Insets top="22.0" />
+                           </padding>
+                           <VBox.margin>
+                              <Insets left="25.0" />
+                           </VBox.margin>
+                        </Label>
+                        <TextField fx:id="txtSearch" alignment="CENTER" maxWidth="330.0" prefHeight="25.0" prefWidth="294.0" promptText="Buscar" style="-fx-background-color: #dcdcdc; -fx-background-radius: 28;">
+                           <VBox.margin>
+                              <Insets left="25.0" top="25.0" />
+                           </VBox.margin>
+                           <font>
+                              <Font size="16.0" />
+                           </font>
+                        </TextField>
                      </children>
-                     <padding>
-                        <Insets bottom="10.0" left="20.0" right="70.0" top="10.0" />
-                     </padding>
-                     <cursor>
-                        <Cursor fx:constant="HAND" />
-                     </cursor>
-                  </HBox>
-                  <HBox alignment="CENTER" layoutX="70.0" layoutY="10.0" style="-fx-background-color: transparent; -fx-background-radius: 50;">
+                  </VBox>
+                  <VBox prefHeight="139.0" prefWidth="417.0">
                      <children>
-                        <BorderPane style="-fx-background-color: white; -fx-background-radius: 50;">
-                           <center>
-                              <ImageView fitHeight="43.0" fitWidth="43.0" pickOnBounds="true" preserveRatio="true" styleClass="sidebar_button_icon">
+                        <Label alignment="BOTTOM_LEFT" text="Usuario">
+                           <font>
+                              <Font size="24.0" />
+                           </font>
+                           <VBox.margin>
+                              <Insets left="284.0" top="10.0" />
+                           </VBox.margin>
+                           <graphic>
+                              <ImageView fitHeight="50.0" fitWidth="34.0" pickOnBounds="true" preserveRatio="true">
                                  <image>
                                     <Image url="@../assets/images/user-icon.png" />
                                  </image>
                               </ImageView>
-                           </center>
-                           <padding>
-                              <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
-                           </padding>
-                        </BorderPane>
-                        <Button mnemonicParsing="false" style="-fx-background-color: transparent;" text="Cuentas" textFill="#0a0a0a">
+                           </graphic>
+                        </Label>
+                        <Button fx:id="btnInvite" mnemonicParsing="false" style="-fx-background-color: black; -fx-background-radius: 28; -fx-background-position: var()" text="Invitar" textFill="WHITE">
                            <font>
-                              <Font size="26.0" />
+                              <Font name="System Bold" size="20.0" />
                            </font>
+                           <VBox.margin>
+                              <Insets left="250.0" top="35.0" />
+                           </VBox.margin>
+                           <graphic>
+                              <ImageView fitHeight="50.0" fitWidth="34.0" pickOnBounds="true" preserveRatio="true">
+                                 <image>
+                                    <Image url="@../assets/images/add_icon_white.png" />
+                                 </image>
+                              </ImageView>
+                           </graphic>
                         </Button>
                      </children>
-                     <padding>
-                        <Insets bottom="10.0" left="20.0" right="70.0" top="10.0" />
-                     </padding>
-                     <cursor>
-                        <Cursor fx:constant="HAND" />
-                     </cursor>
+                  </VBox>
+               </children>
+            </HBox>
+         </top>
+         <center>
+            <BorderPane maxWidth="764.0" prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: #f7f7f7; -fx-background-radius: 15;" BorderPane.alignment="CENTER">
+               <BorderPane.margin>
+                  <Insets bottom="15.0" left="15.0" right="15.0" top="16.0" />
+               </BorderPane.margin>
+            </BorderPane>
+         </center>
+      </BorderPane>
+   </center>
+   <left>
+      <HBox prefHeight="568.0" prefWidth="258.0" style="-fx-background-color: #f7f7f7;" BorderPane.alignment="CENTER">
+         <children>
+            <VBox prefHeight="568.0" prefWidth="267.0" style="-fx-background-color: #f7f7f7;">
+               <children>
+                  <HBox prefHeight="100.0" prefWidth="200.0">
+                     <children>
+                        <ImageView disable="false" fitHeight="80.0" fitWidth="80.0" opacity="1.0" pickOnBounds="true" preserveRatio="true" smooth="false">
+                           <image>
+                              <Image url="@../assets/images/logo.png" />
+                           </image>
+                        </ImageView>
+                        <Label text="Kedu">
+                           <font>
+                              <Font name="System Bold" size="47.0" />
+                           </font>
+                        </Label>
+                     </children>
                   </HBox>
-               </children>
-               <padding>
-                  <Insets left="60.0" />
-               </padding>
-               <FlowPane.margin>
-                  <Insets />
-               </FlowPane.margin>
-            </VBox>
-      </children>
-         <GridPane.margin>
-            <Insets />
-         </GridPane.margin>
-         <padding>
-            <Insets bottom="50.0" left="50.0" right="50.0" top="50.0" />
-         </padding>
-    </FlowPane>
-      <HBox prefHeight="100.0" prefWidth="200.0" spacing="40.0" style="-fx-background-radius: 40; -fx-background-color: #F7F7F7;" GridPane.columnIndex="1" GridPane.rowIndex="1" GridPane.rowSpan="2">
-         <children>
-            <VBox maxHeight="-Infinity" prefHeight="800.0" spacing="20.0" style="-fx-background-color: white; -fx-background-radius: 20;">
-               <children>
-                  <Label text="Por Hacer">
+                  <Button fx:id="btnBoard" alignment="BOTTOM_LEFT" mnemonicParsing="false" prefHeight="55.0" prefWidth="195.0" style="-fx-background-color: black; -fx-background-radius: 28;" text="Tablero" textFill="WHITE">
+                     <opaqueInsets>
+                        <Insets />
+                     </opaqueInsets>
+                     <VBox.margin>
+                        <Insets left="41.0" top="70.0" />
+                     </VBox.margin>
                      <font>
-                        <Font size="22.0" />
+                        <Font name="System Bold" size="26.0" />
                      </font>
-                  </Label>
-                  <FlowPane alignment="TOP_CENTER" prefHeight="200.0" prefWidth="200.0" vgap="10.0">
-                     <children>
-                        <HBox alignment="CENTER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefWidth="200.0" spacing="20.0" style="-fx-background-color: #F6F6F6; -fx-background-radius: 10;">
-                           <children>
-                              <Label prefHeight="25.0" prefWidth="119.0" text="Tarea" wrapText="true">
-                                 <font>
-                                    <Font size="18.0" />
-                                 </font>
-                              </Label>
-                              <Pane maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="30.0" prefWidth="30.0" style="-fx-background-radius: 100; -fx-background-color: pink;" />
-                           </children>
-                           <padding>
-                              <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
-                           </padding>
-                        </HBox>
-                        <HBox alignment="CENTER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefWidth="200.0" spacing="20.0" style="-fx-background-color: #F6F6F6; -fx-background-radius: 10;">
-                           <children>
-                              <Label prefHeight="50.0" prefWidth="117.0" text="Título de la tarea" wrapText="true">
-                                 <font>
-                                    <Font size="18.0" />
-                                 </font>
-                              </Label>
-                              <Pane maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="30.0" prefWidth="30.0" style="-fx-background-radius: 100; -fx-background-color: #43C59E;" />
-                           </children>
-                           <padding>
-                              <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
-                           </padding>
-                        </HBox>
-                     </children>
-                  </FlowPane>
-                  <Button mnemonicParsing="false" style="-fx-background-color: transparent;" text="Agregar">
                      <graphic>
-                        <ImageView fitHeight="24.0" fitWidth="24.0" pickOnBounds="true" preserveRatio="true">
+                        <Pane maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="38.0" prefWidth="38.0" style="-fx-background-radius: 100; -fx-background-color: #ffffff;">
+                           <children>
+                              <ImageView fitHeight="50.0" fitWidth="34.0" pickOnBounds="true" preserveRatio="true" x="2.0" y="2.0">
+                                 <image>
+                                    <Image url="@../assets/images/board_icon.png" />
+                                 </image>
+                              </ImageView>
+                           </children>
+                        </Pane>
+                     </graphic>
+                  </Button>
+                  <Button fx:id="btnAccount" mnemonicParsing="false" style="-fx-border-color: #f7f7f7; -fx-background-color: #f7f7f7;" text="Cuentas" textFill="#919191">
+                     <VBox.margin>
+                        <Insets left="41.0" top="35.0" />
+                     </VBox.margin>
+                     <font>
+                        <Font name="System Bold" size="26.0" />
+                     </font>
+                     <graphic>
+                        <ImageView fitHeight="34.0" fitWidth="57.0" pickOnBounds="true" preserveRatio="true">
                            <image>
-                              <Image url="@../assets/images/add_icon.png" />
+                              <Image url="@../assets/images/add_manager_icon.png" />
                            </image>
                         </ImageView>
                      </graphic>
                   </Button>
                </children>
-               <padding>
-                  <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
-               </padding>
-            </VBox>
-            <VBox layoutX="50.0" layoutY="50.0" maxHeight="-Infinity" prefHeight="800.0" spacing="20.0" style="-fx-background-color: white; -fx-background-radius: 20;">
-               <children>
-                  <Label text="En Ejecución">
-                     <font>
-                        <Font size="22.0" />
-                     </font>
-                  </Label>
-                  <FlowPane alignment="TOP_CENTER" prefHeight="200.0" prefWidth="200.0" vgap="10.0">
-                     <children>
-                        <HBox alignment="CENTER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefWidth="200.0" spacing="20.0" style="-fx-background-color: #F6F6F6; -fx-background-radius: 10;">
-                           <children>
-                              <Label prefHeight="25.0" prefWidth="119.0" text="Tarea" wrapText="true">
-                                 <font>
-                                    <Font size="18.0" />
-                                 </font>
-                              </Label>
-                              <Pane maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="30.0" prefWidth="30.0" style="-fx-background-radius: 100; -fx-background-color: pink;" />
-                           </children>
-                           <padding>
-                              <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
-                           </padding>
-                        </HBox>
-                        <HBox alignment="CENTER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefWidth="200.0" spacing="20.0" style="-fx-background-color: #F6F6F6; -fx-background-radius: 10;">
-                           <children>
-                              <Label prefHeight="50.0" prefWidth="117.0" text="Título de la tarea" wrapText="true">
-                                 <font>
-                                    <Font size="18.0" />
-                                 </font>
-                              </Label>
-                              <Pane maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="30.0" prefWidth="30.0" style="-fx-background-radius: 100; -fx-background-color: #43C59E;" />
-                           </children>
-                           <padding>
-                              <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
-                           </padding>
-                        </HBox>
-                     </children>
-                  </FlowPane>
-                  <Button mnemonicParsing="false" style="-fx-background-color: transparent;" text="Agregar">
-                     <graphic>
-                        <ImageView fitHeight="24.0" fitWidth="24.0" pickOnBounds="true" preserveRatio="true">
-                           <image>
-                              <Image url="@../assets/images/add_icon.png" />
-                           </image>
-                        </ImageView>
-                     </graphic>
-                  </Button>
-               </children>
-               <padding>
-                  <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
-               </padding>
-            </VBox>
-            <VBox layoutX="290.0" layoutY="50.0" maxHeight="-Infinity" prefHeight="800.0" spacing="20.0" style="-fx-background-color: white; -fx-background-radius: 20;">
-               <children>
-                  <Label text="Finalizadas">
-                     <font>
-                        <Font size="22.0" />
-                     </font>
-                  </Label>
-                  <FlowPane alignment="TOP_CENTER" prefHeight="200.0" prefWidth="200.0" vgap="10.0">
-                     <children>
-                        <HBox alignment="CENTER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefWidth="200.0" spacing="20.0" style="-fx-background-color: #F6F6F6; -fx-background-radius: 10;">
-                           <children>
-                              <Label prefHeight="25.0" prefWidth="119.0" text="Tarea" wrapText="true">
-                                 <font>
-                                    <Font size="18.0" />
-                                 </font>
-                              </Label>
-                              <Pane maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="30.0" prefWidth="30.0" style="-fx-background-radius: 100; -fx-background-color: pink;" />
-                           </children>
-                           <padding>
-                              <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
-                           </padding>
-                        </HBox>
-                        <HBox alignment="CENTER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefWidth="200.0" spacing="20.0" style="-fx-background-color: #F6F6F6; -fx-background-radius: 10;">
-                           <children>
-                              <Label prefHeight="50.0" prefWidth="117.0" text="Título de la tarea" wrapText="true">
-                                 <font>
-                                    <Font size="18.0" />
-                                 </font>
-                              </Label>
-                              <Pane maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="30.0" prefWidth="30.0" style="-fx-background-radius: 100; -fx-background-color: #43C59E;" />
-                           </children>
-                           <padding>
-                              <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
-                           </padding>
-                        </HBox>
-                     </children>
-                  </FlowPane>
-                  <Button mnemonicParsing="false" style="-fx-background-color: transparent;" text="Agregar">
-                     <graphic>
-                        <ImageView fitHeight="24.0" fitWidth="24.0" pickOnBounds="true" preserveRatio="true">
-                           <image>
-                              <Image url="@../assets/images/add_icon.png" />
-                           </image>
-                        </ImageView>
-                     </graphic>
-                  </Button>
-               </children>
-               <padding>
-                  <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
-               </padding>
             </VBox>
          </children>
-         <GridPane.margin>
-            <Insets bottom="30.0" left="30.0" right="30.0" top="30.0" />
-         </GridPane.margin>
-         <padding>
-            <Insets bottom="40.0" left="40.0" right="40.0" top="40.0" />
-         </padding>
       </HBox>
-      <GridPane GridPane.columnIndex="1">
-        <columnConstraints>
-          <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-          <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-        </columnConstraints>
-        <rowConstraints>
-          <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-          <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="ALWAYS" />
-        </rowConstraints>
-         <children>
-            <Label text="Incubadora">
-               <font>
-                  <Font name="System Bold" size="40.0" />
-               </font>
-            </Label>
-            <HBox alignment="CENTER" fillHeight="false" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="42.0" prefWidth="329.0" spacing="10.0" style="-fx-background-color: #DCDCDC; -fx-background-radius: 40;" GridPane.rowIndex="1" GridPane.valignment="BOTTOM">
-               <children>
-                  <ImageView fitHeight="30.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true">
-                     <image>
-                        <Image url="@../assets/images/search_icon.png" />
-                     </image>
-                     <viewport>
-                        <Rectangle2D />
-                     </viewport>
-                  </ImageView>
-                  <TextField promptText="Buscar" />
-               </children>
-               <padding>
-                  <Insets bottom="15.0" left="60.0" right="60.0" top="15.0" />
-               </padding>
-            </HBox>
-            <HBox alignment="CENTER_RIGHT" fillHeight="false" minHeight="-Infinity" minWidth="-Infinity" prefHeight="51.0" prefWidth="349.0" style="-fx-background-color: transparent; -fx-background-radius: 50;" GridPane.columnIndex="1">
-               <children>
-                  <BorderPane style="-fx-background-color: white; -fx-background-radius: 50;">
-                     <center>
-                        <ImageView fitHeight="43.0" fitWidth="43.0" pickOnBounds="true" preserveRatio="true" styleClass="sidebar_button_icon">
-                           <image>
-                              <Image url="@../assets/images/user-icon.png" />
-                           </image>
-                        </ImageView>
-                     </center>
-                     <padding>
-                        <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
-                     </padding>
-                  </BorderPane>
-                  <Button mnemonicParsing="false" style="-fx-background-color: transparent;" text="Cuentas" textFill="#0a0a0a">
-                     <font>
-                        <Font size="26.0" />
-                     </font>
-                  </Button>
-               </children>
-               <padding>
-                  <Insets bottom="10.0" left="20.0" right="70.0" top="10.0" />
-               </padding>
-               <cursor>
-                  <Cursor fx:constant="HAND" />
-               </cursor>
-            </HBox>
-            <Button mnemonicParsing="false" prefHeight="38.0" prefWidth="135.0" style="-fx-background-color: black; -fx-background-radius: 30;" text="Invitar" GridPane.columnIndex="1" GridPane.halignment="RIGHT" GridPane.rowIndex="1">
-               <graphic>
-                  <ImageView fitHeight="24.0" fitWidth="24.0" pickOnBounds="true" preserveRatio="true">
-                     <image>
-                        <Image url="@../assets/images/add_icon_white.png" />
-                     </image>
-                  </ImageView>
-               </graphic>
-               <GridPane.margin>
-                  <Insets right="70.0" />
-               </GridPane.margin>
-               <padding>
-                  <Insets left="30.0" right="30.0" />
-               </padding>
-            </Button>
-         </children>
-         <padding>
-            <Insets left="30.0" right="30.0" top="30.0" />
-         </padding>
-      </GridPane>
-  </children>
-  <columnConstraints>
-    <ColumnConstraints hgrow="NEVER" percentWidth="30.0" prefWidth="390.0" />
-    <ColumnConstraints hgrow="NEVER" percentWidth="70.0" prefWidth="300.0" />
-  </columnConstraints>
-  <rowConstraints>
-    <RowConstraints minHeight="10.0" percentHeight="12.0" prefHeight="30.0" vgrow="SOMETIMES" />
-    <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-    <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-  </rowConstraints>
-</GridPane>
+   </left>
+</BorderPane>
