@@ -10,6 +10,26 @@ import dev.builder.usermanagement.application.validator.PasswordValidator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * Comando para iniciar sesión con usuario y contraseña.
+ * Carga la información de sesión en el {@link dev.builder.auth.domain.port.out.SessionContext}.
+ * Se puede verificar si el usuario existe previamente usando {@link dev.builder.usermanagement.application.query.FindUserQuery}
+ *
+ * </br>
+ * Además, la información de sesión se persiste en un archivo encriptado que persiste aunque se cierre la aplicación, la cual se puede recuperar usando {@link RestoreSessionCommand}
+ * </br> Se pueden lanzar las siguientes excepciones
+ *  <ul>
+ *     <li>{@link dev.builder.auth.application.service.UnauthorizedException} Si las credenciales de inicio de sesión son inválidas o no existe un usuario con dicho correo electrónico</li>
+ *      <li>Las violaciones de validación pueden ser de tipo:</li>
+ *         <ul>
+ *                 <li>{@link dev.builder.core.application.validation.RequiredFieldViolation} si alguno de los campos está vacío o solo contiene espacios</li>
+ *                 <li>{@link dev.builder.core.application.validation.FormatViolation} si el formato de correo electrónico es incorrecto o la contraseña es muy débil</li>
+ *         </ul>
+ *  </ul>
+ * @param email el correo electrónico
+ * @param password la contraseña
+ *
+ */
 public record LoginCommand(String email, String password) implements Command<Void> {
 
     public enum Fields{

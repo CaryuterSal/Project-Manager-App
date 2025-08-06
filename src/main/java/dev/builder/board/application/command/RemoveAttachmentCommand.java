@@ -2,6 +2,7 @@ package dev.builder.board.application.command;
 
 import dev.builder.core.application.Command;
 import dev.builder.core.application.validation.BaseRequestValidator;
+import dev.builder.core.application.validation.DateFutureViolation;
 import dev.builder.core.application.validation.RequiredObjectValidator;
 import dev.builder.core.application.validation.ValidationException;
 import dev.builder.core.infrastructure.di.annotation.Bean;
@@ -11,6 +12,23 @@ import org.slf4j.LoggerFactory;
 
 import java.util.UUID;
 
+/**
+ * Elimina un archivo adjunto de una tarea.
+ *  </br>
+ *  Posibles excepciones lanzadas:
+ *   <ul>
+ *       <li>{@link dev.builder.auth.application.service.UnauthorizedException} Si el usuario activo no es {@code Manager} o es un {@code Student} que no colabora con dicha tarea</li>
+ *       <li>{@link dev.builder.board.domain.exception.TaskNotFoundException} si no se encuentra una tarea con dicho ID en el tablero del Manager</li>
+ *       <li>{@link dev.builder.board.domain.exception.FileNotFoundException} si no se encuentra el archivo con el ID indicado</li>
+ *
+ *       <li>Posibles violaciones de validación</li>
+ *       <ul>
+ *           <li>{@link dev.builder.core.application.validation.RequiredFieldViolation} si algún campo es {@code null}</li>
+ *       </ul>
+ *   </ul>
+ * @param taskId el ID de la tarea
+ * @param attachmentId el ID del archivo adjunto
+ */
 public record RemoveAttachmentCommand(UUID taskId, UUID attachmentId) implements Command<Void> {
     public enum Fields{
         TASK_ID("taskId"), ATTACHMENT_ID("attachmentId");

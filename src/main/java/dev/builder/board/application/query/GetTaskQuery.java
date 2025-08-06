@@ -13,6 +13,10 @@ import org.slf4j.LoggerFactory;
 import java.util.Optional;
 import java.util.UUID;
 
+/**
+ * Obtiene la información de una tarea como un {@link Optional<TaskView>} o un Optional vacío si no existe la tarea especificada
+ * @param taskId el ID de la tarea a buscar
+ */
 public record GetTaskQuery(UUID taskId) implements Query<Optional<TaskView>> {
 
     public enum Fields{

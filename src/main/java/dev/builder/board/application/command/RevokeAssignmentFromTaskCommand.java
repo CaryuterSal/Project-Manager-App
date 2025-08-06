@@ -12,6 +12,23 @@ import org.slf4j.LoggerFactory;
 
 import java.util.UUID;
 
+/**
+ * Elimina una asignación a una tarea, esto elimina los permisos de edición del estudiante a dicha tarea y no permite visualizarla.
+ * </br>
+ * Posibles excepciones lanzadas:
+ *  <ul>
+ *      <li>{@link dev.builder.auth.application.service.UnauthorizedException} si no se tiene una sesión activa como {@code Manager}</li>
+ *      <li>{@link dev.builder.board.domain.exception.TaskNotFoundException} si no se encuentra una tarea con dicho ID en el tablero del Manager</li>
+ *      <li>{@link dev.builder.usermanagement.domain.exception.StudentNotFoundException} si el estudiante no existe o no colabora en el tablero del Manager o no está asignado a dicha tarea</li>
+ *      <li>Posibles violaciones de validación</li>
+ *      <ul>
+ *          <li>{@link dev.builder.core.application.validation.RequiredFieldViolation} si algún campo es {@code null} o solo contiene espacios</li>
+ *          <li>{@link dev.builder.core.application.validation.FormatViolation} si el formato de correo electrónico del estudiante es inválido</li>
+ *      </ul>
+ *  </ul>
+ * @param taskId
+ * @param studentEmail
+ */
 public record RevokeAssignmentFromTaskCommand(UUID taskId, String studentEmail) implements Command<Void> {
     public enum Fields{
         TASK_ID("taskId"), STUDENT_EMAIL("studentEmail");

@@ -13,6 +13,14 @@ import java.io.InputStream;
 import java.util.Optional;
 import java.util.UUID;
 
+/**
+ * Consulta para cargar una imágen de portada específica a partir de su identificador.
+ *
+ * Esta consulta devuelve un {@link java.util.Optional} que contiene el {@link java.io.InputStream}
+ * del contenido del adjunto si existe, o un {@link java.util.Optional#empty()} si no se encuentra.
+ *
+ * @param imageId el ID de la imágen de portada
+ */
 public record LoadCoverImageQuery(UUID imageId) implements Command<Optional<InputStream>> {
 
     public enum Fields{

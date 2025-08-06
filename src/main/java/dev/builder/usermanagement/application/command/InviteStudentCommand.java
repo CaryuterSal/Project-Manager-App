@@ -10,6 +10,19 @@ import org.slf4j.LoggerFactory;
 
 import java.util.Objects;
 
+/**
+ * Invita a un nuevo estudiante para que sea parte del sistema. Este tendrá que completar su registro posteriormente usando {@link CompleteRegistrationCommand}.
+ *  Posibles excepciones lanzadas:
+ *   <ul>
+ *       <li>{@link dev.builder.auth.application.service.UnauthorizedException} si la sesión activa no es de {@code Manager}/li>
+ *       <li>Posibles violaciones de validación</li>
+ *       <ul>
+ *           <li>{@link dev.builder.core.application.validation.RequiredFieldViolation} si algún campo es {@code null} o solo contiene espacios</li>
+ *           <li>{@link dev.builder.core.application.validation.FormatViolation} si el correo electrónico no tiene un formato válido</li>
+ *           <li>{@link PositiveValidator} si el número de cuatrimestre del estudiante no es un número positivo</li>
+ *       </ul>
+ *   </ul>
+ */
 public class InviteStudentCommand extends InviteUserCommand<StudentView> {
 
     public enum Fields{
