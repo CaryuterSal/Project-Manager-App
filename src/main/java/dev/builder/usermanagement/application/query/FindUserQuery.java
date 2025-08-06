@@ -1,0 +1,88 @@
+package dev.builder.usermanagement.application.query;
+
+import dev.builder.core.application.Query;
+import dev.builder.core.application.validation.BaseRequestValidator;
+import dev.builder.core.application.validation.ValidationException;
+import dev.builder.core.infrastructure.di.annotation.Bean;
+import dev.builder.core.infrastructure.di.annotation.Inject;
+import dev.builder.usermanagement.application.validator.EmailValidator;
+import dev.builder.usermanagement.application.view.UserView;
+import dev.builder.usermanagement.domain.model.User;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.util.Optional;
+
+/**
+ * Obtiene la información de un usuario cualquiera como {@link java.util.Optional} de {@link dev.builder.usermanagement.application.view.UserView}.
+ * Usar el método <b>factory</b> {@code generic(String email)}
+ *  Posibles excepciones lanzadas:
+ *   <ul>
+ *       <li>Posibles violaciones de validación</li>
+ *       <ul>
+ *           <li>{@link dev.builder.core.application.validation.RequiredFieldViolation} si algún campo es {@code null} o solo contiene espacios</li>
+ *           <li>{@link dev.builder.core.application.validation.FormatViolation} si el correo electrónico no tiene un formato válido</li>
+ *       </ul>
+ *   </ul>
+ **/
+public class FindUserQuery<T extends UserView> implements Query<Optional<T>> {
+    public enum Fields{
+        EMAIL("email");
+        private final String value;
+        Fields(String value) {this.value = value;}
+        public String getValue() {return value;}
+    }
+    private final String email;
+
+    protected FindUserQuery(String email) {
+        this.email = email;
+    }
+
+    public static FindUserQuery<UserView> generic(String email) {
+        return new FindGenericUserQuery(email);
+    }
+
+    public String email() {
+        return email;
+    }
+
+    public static class FindGenericUserQuery extends FindUserQuery<UserView> {
+        private FindGenericUserQuery(String email) {
+            super(email);
+        }
+    }
+
+    public static abstract class FindUserQueryAbstractValidator<T extends FindUserQuery<?>> extends BaseRequestValidator<T>  {
+
+        private final EmailValidator emailValidator;
+
+        public FindUserQueryAbstractValidator(Logger logger, EmailValidator emailValidator) {
+            super(logger);
+            this.emailValidator = emailValidator;
+        }
+
+        @Override
+        public void validate(T value) throws ValidationException {
+            validate(() -> emailValidator.validate(Fields.EMAIL.getValue(), value.email()));
+            validateExtra();
+            throwIfAny();
+        }
+
+        protected abstract void validateExtra();
+    }
+
+    @Bean
+    public static class FindUserQueryValidator extends FindUserQueryAbstractValidator<FindUserQuery<UserView>>{
+
+        private static final Logger log = LoggerFactory.getLogger(FindUserQueryValidator.class);
+
+        @Inject
+        public FindUserQueryValidator(EmailValidator emailValidator) {
+            super(log, emailValidator);
+        }
+
+        @Override
+        protected void validateExtra() {
+        }
+    }
+}

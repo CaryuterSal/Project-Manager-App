@@ -1,0 +1,66 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<Entity class="oracle.dbtools.crest.model.design.logical.Entity" directorySegmentName="seg_0" id="1EF3CBFC-EB27-D2EE-0734-9318E0E3E07E" name="BOARD STAGES">
+<createdBy>caryuter</createdBy>
+<createdTime>2025-06-27 18:07:33 UTC</createdTime>
+<ownerDesignName>project-manager-db-design</ownerDesignName>
+<engineerTo>
+<item key="AB23647E-F000-19A5-FCDD-7AB0199D0662" value="true"/>
+</engineerTo>
+<adequatelyNormalized>NO</adequatelyNormalized>
+<expectedVolumes>0</expectedVolumes>
+<fwdEngineeringStrategyName>Single Table</fwdEngineeringStrategyName>
+<growthPercent>0</growthPercent>
+<growthType>Year</growthType>
+<maxVolumes>9999999</maxVolumes>
+<minVolumes>0</minVolumes>
+<normalForm>Third</normalForm>
+<shortName>bse</shortName>
+<attributes itemClass="oracle.dbtools.crest.model.design.logical.Attribute">
+<Attribute name="Email" id="18167F3B-535A-7305-233F-7AB2227128A1">
+<createdBy>caryuter</createdBy>
+<createdTime>2025-06-27 18:24:20 UTC</createdTime>
+<generatorID>8036AAB2-F1BA-ACE3-5697-DFD6A483894C</generatorID>
+<ownerDesignName>project-manager-db-design</ownerDesignName>
+<engineerTo>
+<item key="AB23647E-F000-19A5-FCDD-7AB0199D0662" value="true"/>
+</engineerTo>
+<referedAttribute>69366603-505D-B3D0-28A1-9D5D1D113FDA</referedAttribute>
+<useDomainConstraints>false</useDomainConstraints>
+<use>1</use>
+<logicalDatatype>LOGDT024</logicalDatatype>
+<dataTypeSize>63 CHAR</dataTypeSize>
+<ownDataTypeParameters>,,</ownDataTypeParameters>
+</Attribute>
+<Attribute name="Name" id="A55A308C-F1F0-425F-5A6D-35E3E46D4134">
+<createdBy>caryuter</createdBy>
+<createdTime>2025-06-27 18:27:40 UTC</createdTime>
+<generatorID>6E78E607-54DA-8C54-8E67-6BE2C038C098</generatorID>
+<ownerDesignName>project-manager-db-design</ownerDesignName>
+<engineerTo>
+<item key="AB23647E-F000-19A5-FCDD-7AB0199D0662" value="true"/>
+</engineerTo>
+<referedAttribute>424554BC-A4C0-9A07-FA97-5FDF96B14888</referedAttribute>
+<useDomainConstraints>false</useDomainConstraints>
+<use>1</use>
+<logicalDatatype>LOGDT024</logicalDatatype>
+<dataTypeSize>15 CHAR</dataTypeSize>
+<ownDataTypeParameters>,,</ownDataTypeParameters>
+</Attribute>
+</attributes>
+<identifiers itemClass="oracle.dbtools.crest.model.design.logical.CandidateKey">
+<identifier id="3DEF4E48-F736-77FD-3534-B00AB6F7D7B5" name="BOARD STAGES PK">
+<createdBy>caryuter</createdBy>
+<createdTime>2025-06-27 18:24:20 UTC</createdTime>
+<ownerDesignName>project-manager-db-design</ownerDesignName>
+<shouldEngineer>false</shouldEngineer>
+<engineerTo>
+<item key="AB23647E-F000-19A5-FCDD-7AB0199D0662" value="false"/>
+</engineerTo>
+<pk>true</pk>
+<usedAttributes>
+<attributeRef>18167F3B-535A-7305-233F-7AB2227128A1</attributeRef>
+<attributeRef>A55A308C-F1F0-425F-5A6D-35E3E46D4134</attributeRef>
+</usedAttributes>
+</identifier>
+</identifiers>
+</Entity>

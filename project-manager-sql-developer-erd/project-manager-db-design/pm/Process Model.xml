@@ -1,0 +1,7 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<ProcessModel class="oracle.dbtools.crest.model.design.process.ProcessModel" name="Process Model" id="D95769C2-A39D-6B3D-0EEE-026BCF5A827E">
+<createdBy>caryuter</createdBy>
+<createdTime>2025-06-27 17:17:28 UTC</createdTime>
+<ownerDesignName>project-manager-db-design</ownerDesignName>
+<shouldBeOpen>false</shouldBeOpen>
+</ProcessModel>

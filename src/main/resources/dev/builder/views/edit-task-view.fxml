@@ -1,0 +1,201 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.DatePicker?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+
+
+<HBox alignment="TOP_CENTER" prefHeight="630.0" prefWidth="875.0" style="-fx-background-color: white;" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1">
+   <children>
+      <VBox prefHeight="630.0" prefWidth="778.0" spacing="10.0">
+         <children>
+            <HBox alignment="CENTER" prefHeight="52.0" prefWidth="746.0">
+               <children>
+                  <Label text="Información de Tarea">
+                     <font>
+                        <Font name="System Bold" size="38.0" />
+                     </font>
+                  </Label>
+               </children>
+            </HBox>
+            <HBox alignment="CENTER_LEFT" prefHeight="40.0" prefWidth="746.0">
+               <children>
+                  <Button mnemonicParsing="false" style="-fx-background-color: transparent;">
+                     <graphic>
+                        <ImageView fitHeight="30.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true">
+                           <image>
+                              <Image url="@../assets/images/toggle_complete_task_icon.png" />
+                           </image>
+                        </ImageView>
+                     </graphic>
+                  </Button>
+                  <Label text="Título de la tarea">
+                     <font>
+                        <Font name="System Bold" size="30.0" />
+                     </font>
+                  </Label>
+               </children>
+            </HBox>
+            <HBox alignment="CENTER_LEFT" prefHeight="40.0" prefWidth="746.0" spacing="60.0">
+               <children>
+                  <DatePicker prefHeight="26.0" prefWidth="127.0" promptText="01/01/2025" />
+                  <DatePicker prefHeight="26.0" prefWidth="133.0" promptText="30/01/2025" />
+               </children>
+            </HBox>
+            <ImageView fitHeight="50.0" fitWidth="40.0" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@../assets/images/student_assignment_icon.png" />
+               </image>
+            </ImageView>
+            <HBox alignment="CENTER_LEFT" prefHeight="40.0" prefWidth="746.0" spacing="20.0">
+               <children>
+                  <ImageView fitHeight="30.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@../assets/images/task_description_icon.png" />
+                     </image>
+                  </ImageView>
+                  <Label text="Descripción: ">
+                     <font>
+                        <Font size="20.0" />
+                     </font>
+                  </Label>
+               </children>
+            </HBox>
+            <VBox prefHeight="200.0" prefWidth="100.0" style="-fx-background-color: white;">
+               <children>
+                  <HBox alignment="CENTER_RIGHT" prefHeight="7.0" prefWidth="707.0" style="-fx-background-color: #919191;">
+                     <children>
+                        <Button mnemonicParsing="false" style="-fx-background-color: transparent;">
+                           <graphic>
+                              <ImageView fitHeight="24.0" fitWidth="96.0" pickOnBounds="true" preserveRatio="true">
+                                 <image>
+                                    <Image url="@../assets/images/text_left_alignment_icon.png" />
+                                 </image>
+                              </ImageView>
+                           </graphic>
+                        </Button>
+                      <Button mnemonicParsing="false" style="-fx-background-color: transparent;">
+                           <graphic>
+                              <ImageView fitHeight="24.0" fitWidth="96.0" pickOnBounds="true" preserveRatio="true">
+                                 <image>
+                                    <Image url="@../assets/images/text_center_alignment_icon.png" />
+                                 </image>
+                              </ImageView>
+                           </graphic>
+                        </Button>
+                        <Button layoutX="675.0" layoutY="10.0" mnemonicParsing="false" style="-fx-background-color: transparent;">
+                           <graphic>
+                              <ImageView fitHeight="24.0" fitWidth="96.0" pickOnBounds="true" preserveRatio="true">
+                                 <image>
+                                    <Image url="@../assets/images/text_right_alignment_icon.png" />
+                                 </image>
+                              </ImageView>
+                           </graphic>
+                        </Button>
+                        <Button layoutX="675.0" layoutY="10.0" mnemonicParsing="false" style="-fx-background-color: transparent;">
+                           <graphic>
+                              <ImageView fitHeight="24.0" fitWidth="96.0" pickOnBounds="true" preserveRatio="true">
+                                 <image>
+                                    <Image url="@../assets/images/text_right_alignment_icon.png" />
+                                 </image>
+                              </ImageView>
+                           </graphic>
+                        </Button>
+                        <Button layoutX="675.0" layoutY="10.0" mnemonicParsing="false" style="-fx-background-color: transparent;">
+                           <graphic>
+                              <ImageView fitHeight="24.0" fitWidth="96.0" pickOnBounds="true" preserveRatio="true">
+                                 <image>
+                                    <Image url="@../assets/images/text_justify_icon.png" />
+                                 </image>
+                              </ImageView>
+                           </graphic>
+                        </Button>
+                        <Button layoutX="675.0" layoutY="10.0" mnemonicParsing="false" style="-fx-background-color: transparent;">
+                           <graphic>
+                              <ImageView fitHeight="24.0" fitWidth="96.0" pickOnBounds="true" preserveRatio="true">
+                                 <image>
+                                    <Image url="@../assets/images/text_italize_icon.png" />
+                                 </image>
+                              </ImageView>
+                           </graphic>
+                        </Button>
+                        <Button layoutX="675.0" layoutY="10.0" mnemonicParsing="false" style="-fx-background-color: transparent;">
+                           <graphic>
+                              <ImageView fitHeight="24.0" fitWidth="96.0" pickOnBounds="true" preserveRatio="true">
+                                 <image>
+                                    <Image url="@../assets/images/text_bold_icon.png" />
+                                 </image>
+                              </ImageView>
+                           </graphic>
+                        </Button>
+                        <Button layoutX="675.0" layoutY="10.0" mnemonicParsing="false" style="-fx-background-color: transparent;">
+                           <graphic>
+                              <ImageView fitHeight="24.0" fitWidth="96.0" pickOnBounds="true" preserveRatio="true">
+                                 <image>
+                                    <Image url="@../assets/images/text_underline_icon.png" />
+                                 </image>
+                              </ImageView>
+                           </graphic>
+                        </Button>
+                        <Button layoutX="633.0" layoutY="10.0" mnemonicParsing="false" style="-fx-background-color: transparent;">
+                           <graphic>
+                              <ImageView fitHeight="24.0" fitWidth="96.0" pickOnBounds="true" preserveRatio="true">
+                                 <image>
+                                    <Image url="@../assets/images/bullets_icon.png" />
+                                 </image>
+                              </ImageView>
+                           </graphic>
+                        </Button>
+                        <Button layoutX="675.0" layoutY="10.0" mnemonicParsing="false" style="-fx-background-color: transparent;">
+                           <graphic>
+                              <ImageView fitHeight="24.0" fitWidth="96.0" pickOnBounds="true" preserveRatio="true">
+                                 <image>
+                                    <Image url="@../assets/images/attach_image_icon.png" />
+                                 </image>
+                              </ImageView>
+                           </graphic>
+                        </Button>
+                        <Button layoutX="675.0" layoutY="10.0" mnemonicParsing="false" style="-fx-background-color: transparent;">
+                           <graphic>
+                              <ImageView fitHeight="24.0" fitWidth="96.0" pickOnBounds="true" preserveRatio="true">
+                                 <image>
+                                    <Image url="@../assets/images/add_hyperlink_icon.png" />
+                                 </image>
+                              </ImageView>
+                           </graphic>
+                        </Button>
+                     </children>
+                  </HBox>
+                  <TextArea prefHeight="200.0" prefWidth="200.0" text="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec sit amet tellus ut justo sagittis rhoncus. Pellentesque sagittis aliquam nisi at auctor. Praesent imperdiet facilisis feugiat. Nam faucibus nisl ut interdum viverra. Quisque at tortor in turpis porta auctor nec vestibulum justo. Vivamus congue ex ut vestibulum pellentesque. Donec imperdiet." wrapText="true">
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                     <VBox.margin>
+                        <Insets />
+                     </VBox.margin>
+                  </TextArea>
+               </children>
+            </VBox>
+         </children>
+      </VBox>
+      <Button mnemonicParsing="false" style="-fx-background-color: transparent;">
+         <graphic>
+            <ImageView fitHeight="50.0" fitWidth="50.0" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@../assets/images/close_icon.png" />
+               </image>
+            </ImageView>
+         </graphic>
+      </Button>
+   </children>
+   <padding>
+      <Insets bottom="50.0" left="50.0" right="50.0" top="50.0" />
+   </padding>
+</HBox>

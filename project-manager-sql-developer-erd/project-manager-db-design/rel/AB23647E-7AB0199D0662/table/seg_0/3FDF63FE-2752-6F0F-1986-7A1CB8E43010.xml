@@ -1,0 +1,125 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<Table class="oracle.dbtools.crest.model.design.relational.Table" directorySegmentName="seg_0" id="3FDF63FE-2752-6F0F-1986-7A1CB8E43010" name="STAGE_TASK">
+<createdBy>caryuter</createdBy>
+<createdTime>2025-06-27 18:53:28 UTC</createdTime>
+<generatorID>1B08FE9C-C661-1252-4EEF-FF57C1D88A20</generatorID>
+<ownerDesignName>project-manager-db-design</ownerDesignName>
+<ordsAlias>stage_tasks</ordsAlias>
+<abbreviation>stk</abbreviation>
+<allowColumnReorder>false</allowColumnReorder>
+<existDependencyGenerateInDDl>true</existDependencyGenerateInDDl>
+<parsed>true</parsed>
+<columns itemClass="oracle.dbtools.crest.model.design.relational.Column">
+<Column name="order" id="03E226BF-669E-BF09-5A89-1882B49FEF5C">
+<createdBy>caryuter</createdBy>
+<createdTime>2025-06-27 18:53:28 UTC</createdTime>
+<generatorID>74C1F4C3-28D9-495C-5FBF-42BCFE3C3EA9</generatorID>
+<ownerDesignName>project-manager-db-design</ownerDesignName>
+<useDomainConstraints>false</useDomainConstraints>
+<use>1</use>
+<logicalDatatype>LOGDT026</logicalDatatype>
+<dataTypePrecision>10</dataTypePrecision>
+<dataTypeScale>4</dataTypeScale>
+<ownDataTypeParameters>,10,4</ownDataTypeParameters>
+<autoIncrementCycle>false</autoIncrementCycle>
+</Column>
+<Column name="bse_bad_email" id="339F9444-B417-9AAA-D728-1E62B407CA0D">
+<createdBy>caryuter</createdBy>
+<createdTime>2025-06-27 18:53:28 UTC</createdTime>
+<generatorID>52F88471-2681-D866-BC18-606130F2B9D6</generatorID>
+<ownerDesignName>project-manager-db-design</ownerDesignName>
+<useDomainConstraints>false</useDomainConstraints>
+<use>1</use>
+<logicalDatatype>LOGDT024</logicalDatatype>
+<dataTypeSize>63 CHAR</dataTypeSize>
+<ownDataTypeParameters>,,</ownDataTypeParameters>
+<previousColumn>false</previousColumn>
+<autoIncrementCycle>false</autoIncrementCycle>
+<associations>
+<colAssociation fkAssociation="E32A5172-5D19-3CB1-E86B-B52F5A7EF1B0" referredColumn="354BFEF2-BB6D-45B4-2949-830E54F30B1D"/>
+</associations>
+</Column>
+<Column name="bse_sae_name" id="F95CEB49-E970-8222-F5C9-5E18F775AF65">
+<createdBy>caryuter</createdBy>
+<createdTime>2025-06-27 18:53:28 UTC</createdTime>
+<generatorID>97263751-28A8-D200-DE23-6954B22EFDC5</generatorID>
+<ownerDesignName>project-manager-db-design</ownerDesignName>
+<useDomainConstraints>false</useDomainConstraints>
+<use>1</use>
+<logicalDatatype>LOGDT024</logicalDatatype>
+<dataTypeSize>15 CHAR</dataTypeSize>
+<ownDataTypeParameters>,,</ownDataTypeParameters>
+<previousColumn>false</previousColumn>
+<autoIncrementCycle>false</autoIncrementCycle>
+<associations>
+<colAssociation fkAssociation="E32A5172-5D19-3CB1-E86B-B52F5A7EF1B0" referredColumn="3DB3653A-93BF-55A2-8C38-6CC7496C6C07"/>
+</associations>
+</Column>
+<Column name="tsk_Id" id="967D4FC0-189E-7A2C-48CC-F7C53070B02B">
+<createdBy>caryuter</createdBy>
+<createdTime>2025-06-27 18:53:28 UTC</createdTime>
+<generatorID>BB198042-4F32-87F5-2EDC-261F38053A44</generatorID>
+<ownerDesignName>project-manager-db-design</ownerDesignName>
+<useDomainConstraints>false</useDomainConstraints>
+<use>1</use>
+<logicalDatatype>LogDes-4BABEC65-108B-2A3C-F7C4-84AC47D292B0@LOGDT10040</logicalDatatype>
+<dataTypeSize>16</dataTypeSize>
+<ownDataTypeParameters>,,</ownDataTypeParameters>
+<previousColumn>false</previousColumn>
+<autoIncrementCycle>false</autoIncrementCycle>
+<associations>
+<colAssociation fkAssociation="43C54E3C-A9C4-4E1B-D401-AD813EC3CF6A" referredColumn="1DC42F8B-EDA9-DE8A-B4AB-254AABA6B94B"/>
+</associations>
+</Column>
+</columns>
+<indexes itemClass="oracle.dbtools.crest.model.design.relational.Index">
+<ind_PK_UK id="2B6A05D2-7F4D-B204-0A3E-196DA0E0BCA1" name="STAGE_TASKS_PK">
+<createdBy>caryuter</createdBy>
+<createdTime>2025-06-27 18:53:28 UTC</createdTime>
+<generatorID>5E06339C-4DA3-BE49-5249-2FA7E23C2444</generatorID>
+<ownerDesignName>project-manager-db-design</ownerDesignName>
+<pk>true</pk>
+<indexState>Primary Constraint</indexState>
+<isSurrogateKey>false</isSurrogateKey>
+<indexColumnUsage>
+<colUsage columnID="339F9444-B417-9AAA-D728-1E62B407CA0D"/>
+<colUsage columnID="F95CEB49-E970-8222-F5C9-5E18F775AF65"/>
+<colUsage columnID="967D4FC0-189E-7A2C-48CC-F7C53070B02B"/>
+</indexColumnUsage>
+</ind_PK_UK>
+<ind_PK_UK id="E782E89B-3E1F-D2AB-D5E3-4B291288AB31" name="STAGE_TASKS__IDX">
+<createdBy>caryuter</createdBy>
+<createdTime>2025-06-27 18:53:28 UTC</createdTime>
+<ownerDesignName>project-manager-db-design</ownerDesignName>
+<indexState>Unique Plain Index</indexState>
+<isSurrogateKey>false</isSurrogateKey>
+<relationGeneratorID>717F43CF-4C87-42AA-1EBB-C8857B32AD07</relationGeneratorID>
+<indexColumnUsage>
+<colUsage columnID="967D4FC0-189E-7A2C-48CC-F7C53070B02B"/>
+</indexColumnUsage>
+</ind_PK_UK>
+<ind_PK_UK id="49A4842D-3C58-CE6F-7864-EF92BE554D9A" name="STAGE_TASKS_BOARD_STAGES_FK">
+<createdBy>caryuter</createdBy>
+<createdTime>2025-06-27 18:53:28 UTC</createdTime>
+<generatorID>E03228F5-7636-C02F-9B28-87347E49BF13</generatorID>
+<ownerDesignName>project-manager-db-design</ownerDesignName>
+<indexState>Foreign Key</indexState>
+<isSurrogateKey>false</isSurrogateKey>
+<indexColumnUsage>
+<colUsage columnID="339F9444-B417-9AAA-D728-1E62B407CA0D"/>
+<colUsage columnID="F95CEB49-E970-8222-F5C9-5E18F775AF65"/>
+</indexColumnUsage>
+</ind_PK_UK>
+<ind_PK_UK id="BE87ED9D-6F3D-7292-60E8-78B2CAD16635" name="STAGE_TASKS_TASKS_FK">
+<createdBy>caryuter</createdBy>
+<createdTime>2025-06-27 18:53:28 UTC</createdTime>
+<generatorID>717F43CF-4C87-42AA-1EBB-C8857B32AD07</generatorID>
+<ownerDesignName>project-manager-db-design</ownerDesignName>
+<indexState>Foreign Key</indexState>
+<isSurrogateKey>false</isSurrogateKey>
+<indexColumnUsage>
+<colUsage columnID="967D4FC0-189E-7A2C-48CC-F7C53070B02B"/>
+</indexColumnUsage>
+</ind_PK_UK>
+</indexes>
+</Table>

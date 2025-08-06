@@ -1,0 +1,40 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<Table class="oracle.dbtools.crest.model.design.relational.Table" directorySegmentName="seg_0" id="5A626FB4-486C-5320-CA8A-A56676FC75E5" name="ACADEMIC_GROUP">
+<createdBy>caryuter</createdBy>
+<createdTime>2025-06-27 17:56:12 UTC</createdTime>
+<generatorID>18DDE5EB-3D21-9EF3-0427-89C129D6304D</generatorID>
+<ownerDesignName>project-manager-db-design</ownerDesignName>
+<ordsAlias>academic_groups</ordsAlias>
+<abbreviation>agp</abbreviation>
+<allowColumnReorder>false</allowColumnReorder>
+<existDependencyGenerateInDDl>true</existDependencyGenerateInDDl>
+<parsed>true</parsed>
+<columns itemClass="oracle.dbtools.crest.model.design.relational.Column">
+<Column name="name" id="DA11914C-4C81-DAF7-BDF6-5F99A65C2555">
+<createdBy>caryuter</createdBy>
+<createdTime>2025-06-27 17:56:12 UTC</createdTime>
+<generatorID>E9B126FC-CFB2-89AA-FC42-E5B930D551FD</generatorID>
+<ownerDesignName>project-manager-db-design</ownerDesignName>
+<useDomainConstraints>false</useDomainConstraints>
+<use>1</use>
+<logicalDatatype>LOGDT025</logicalDatatype>
+<dataTypeSize>1 CHAR</dataTypeSize>
+<ownDataTypeParameters>1 CHAR,,</ownDataTypeParameters>
+<autoIncrementCycle>false</autoIncrementCycle>
+</Column>
+</columns>
+<indexes itemClass="oracle.dbtools.crest.model.design.relational.Index">
+<ind_PK_UK id="8E2A8187-DD2F-E9AF-E814-C814B3792A96" name="ACADEMIC_GROUPS_PK">
+<createdBy>caryuter</createdBy>
+<createdTime>2025-06-27 17:56:12 UTC</createdTime>
+<generatorID>26A2E23C-8BC7-9F60-A72A-9C6DC47E3E6B</generatorID>
+<ownerDesignName>project-manager-db-design</ownerDesignName>
+<pk>true</pk>
+<indexState>Primary Constraint</indexState>
+<isSurrogateKey>false</isSurrogateKey>
+<indexColumnUsage>
+<colUsage columnID="DA11914C-4C81-DAF7-BDF6-5F99A65C2555"/>
+</indexColumnUsage>
+</ind_PK_UK>
+</indexes>
+</Table>

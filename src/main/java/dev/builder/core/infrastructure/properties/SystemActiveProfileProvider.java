@@ -1,14 +1,16 @@
 package dev.builder.core.infrastructure.properties;
 
+import dev.builder.core.infrastructure.di.annotation.Bean;
+
 import java.util.Optional;
 
+@Bean
 public class SystemActiveProfileProvider implements ActiveProfileProvider {
 
-    static final String profilePropertyNamespace = "profile";
     private final String activeProfile;
 
     public SystemActiveProfileProvider() {
-        activeProfile = System.getProperty(profilePropertyNamespace);
+        activeProfile = System.getProperty(PropertiesNamespaces.PROPERTIES_PROFILE_NAMESPACE);
     }
 
     @Override
