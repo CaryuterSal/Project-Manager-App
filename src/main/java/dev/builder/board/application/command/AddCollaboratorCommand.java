@@ -11,6 +11,21 @@ import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * Añade un nuevo estudiante como colaborador a tu tablero (requiere sesión como {@link dev.builder.auth.infrastructure.Role} {@code Manager}. Requiere que el estudiante ya exista.
+ * </br>
+ *  Posibles excepciones lanzadas:
+ *  <ul>
+ *      <li>{@link dev.builder.auth.application.service.UnauthorizedException} si no se tiene una sesión activa como {@code Manager}</li>
+ *      <li>{@link dev.builder.usermanagement.domain.exception.StudentNotFoundException} si el estudiante no existe</li>
+ *      <li>Posibles violaciones de validación</li>
+ *      <ul>
+ *          <li>{@link dev.builder.core.application.validation.RequiredFieldViolation} si el correo electrónico es {@code null} o solo contiene espacios</li>
+ *          <li>{@link dev.builder.core.application.validation.FormatViolation} si el formato de correo electrónico es inválido</li>
+ *      </ul>
+ *  </ul>
+ * @param email el correo electrónico del estudiante a añadir.
+ */
 public record AddCollaboratorCommand(String email) implements Command<Void> {
     public enum Fields{
         EMAIL("email");

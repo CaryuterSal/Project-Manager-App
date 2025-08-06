@@ -13,6 +13,19 @@ import org.slf4j.LoggerFactory;
 
 import java.time.LocalDateTime;
 
+
+/**
+ * Obtiene la información de varios administradores como {@link java.util.List} de {@link dev.builder.usermanagement.application.view.AdminView}.
+ * Usar el método <b>Builder/b> {@code builder()}
+ *  Posibles excepciones lanzadas:
+ *   <ul>
+ *       <li>Posibles violaciones de validación</li>
+ *       <ul>
+ *           <li>{@link dev.builder.core.application.validation.RequiredFieldViolation} si algún campo es {@code null} o solo contiene espacios</li>
+ *           <li>{@link dev.builder.core.application.validation.FormatViolation} si el correo electrónico no tiene un formato válido</li>
+ *       </ul>
+ *   </ul>
+ **/
 public class FindAllAdminsQuery extends FindAllUsersQuery<AdminView, FindAllUsersQuery.UserSortableField> {
 
     private FindAllAdminsQuery(Sort<UserSortableField> sort, LocalDateTime minCreatedDate, LocalDateTime maxCreatedDate) {

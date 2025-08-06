@@ -8,6 +8,18 @@ import dev.builder.usermanagement.application.view.UserView;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * Obtiene la información de un manager como {@link java.util.Optional} de {@link dev.builder.usermanagement.application.view.ManagerView}.
+ * Usar el método <b>factory</b> {@code forEmail(String email)}
+ *  Posibles excepciones lanzadas:
+ *   <ul>
+ *       <li>Posibles violaciones de validación</li>
+ *       <ul>
+ *           <li>{@link dev.builder.core.application.validation.RequiredFieldViolation} si algún campo es {@code null} o solo contiene espacios</li>
+ *           <li>{@link dev.builder.core.application.validation.FormatViolation} si el correo electrónico no tiene un formato válido</li>
+ *       </ul>
+ *   </ul>
+ **/
 public class FindManagerQuery extends FindUserQuery<ManagerView> {
 
     private FindManagerQuery(String email) {

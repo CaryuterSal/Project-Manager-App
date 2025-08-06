@@ -40,6 +40,7 @@ import org.slf4j.LoggerFactory;
 import java.io.InputStream;
 import java.sql.Connection;
 import java.util.*;
+import java.util.stream.Collectors;
 
 import static dev.builder.core.infrastructure.persistence.CommonJdbcOperationWrappers.runInTransaction;
 
@@ -98,9 +99,7 @@ public class BoardApplicationService implements BoardService, TaskService, FileS
                 connectionManager,
                 log,
                 conn -> {
-                    Stage containerStage = stageRepository.findById(stageId, conn).orElseThrow(
-                            () -> new StageNotFoundException(messageLocalizer, stageId)
-                    );
+                    Stage containerStage = stageRepository.findById(stageId, conn).orElseThrow();
 
                     containerStage.createTask(
                             new Task.Id(UUIDGenerator.generateUUID()),
@@ -152,12 +151,9 @@ public class BoardApplicationService implements BoardService, TaskService, FileS
                             .orElseThrow(
                                     () -> new StudentNotFoundException(messageLocalizer, collaboratorId)
                             );
-                    Board board = boardRepository.findById(boardId)
-                            .orElseThrow(
-                                    () -> new BoardNotFoundException(messageLocalizer, boardId)
-                            );
-                    board.addCollaborator(collaborator.id());
-                    boardRepository.save(board, conn);
+                    Board board = boardRepository.findById(boardId).orElseThrow();
+                    boolean updated = board.addCollaborator(collaborator.id());
+                    if(updated) boardRepository.save(board, conn);
                     return null;
                 }
         );
@@ -265,6 +261,15 @@ public class BoardApplicationService implements BoardService, TaskService, FileS
     }
 
     @Override
+    public void assignToInvitedBoard(Connection connection) {
+        sessionContext.requireRole(Role.STUDENT, "Se requiere ser estudiante para asignarse al tablero al que se fue invitado");
+        Student student = studentRepository.findById(new Student.Id(sessionContext.getCurrentUser())).orElseThrow();
+        Board board = boardRepository.findById(new Board.Id(student.createdBy())).orElseThrow();
+        board.addCollaborator(student.id());
+        boardRepository.save(board, connection);
+    }
+
+    @Override
     public TaskView editTask(EditTaskCommand command) {
         Task.Id taskId = new Task.Id(command.id());
         return findTaskInOwnBoardAndDo(
@@ -287,7 +292,11 @@ public class BoardApplicationService implements BoardService, TaskService, FileS
                 taskId,
                 (task, conn) -> {
                     Student.Id studentId = new Student.Id(command.studentEmail());
+                    Board board = boardRepository.findById(new Board.Id(new Manager.Id(sessionContext.getCurrentUser()))).orElseThrow();
                     studentRepository.findById(studentId, conn)
+                            .filter(s -> board.collaborators().stream()
+                                    .map(BoardCollaborator::id).collect(Collectors.toSet())
+                                    .contains(s.id()))
                             .orElseThrow(
                                     () -> new StudentNotFoundException(messageLocalizer, studentId)
                             );
@@ -304,7 +313,12 @@ public class BoardApplicationService implements BoardService, TaskService, FileS
                 taskId,
                 (task, conn) -> {
                     Student.Id studentId = new Student.Id(command.studentEmail());
+                    Board board = boardRepository.findById(new Board.Id(new Manager.Id(sessionContext.getCurrentUser()))).orElseThrow();
                     studentRepository.findById(studentId, conn)
+                            .filter(s -> board.collaborators().stream()
+                                    .map(BoardCollaborator::id).collect(Collectors.toSet())
+                                    .contains(s.id()))
+                            .filter(s -> task.assignedStudents().contains(studentId))
                             .orElseThrow(
                                     () -> new StudentNotFoundException(messageLocalizer, studentId)
                             );
@@ -464,11 +478,12 @@ public class BoardApplicationService implements BoardService, TaskService, FileS
     }
 
     private Image createImage(Image.Filename filename, Task.Id forTask, InputStream data, Connection connection) {
+        StoredFile.MimeType mimeType = StoredFile.MimeType.fromValue(messageLocalizer, mimeTypeGenerator.generateMimeType(data));
         Image image = new Image(
                 new Image.Id(UUIDGenerator.generateUUID()),
                 forTask,
                 filename,
-                StoredFile.MimeType.fromValue(messageLocalizer, mimeTypeGenerator.generateMimeType(data))
+                mimeType
         );
         return imageRepository.save(image, data, connection);
     }

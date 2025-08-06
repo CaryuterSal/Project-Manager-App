@@ -33,6 +33,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import static dev.builder.core.infrastructure.persistence.CommonJdbcOperationWrappers.runInTransaction;
+
 @Bean
 public class UserApplicationService implements UserService {
 
@@ -84,7 +86,7 @@ public class UserApplicationService implements UserService {
     @Override
     public ManagerView registerManager(InviteManagerCommand command) {
         sessionContext.requireRole(Role.ADMIN, messageLocalizer.getMessage("auth.session.requires.role", Role.ADMIN));
-        Manager saved = CommonJdbcOperationWrappers.runInTransaction(
+        Manager saved = runInTransaction(
                 connectionManager,
                 log,
                 con -> {
@@ -107,7 +109,7 @@ public class UserApplicationService implements UserService {
     @Override
     public StudentView registerStudent(InviteStudentCommand command) {
         sessionContext.requireRole(Role.MANAGER, messageLocalizer.getMessage("auth.session.requires.role", Role.MANAGER));
-        Student saved = CommonJdbcOperationWrappers.runInTransaction(
+        Student saved = runInTransaction(
                 connectionManager,
                 log,
                 con -> {
@@ -134,13 +136,33 @@ public class UserApplicationService implements UserService {
 
     @Override
     public void deleteUser(DeleteUserCommand command) {
-        sessionContext.requireRole(Role.MANAGER, messageLocalizer.getMessage("auth.session.requires.role", Role.ADMIN));
-        anyUserRepository.deleteById(new User.Id<>(command.email()));
+        if(!sessionContext.isAuthenticated()) throw new UnauthorizedException("Se requiere una sesión activa para eliminar usuario");
+        runInTransaction(
+                connectionManager,
+                log,
+                conn -> {
+                    User<?> ownUser = anyUserRepository.findById(new User.Id<>(sessionContext.getCurrentUser()), conn).orElseThrow();
+                    User.Id<?> userToDeleteId = new User.Id<>(command.email());
+                    User<?> userToDelete = anyUserRepository.findById(userToDeleteId, conn).orElseThrow(
+                            () -> new UserNotFoundException(messageLocalizer, userToDeleteId)
+                    );
+                    if(ownUser.id().equals(userToDelete.id())) {
+                        anyUserRepository.deleteById(userToDeleteId, conn);
+                    } else if(ownUser instanceof Admin admin && userToDelete instanceof Manager manager && manager.createdBy().equals(admin.id())) {
+                        anyUserRepository.deleteById(userToDeleteId, conn);
+                    } else if(ownUser instanceof Manager manager && userToDelete instanceof Student student && student.createdBy().equals(manager.id())) {
+                        anyUserRepository.deleteById(userToDeleteId, conn);
+                    } else {
+                        throw new UnauthorizedException("No tienes permisos para eliminar a este usuario");
+                    }
+                    return null;
+                }
+        );
     }
 
     @Override
     public UserView completeRegistration(CompleteRegistrationCommand command) {
-        User<?> registered = CommonJdbcOperationWrappers.runInTransaction(
+        User<?> registered = runInTransaction(
                 connectionManager,
                 log,
                 con -> {
@@ -156,6 +178,8 @@ public class UserApplicationService implements UserService {
                     sessionContext.setAuthentication(savedUser);
                     if(savedUser instanceof Manager){
                         boardService.createOwnBoard(con);
+                    } else if(savedUser instanceof Student){
+                        boardService.assignToInvitedBoard(con);
                     }
                     return savedUser;
                 }

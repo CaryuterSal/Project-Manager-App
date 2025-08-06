@@ -13,6 +13,14 @@ import java.io.InputStream;
 import java.util.Optional;
 import java.util.UUID;
 
+/**
+ * Consulta para cargar un archivo adjunto de una tarea específico a partir de su identificador.
+ *
+ * Esta consulta devuelve un {@link java.util.Optional} que contiene el {@link java.io.InputStream}
+ * del contenido del adjunto si existe, o un {@link java.util.Optional#empty()} si no se encuentra.
+ *
+ * @param attachmentId el identificador único del adjunto que se desea cargar
+ */
 public record LoadAttachmentQuery(UUID attachmentId) implements Query<Optional<InputStream>> {
 
     public enum Fields{

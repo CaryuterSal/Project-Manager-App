@@ -14,6 +14,27 @@ import org.slf4j.LoggerFactory;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
+/**
+ * Edita la información base de la tarea, aquella que se definió al momento de crear la tarea con {@link CreateTaskCommand}.
+ * Devuelve un {@link TaskView} con la información editada de la tarea
+ * </br>
+ * Posibles excepciones lanzadas:
+ *  <ul>
+ *      <li>{@link dev.builder.auth.application.service.UnauthorizedException} Si el usuario activo no es {@code Manager}</li>
+ *      <li>{@link dev.builder.board.domain.exception.TaskNotFoundException} si no se encuentra una tarea con dicho ID en el tablero del Manager</li>
+ *      <li>Posibles violaciones de validación</li>
+ *      <ul>
+ *          <li>{@link dev.builder.core.application.validation.RequiredFieldViolation} si algún campo es {@code null} o solo contiene espacios</li>
+ *          <li>{@link dev.builder.core.application.validation.FormatViolation} si el formato de título de la tarea es inválido</li>
+ *          <li>{@link DateFutureViolation} si la fecha límite para completar la tarea no se encuentra en el futuro</li>
+ *      </ul>
+ *  </ul>
+ * @param id el ID de la tarea a editar
+ * @param title el nuevo título de la tarea
+ * @param description la nueva descripción de la tarea
+ * @param color el nuevo color de la tarea
+ * @param deadline la nueva fecha límite de la tarea
+ */
 public record EditTaskCommand(UUID id, String title, String description, Color color, LocalDateTime deadline) implements Command<TaskView> {
 
     public enum Fields{
