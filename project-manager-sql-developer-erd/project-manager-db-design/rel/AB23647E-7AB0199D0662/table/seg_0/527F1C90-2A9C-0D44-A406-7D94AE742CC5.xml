@@ -1,0 +1,94 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<Table class="oracle.dbtools.crest.model.design.relational.Table" directorySegmentName="seg_0" id="527F1C90-2A9C-0D44-A406-7D94AE742CC5" name="STUDENT_BOARD">
+<createdBy>caryuter</createdBy>
+<createdTime>2025-06-27 17:56:12 UTC</createdTime>
+<generatorID>581283EB-6E8C-7EE4-67B7-FE6E873679D0</generatorID>
+<ownerDesignName>project-manager-db-design</ownerDesignName>
+<ordsAlias>students_boards</ordsAlias>
+<abbreviation>sbd</abbreviation>
+<allowColumnReorder>false</allowColumnReorder>
+<existDependencyGenerateInDDl>true</existDependencyGenerateInDDl>
+<parsed>true</parsed>
+<columns itemClass="oracle.dbtools.crest.model.design.relational.Column">
+<Column name="issued_at" id="B7CFBA65-83C6-1F69-2881-FA7E763C13D2">
+<createdBy>caryuter</createdBy>
+<createdTime>2025-06-27 17:56:12 UTC</createdTime>
+<generatorID>408E70CA-187A-DC90-C5AB-0CBD12FCC0C7</generatorID>
+<ownerDesignName>project-manager-db-design</ownerDesignName>
+<useDomainConstraints>false</useDomainConstraints>
+<use>1</use>
+<logicalDatatype>LOGDT046</logicalDatatype>
+<ownDataTypeParameters>,,</ownDataTypeParameters>
+<autoIncrementCycle>false</autoIncrementCycle>
+</Column>
+<Column name="sdt_email" id="EBD1D435-E077-E5C8-D660-1C658D8DC4F0">
+<createdBy>caryuter</createdBy>
+<createdTime>2025-06-27 17:56:12 UTC</createdTime>
+<generatorID>59636D92-FE92-441F-FCF5-62877A22EE63</generatorID>
+<ownerDesignName>project-manager-db-design</ownerDesignName>
+<useDomainConstraints>false</useDomainConstraints>
+<use>1</use>
+<logicalDatatype>LOGDT024</logicalDatatype>
+<dataTypeSize>63 CHAR</dataTypeSize>
+<ownDataTypeParameters>,,</ownDataTypeParameters>
+<previousColumn>false</previousColumn>
+<autoIncrementCycle>false</autoIncrementCycle>
+<associations>
+<colAssociation fkAssociation="EDECAD1E-6E16-CB8F-A514-52CCCF721F47" referredColumn="58174BBE-B5C8-9EDD-6CA9-33C6AAC1845A"/>
+</associations>
+</Column>
+<Column name="bad_email" id="9C888B2E-EE0E-44EB-3E39-AE813B3C6122">
+<createdBy>caryuter</createdBy>
+<createdTime>2025-06-27 17:56:12 UTC</createdTime>
+<generatorID>8E657D7E-2E62-77DF-96FE-AC6806F5E3F1</generatorID>
+<ownerDesignName>project-manager-db-design</ownerDesignName>
+<useDomainConstraints>false</useDomainConstraints>
+<use>1</use>
+<logicalDatatype>LOGDT024</logicalDatatype>
+<dataTypeSize>63 CHAR</dataTypeSize>
+<ownDataTypeParameters>,,</ownDataTypeParameters>
+<previousColumn>false</previousColumn>
+<autoIncrementCycle>false</autoIncrementCycle>
+<associations>
+<colAssociation fkAssociation="BBF5BAEE-B2D7-5459-E160-6B027CE6A387" referredColumn="F08E92B0-9F6A-EDB6-1A15-E1981BF40B70"/>
+</associations>
+</Column>
+</columns>
+<indexes itemClass="oracle.dbtools.crest.model.design.relational.Index">
+<ind_PK_UK id="C5BE3D64-8961-7C67-8384-BEE5355C6CBB" name="STUDENTS_BOARD_PK">
+<createdBy>caryuter</createdBy>
+<createdTime>2025-06-27 17:56:12 UTC</createdTime>
+<generatorID>B54E151C-363F-6396-9F6D-11E332F9C261</generatorID>
+<ownerDesignName>project-manager-db-design</ownerDesignName>
+<pk>true</pk>
+<indexState>Primary Constraint</indexState>
+<isSurrogateKey>false</isSurrogateKey>
+<indexColumnUsage>
+<colUsage columnID="EBD1D435-E077-E5C8-D660-1C658D8DC4F0"/>
+<colUsage columnID="9C888B2E-EE0E-44EB-3E39-AE813B3C6122"/>
+</indexColumnUsage>
+</ind_PK_UK>
+<ind_PK_UK id="1DF5C4C9-5EBB-66A6-0223-05FAE00FD564" name="STUDENTS_BOARD_STUDENTS_FK">
+<createdBy>caryuter</createdBy>
+<createdTime>2025-06-27 17:56:12 UTC</createdTime>
+<generatorID>82337D12-A032-6394-8FD7-1DD6707149B9</generatorID>
+<ownerDesignName>project-manager-db-design</ownerDesignName>
+<indexState>Foreign Key</indexState>
+<isSurrogateKey>false</isSurrogateKey>
+<indexColumnUsage>
+<colUsage columnID="EBD1D435-E077-E5C8-D660-1C658D8DC4F0"/>
+</indexColumnUsage>
+</ind_PK_UK>
+<ind_PK_UK id="EE577365-F291-237E-2781-824B173FE1FF" name="STUDENTS_BOARD_BOARDS_FK">
+<createdBy>caryuter</createdBy>
+<createdTime>2025-06-27 17:56:12 UTC</createdTime>
+<generatorID>274DE878-B0E8-D253-7062-937DE7A5D78C</generatorID>
+<ownerDesignName>project-manager-db-design</ownerDesignName>
+<indexState>Foreign Key</indexState>
+<isSurrogateKey>false</isSurrogateKey>
+<indexColumnUsage>
+<colUsage columnID="9C888B2E-EE0E-44EB-3E39-AE813B3C6122"/>
+</indexColumnUsage>
+</ind_PK_UK>
+</indexes>
+</Table>

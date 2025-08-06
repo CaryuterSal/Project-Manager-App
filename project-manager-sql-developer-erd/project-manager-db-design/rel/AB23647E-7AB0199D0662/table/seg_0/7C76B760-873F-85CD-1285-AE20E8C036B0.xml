@@ -1,0 +1,81 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<Table class="oracle.dbtools.crest.model.design.relational.Table" directorySegmentName="seg_0" id="7C76B760-873F-85CD-1285-AE20E8C036B0" name="MANAGER">
+<createdBy>caryuter</createdBy>
+<createdTime>2025-06-27 17:56:12 UTC</createdTime>
+<generatorID>45C6271D-473A-9A30-3E11-289404A50369</generatorID>
+<ownerDesignName>project-manager-db-design</ownerDesignName>
+<ordsAlias>managers</ordsAlias>
+<abbreviation>mnr</abbreviation>
+<allowColumnReorder>false</allowColumnReorder>
+<existDependencyGenerateInDDl>true</existDependencyGenerateInDDl>
+<parsed>true</parsed>
+<columns itemClass="oracle.dbtools.crest.model.design.relational.Column">
+<Column name="email" id="618D2C73-ADC9-A243-851C-9E291F2A670D">
+<createdBy>caryuter</createdBy>
+<createdTime>2025-06-27 17:56:12 UTC</createdTime>
+<generatorID>D300C36E-65BC-7C3A-03AC-0FF2B5DC80F0</generatorID>
+<ownerDesignName>project-manager-db-design</ownerDesignName>
+<useDomainConstraints>false</useDomainConstraints>
+<use>1</use>
+<logicalDatatype>LOGDT024</logicalDatatype>
+<dataTypeSize>63 CHAR</dataTypeSize>
+<ownDataTypeParameters>,,</ownDataTypeParameters>
+<autoIncrementCycle>false</autoIncrementCycle>
+<associations>
+<colAssociation fkAssociation="696A892B-9271-C61B-CC0D-97C487B63476" referredColumn="C70B86F4-9406-3900-9DDC-3CFF8F2AB5A4"/>
+</associations>
+</Column>
+<Column name="created_by" id="2A8094CF-A679-5A38-0AA4-84BFA9E1B1F8">
+<createdBy>caryuter</createdBy>
+<createdTime>2025-06-27 17:56:12 UTC</createdTime>
+<generatorID>77782B9F-7CAC-71EB-C5FF-0E1AB9DFC3D2</generatorID>
+<ownerDesignName>project-manager-db-design</ownerDesignName>
+<useDomainConstraints>false</useDomainConstraints>
+<use>1</use>
+<logicalDatatype>LOGDT024</logicalDatatype>
+<dataTypeSize>63 CHAR</dataTypeSize>
+<ownDataTypeParameters>,,</ownDataTypeParameters>
+<previousColumn>false</previousColumn>
+<autoIncrementCycle>false</autoIncrementCycle>
+<associations>
+<colAssociation fkAssociation="F68C2CE1-0931-0E28-1E9A-D896BBC6DCF0" referredColumn="A6B034B4-89C2-2B04-2758-68B062A980E0"/>
+</associations>
+</Column>
+</columns>
+<indexes itemClass="oracle.dbtools.crest.model.design.relational.Index">
+<ind_PK_UK id="E864EB5F-5D5B-2FCB-BD4F-AFCCE4E6D877" name="MANAGERS_PK">
+<createdBy>caryuter</createdBy>
+<createdTime>2025-06-27 17:56:12 UTC</createdTime>
+<generatorID>43D5688D-7A76-CB0B-7B92-2BF393E49347</generatorID>
+<ownerDesignName>project-manager-db-design</ownerDesignName>
+<pk>true</pk>
+<indexState>Primary Constraint</indexState>
+<isSurrogateKey>false</isSurrogateKey>
+<indexColumnUsage>
+<colUsage columnID="618D2C73-ADC9-A243-851C-9E291F2A670D"/>
+</indexColumnUsage>
+</ind_PK_UK>
+<ind_PK_UK id="1E6070D0-0DA5-17D2-DD5B-EDDD85C412F5" name="MANAGERS_APP_USERS_FK">
+<createdBy>caryuter</createdBy>
+<createdTime>2025-06-27 17:56:12 UTC</createdTime>
+<generatorID>A1C84C9E-F69F-FEB7-5005-DEC7EA870561</generatorID>
+<ownerDesignName>project-manager-db-design</ownerDesignName>
+<indexState>Foreign Key</indexState>
+<isSurrogateKey>false</isSurrogateKey>
+<indexColumnUsage>
+<colUsage columnID="618D2C73-ADC9-A243-851C-9E291F2A670D"/>
+</indexColumnUsage>
+</ind_PK_UK>
+<ind_PK_UK id="308E9BE2-684D-90E6-7DD5-99E8613E565E" name="MANAGERS_ADMINS_FK">
+<createdBy>caryuter</createdBy>
+<createdTime>2025-06-27 17:56:12 UTC</createdTime>
+<generatorID>3ADA3AFC-67D0-0265-D032-C5EE8ABD61BE</generatorID>
+<ownerDesignName>project-manager-db-design</ownerDesignName>
+<indexState>Foreign Key</indexState>
+<isSurrogateKey>false</isSurrogateKey>
+<indexColumnUsage>
+<colUsage columnID="2A8094CF-A679-5A38-0AA4-84BFA9E1B1F8"/>
+</indexColumnUsage>
+</ind_PK_UK>
+</indexes>
+</Table>

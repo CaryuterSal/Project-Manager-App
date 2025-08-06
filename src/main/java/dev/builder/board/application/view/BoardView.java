@@ -1,4 +1,8 @@
 package dev.builder.board.application.view;
+import dev.builder.usermanagement.application.view.StudentView;
 
-public class BoardView {
+import java.util.List;
+import java.util.Set;
+
+public record BoardView(Set<CollaboratorView> collaborators, List<StageView> stages) {
 }

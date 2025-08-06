@@ -1,0 +1,95 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<Table class="oracle.dbtools.crest.model.design.relational.Table" directorySegmentName="seg_0" id="2AFBEEEB-17ED-C48A-73AE-37D53DE23BF6" name="TASK_ASSIGNEE">
+<createdBy>caryuter</createdBy>
+<createdTime>2025-06-27 18:53:28 UTC</createdTime>
+<ownerDesignName>project-manager-db-design</ownerDesignName>
+<ordsAlias>task_assignees</ordsAlias>
+<allowColumnReorder>false</allowColumnReorder>
+<existDependencyGenerateInDDl>true</existDependencyGenerateInDDl>
+<parsed>true</parsed>
+<columns itemClass="oracle.dbtools.crest.model.design.relational.Column">
+<Column name="tsk_id" id="46038FD1-3578-0509-2CE0-C94E9CEBEC78">
+<createdBy>caryuter</createdBy>
+<createdTime>2025-06-27 18:53:28 UTC</createdTime>
+<ownerDesignName>project-manager-db-design</ownerDesignName>
+<useDomainConstraints>false</useDomainConstraints>
+<use>1</use>
+<logicalDatatype>LogDes-4BABEC65-108B-2A3C-F7C4-84AC47D292B0@LOGDT10040</logicalDatatype>
+<dataTypeSize>16</dataTypeSize>
+<ownDataTypeParameters>,,</ownDataTypeParameters>
+<previousColumn>false</previousColumn>
+<autoIncrementCycle>false</autoIncrementCycle>
+<associations>
+<colAssociation fkAssociation="C9AC0281-8892-73DA-9995-86C091F037F0" referredColumn="1DC42F8B-EDA9-DE8A-B4AB-254AABA6B94B"/>
+</associations>
+</Column>
+<Column name="sbd_sdt_email" id="C5A77F9F-840B-9929-79DE-E0E2DDDD2A15">
+<createdBy>caryuter</createdBy>
+<createdTime>2025-06-27 18:53:28 UTC</createdTime>
+<ownerDesignName>project-manager-db-design</ownerDesignName>
+<useDomainConstraints>false</useDomainConstraints>
+<use>1</use>
+<logicalDatatype>LOGDT024</logicalDatatype>
+<dataTypeSize>63 CHAR</dataTypeSize>
+<ownDataTypeParameters>,,</ownDataTypeParameters>
+<previousColumn>false</previousColumn>
+<autoIncrementCycle>false</autoIncrementCycle>
+<associations>
+<colAssociation fkAssociation="EB1330F3-4283-12A1-048F-25C025D86DED" referredColumn="EBD1D435-E077-E5C8-D660-1C658D8DC4F0"/>
+</associations>
+</Column>
+<Column name="sbd_bad_email" id="D65188A6-27BD-8E2D-41B7-A4DDCD084B12">
+<createdBy>caryuter</createdBy>
+<createdTime>2025-06-27 18:53:28 UTC</createdTime>
+<ownerDesignName>project-manager-db-design</ownerDesignName>
+<useDomainConstraints>false</useDomainConstraints>
+<use>1</use>
+<logicalDatatype>LOGDT024</logicalDatatype>
+<dataTypeSize>63 CHAR</dataTypeSize>
+<ownDataTypeParameters>,,</ownDataTypeParameters>
+<previousColumn>false</previousColumn>
+<autoIncrementCycle>false</autoIncrementCycle>
+<associations>
+<colAssociation fkAssociation="EB1330F3-4283-12A1-048F-25C025D86DED" referredColumn="9C888B2E-EE0E-44EB-3E39-AE813B3C6122"/>
+</associations>
+</Column>
+</columns>
+<indexes itemClass="oracle.dbtools.crest.model.design.relational.Index">
+<ind_PK_UK id="744A7B7A-28F0-1CC7-9A89-A45E46B251F6" name="Relation_19_PK">
+<createdBy>caryuter</createdBy>
+<createdTime>2025-06-27 18:53:28 UTC</createdTime>
+<ownerDesignName>project-manager-db-design</ownerDesignName>
+<pk>true</pk>
+<indexState>Primary Constraint</indexState>
+<isSurrogateKey>false</isSurrogateKey>
+<indexColumnUsage>
+<colUsage columnID="46038FD1-3578-0509-2CE0-C94E9CEBEC78"/>
+<colUsage columnID="C5A77F9F-840B-9929-79DE-E0E2DDDD2A15"/>
+<colUsage columnID="D65188A6-27BD-8E2D-41B7-A4DDCD084B12"/>
+</indexColumnUsage>
+</ind_PK_UK>
+<ind_PK_UK id="E4D3483B-85D8-46DF-526F-0B16D495C36A" name="Relation_19_TASKS_FK">
+<createdBy>caryuter</createdBy>
+<createdTime>2025-06-27 18:53:28 UTC</createdTime>
+<generatorID>51B0FED1-6D2D-2B62-CEE7-A43F194F45A2</generatorID>
+<ownerDesignName>project-manager-db-design</ownerDesignName>
+<indexState>Foreign Key</indexState>
+<isSurrogateKey>false</isSurrogateKey>
+<indexColumnUsage>
+<colUsage columnID="46038FD1-3578-0509-2CE0-C94E9CEBEC78"/>
+</indexColumnUsage>
+</ind_PK_UK>
+<ind_PK_UK id="73783851-EC6C-6279-5911-064F5AA68859" name="Relation_19_STUDENTS_BOARD_FK">
+<createdBy>caryuter</createdBy>
+<createdTime>2025-06-27 18:53:28 UTC</createdTime>
+<generatorID>51B0FED1-6D2D-2B62-CEE7-A43F194F45A2</generatorID>
+<ownerDesignName>project-manager-db-design</ownerDesignName>
+<indexState>Foreign Key</indexState>
+<isSurrogateKey>false</isSurrogateKey>
+<indexColumnUsage>
+<colUsage columnID="C5A77F9F-840B-9929-79DE-E0E2DDDD2A15"/>
+<colUsage columnID="D65188A6-27BD-8E2D-41B7-A4DDCD084B12"/>
+</indexColumnUsage>
+</ind_PK_UK>
+</indexes>
+</Table>

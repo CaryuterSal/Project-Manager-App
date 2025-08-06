@@ -1,0 +1,81 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<Table class="oracle.dbtools.crest.model.design.relational.Table" directorySegmentName="seg_0" id="F22BC3AD-D373-0A95-F281-265B2447E966" name="QUARTER_GROUP">
+<createdBy>caryuter</createdBy>
+<createdTime>2025-06-27 17:56:12 UTC</createdTime>
+<generatorID>9D5331BB-03A2-418C-12D8-7C0497337C25</generatorID>
+<ownerDesignName>project-manager-db-design</ownerDesignName>
+<ordsAlias>quarter_groups</ordsAlias>
+<abbreviation>qgp</abbreviation>
+<allowColumnReorder>false</allowColumnReorder>
+<existDependencyGenerateInDDl>true</existDependencyGenerateInDDl>
+<parsed>true</parsed>
+<columns itemClass="oracle.dbtools.crest.model.design.relational.Column">
+<Column name="agp_name" id="F5D34481-9A08-F1B3-4712-21A2C267DC9F">
+<createdBy>caryuter</createdBy>
+<createdTime>2025-06-27 17:56:12 UTC</createdTime>
+<generatorID>97CD8393-BC29-56DE-B362-EB2826853334</generatorID>
+<ownerDesignName>project-manager-db-design</ownerDesignName>
+<useDomainConstraints>false</useDomainConstraints>
+<use>1</use>
+<logicalDatatype>LOGDT025</logicalDatatype>
+<dataTypeSize>1 CHAR</dataTypeSize>
+<ownDataTypeParameters>,,</ownDataTypeParameters>
+<previousColumn>false</previousColumn>
+<autoIncrementCycle>false</autoIncrementCycle>
+<associations>
+<colAssociation fkAssociation="0492723E-AA3D-52BB-6919-09FBE75F8312" referredColumn="DA11914C-4C81-DAF7-BDF6-5F99A65C2555"/>
+</associations>
+</Column>
+<Column name="aqr_number" id="75668E9E-1679-31CC-9CC4-2F23827CBCCC">
+<createdBy>caryuter</createdBy>
+<createdTime>2025-06-27 17:59:59 UTC</createdTime>
+<ownerDesignName>project-manager-db-design</ownerDesignName>
+<useDomainConstraints>false</useDomainConstraints>
+<use>1</use>
+<logicalDatatype>LOGDT011</logicalDatatype>
+<ownDataTypeParameters>,,</ownDataTypeParameters>
+<previousColumn>false</previousColumn>
+<autoIncrementCycle>false</autoIncrementCycle>
+<associations>
+<colAssociation fkAssociation="A4A67E43-A03D-7239-C7D4-D0AA775C8117" referredColumn="1592FB48-FF03-A716-FFE0-9168C2186C14"/>
+</associations>
+</Column>
+</columns>
+<indexes itemClass="oracle.dbtools.crest.model.design.relational.Index">
+<ind_PK_UK id="8AAE2869-A287-CA9C-3ADB-B6F4AF46B111" name="QUARTER_GROUPS_PK">
+<createdBy>caryuter</createdBy>
+<createdTime>2025-06-27 17:56:12 UTC</createdTime>
+<generatorID>092FAA30-4981-7353-326C-E98B940305AB</generatorID>
+<ownerDesignName>project-manager-db-design</ownerDesignName>
+<pk>true</pk>
+<indexState>Primary Constraint</indexState>
+<isSurrogateKey>false</isSurrogateKey>
+<indexColumnUsage>
+<colUsage columnID="F5D34481-9A08-F1B3-4712-21A2C267DC9F"/>
+<colUsage columnID="75668E9E-1679-31CC-9CC4-2F23827CBCCC"/>
+</indexColumnUsage>
+</ind_PK_UK>
+<ind_PK_UK id="2FFC35E2-C3F8-796E-AE31-9F5D2A3DCDDB" name="QUARTER_GROUPS_ACADEMIC_QUARTERS_FK">
+<createdBy>caryuter</createdBy>
+<createdTime>2025-06-27 17:56:12 UTC</createdTime>
+<generatorID>0661CD26-1845-F97C-A94B-3F78BDCBC397</generatorID>
+<ownerDesignName>project-manager-db-design</ownerDesignName>
+<indexState>Foreign Key</indexState>
+<isSurrogateKey>false</isSurrogateKey>
+<indexColumnUsage>
+<colUsage columnID="75668E9E-1679-31CC-9CC4-2F23827CBCCC"/>
+</indexColumnUsage>
+</ind_PK_UK>
+<ind_PK_UK id="B8BDA52A-9585-2185-C56A-3EBD908D4767" name="QUARTER_GROUPS_ACADEMIC_GROUPS_FK">
+<createdBy>caryuter</createdBy>
+<createdTime>2025-06-27 17:56:12 UTC</createdTime>
+<generatorID>BB1BA477-B80A-6548-BB76-2C4730B66FD0</generatorID>
+<ownerDesignName>project-manager-db-design</ownerDesignName>
+<indexState>Foreign Key</indexState>
+<isSurrogateKey>false</isSurrogateKey>
+<indexColumnUsage>
+<colUsage columnID="F5D34481-9A08-F1B3-4712-21A2C267DC9F"/>
+</indexColumnUsage>
+</ind_PK_UK>
+</indexes>
+</Table>
