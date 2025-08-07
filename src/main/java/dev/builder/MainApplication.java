@@ -23,6 +23,7 @@ public class MainApplication extends Application {
 
     @Override
     public void start(Stage stage) throws IOException {
+
         RequestDispatcher requestDispatcher = dependencyContainer.getInstance(RequestDispatcher.class);
         SessionContext sessionContext = dependencyContainer.getInstance(SessionContext.class);
         ViewNavigation viewNavigation = dependencyContainer.getInstance(ViewNavigation.class);
