@@ -69,17 +69,6 @@ public class LoginController implements Initializable {
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
-        Platform.runLater(() -> {
-            try {
-                boolean isRecovered = requestDispatcher.dispatch(new RestoreSessionCommand());
-                if (isRecovered) {
-                    loginAndRedirect();
-                }
-            } catch (Exception e) {
-                System.out.println("error" + e.getMessage());
-            }
-        });
-
         btnLogin.setOnAction(this::validarCorreo);
         btnCancel.setOnAction(this::cancel);
         //btnLogin.setOnAction(this::navigate);
