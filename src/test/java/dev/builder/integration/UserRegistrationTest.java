@@ -39,6 +39,7 @@ import dev.builder.usermanagement.application.validator.NameValidator;
 import dev.builder.usermanagement.application.validator.PasswordValidator;
 import dev.builder.usermanagement.application.view.ManagerView;
 import dev.builder.usermanagement.application.view.StudentView;
+import dev.builder.usermanagement.domain.exception.UserExistsException;
 import dev.builder.usermanagement.domain.model.User;
 import dev.builder.usermanagement.domain.port.out.AnyUserRepository;
 import dev.builder.usermanagement.infrastructure.*;
@@ -247,6 +248,14 @@ public class UserRegistrationTest extends ContainerizedTest {
         assertAll(
                 () -> assertThat(manager.verified()).isFalse()
         );
+    }
+
+    @Test
+    void test_invite_manager_when_exists_fail() throws ValidationException {
+        executeInsertTestData();
+        mockWithAdmin();
+        String managerEmail = "manager1@example.com";
+        assertThrows(UserExistsException.class, () -> requestDispatcher.dispatch(new InviteManagerCommand(managerEmail)));
     }
 
     @Test

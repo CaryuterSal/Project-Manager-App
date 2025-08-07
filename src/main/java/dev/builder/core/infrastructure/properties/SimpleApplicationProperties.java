@@ -93,6 +93,7 @@ public class SimpleApplicationProperties implements ApplicationProperties {
         return System.getenv("DB_PASSWORD");
     }
 
+
     @Override
     public String getDbName() {
         return System.getenv("DB_NAME");
@@ -106,6 +107,28 @@ public class SimpleApplicationProperties implements ApplicationProperties {
     @Override
     public String getCipherKeyType() {
         return applicationProperties.getProperty(PropertiesNamespaces.Session.KEY_TYPE);
+    }
+
+
+    @Override
+    public String getCipherPassword() {
+        return System.getenv("CIPHER_PASSWORD");
+    }
+
+    @Override
+    public String getCipherSalt() {
+        return System.getenv("CIPHER_SALT");
+    }
+
+    @Override
+    public int getCipherIterations() {
+
+        return Integer.parseInt(applicationProperties.getProperty(PropertiesNamespaces.Session.ITERATIONS));
+    }
+
+    @Override
+    public int getCipherKeyLength() {
+        return Integer.parseInt(applicationProperties.getProperty(PropertiesNamespaces.Session.KEY_LENGTH));
     }
 
     @Override

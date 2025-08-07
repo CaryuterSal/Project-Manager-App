@@ -24,4 +24,8 @@ public interface AnyUserRepository{
     boolean existsDeletedById(User.Id<?> id);
     boolean existsDeletedById(User.Id<?> id, Connection connection);
 
+
+    List<? extends User<?>> findWithEmailLike(String emailLike);
+    List<? extends User<?>> findWithEmailLike(String emailLike, Connection connection);
+
 }

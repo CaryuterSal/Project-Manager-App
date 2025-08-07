@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+
+<ScrollPane fx:id="scrollPane" fitToWidth="true" style="-fx-pref-width: 1000;-fx-pref-height: 700" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1">
+    <content>
+        <VBox spacing="15.0" prefWidth="800.0" alignment="TOP_CENTER" style="-fx-padding: 20;">
+            <children>
+                <!-- Encabezado con Logo y Título -->
+                <HBox spacing="10.0" alignment="CENTER_LEFT">
+                    <children>
+                        <ImageView fitHeight="50.0" fitWidth="50.0">
+                            <image>
+                                <Image url="@../assets/images/logo.png" />
+                            </image>
+                        </ImageView>
+                        <Label text="Maestros">
+                            <font>
+                                <Font name="System Bold" size="24.0" />
+                            </font>
+                        </Label>
+                        <Label text="Kedu">
+                            <font>
+                                <Font name="System Bold" size="24.0" />
+                            </font>
+                        </Label>
+                    </children>
+                </HBox>
+
+                <!-- Usuario Info -->
+                <HBox spacing="10.0" alignment="CENTER_RIGHT">
+                    <children>
+                        <ImageView fitHeight="30.0" fitWidth="30.0">
+                            <image>
+                                <Image url="@../assets/images/user-icon.png" />
+                            </image>
+                        </ImageView>
+                        <Label text="Usuario1234" prefWidth="200">
+                            <font>
+                                <Font size="16.0" />
+                            </font>
+                        </Label>
+                    </children>
+                </HBox>
+                <HBox prefWidth="Infinity" alignment="CENTER_LEFT" spacing="10">
+                    <children>
+                        <TextField promptText="Buscar" prefWidth="300.0" prefHeight="30.0">
+                            <font>
+                                <Font size="16.0" />
+                            </font>
+                        </TextField>
+
+                        <Region fx:id="spacer" HBox.hgrow="ALWAYS" />
+
+                        <Button text="AGREGAR" textFill="WHITE" mnemonicParsing="false" prefWidth="300.0" prefHeight="35.0" style="-fx-background-color: black;">
+                            <font>
+                                <Font name="System Bold" size="16.0" />
+                            </font>
+                        </Button>
+                    </children>
+                </HBox>
+                <!-- Contenedor principal -->
+                <AnchorPane VBox.vgrow="ALWAYS" style="-fx-background-color: #f7f7f7;" prefHeight="400">
+                    <children>
+                        <VBox alignment="CENTER" layoutX="0" layoutY="0"
+                              AnchorPane.topAnchor="0" AnchorPane.bottomAnchor="0"
+                              AnchorPane.leftAnchor="0" AnchorPane.rightAnchor="0"
+                              spacing="20.0">
+                            <children>
+                                <Label text="Aún no hay maestros aquí">
+                                    <font>
+                                        <Font name="System Bold" size="30.0" />
+                                    </font>
+                                </Label>
+                                <Button text="COMENZAR A AGREGAR" mnemonicParsing="false"
+                                        prefWidth="300.0" prefHeight="45.0"
+                                        style="-fx-background-color: black;" textFill="WHITE">
+                                    <font>
+                                        <Font name="System Bold" size="20.0" />
+                                    </font>
+                                </Button>
+                            </children>
+                        </VBox>
+                    </children>
+                </AnchorPane>
+            </children>
+        </VBox>
+    </content>
+</ScrollPane>

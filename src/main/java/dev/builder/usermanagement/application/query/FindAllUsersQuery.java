@@ -35,8 +35,8 @@ import java.util.Optional;
 public class FindAllUsersQuery<T extends UserView, S extends  Enum<S> & SortField> implements Query<List<T>> {
 
     public static class FindAllUsersGenericQuery extends FindAllUsersQuery<UserView, FindAllUsersQuery.UserSortableField> {
-        private FindAllUsersGenericQuery(Sort<UserSortableField> sort, LocalDateTime minCreatedDate, LocalDateTime maxCreatedDate) {
-            super(sort, minCreatedDate, maxCreatedDate);
+        private FindAllUsersGenericQuery(Sort<UserSortableField> sort, String emailLike,  LocalDateTime minCreatedDate, LocalDateTime maxCreatedDate) {
+            super(sort, emailLike, minCreatedDate, maxCreatedDate);
         }
 
         @Contract(value = " -> new", pure = true)
@@ -45,10 +45,15 @@ public class FindAllUsersQuery<T extends UserView, S extends  Enum<S> & SortFiel
         }
 
 
-        public static class Builder extends FindAllUsersQuery.Builder<FindAllUsersQuery.UserSortableField> {
+        public static class Builder extends FindAllUsersQuery.Builder<Builder, FindAllUsersQuery.UserSortableField> {
             @Override
             public FindAllUsersQuery<?, UserSortableField> build() {
-                return new FindAllUsersGenericQuery(super.sort, super.minCreatedDate, super.maxCreatedDate);
+                return new FindAllUsersGenericQuery(super.sort, super.emailLike, super.minCreatedDate, super.maxCreatedDate);
+            }
+
+            @Override
+            protected Builder getSelf() {
+                return super.getSelf();
             }
         }
     }
@@ -62,15 +67,17 @@ public class FindAllUsersQuery<T extends UserView, S extends  Enum<S> & SortFiel
     private final Sort<S> sort;
     private final LocalDateTime minCreatedDate;
     private final LocalDateTime maxCreatedDate;
+    private final String emailLike;
 
-    protected FindAllUsersQuery(Sort<S> sort, LocalDateTime minCreatedDate, LocalDateTime maxCreatedDate) {
+    protected FindAllUsersQuery(Sort<S> sort, String emailLike, LocalDateTime minCreatedDate, LocalDateTime maxCreatedDate) {
         this.sort = sort;
+        this.emailLike = emailLike;
         this.minCreatedDate = minCreatedDate;
         this.maxCreatedDate = maxCreatedDate;
     }
 
     public static FindAllUsersQuery<?,?> asActive(){
-        return new FindAllUsersQuery<>(null,  null, null);
+        return new FindAllUsersQuery<>(null,  null,null, null);
     }
 
     public Optional<Sort<S>> sort() {
@@ -84,6 +91,8 @@ public class FindAllUsersQuery<T extends UserView, S extends  Enum<S> & SortFiel
     public Optional<LocalDateTime> maxCreatedDate() {
         return Optional.ofNullable(maxCreatedDate);
     }
+
+    public Optional<String> emailLike() {return Optional.ofNullable(emailLike);}
 
     @Override
     public boolean equals(Object o) {
@@ -102,41 +111,49 @@ public class FindAllUsersQuery<T extends UserView, S extends  Enum<S> & SortFiel
     }
 
     @Contract(value = " -> new", pure = true)
-    public static <S extends Enum<S> & SortField> @NotNull Builder<S> builder() {
+    public static <S extends Enum<S> & SortField> @NotNull Builder<?,S> builder() {
         return new Builder<>();
     }
 
-    public static class Builder<S extends Enum<S> & SortField> {
+    public static class Builder<SELF extends Builder<SELF, S>, S extends Enum<S> & SortField> {
         protected Sort<S> sort;
         protected LocalDateTime minCreatedDate;
         protected LocalDateTime maxCreatedDate;
+        protected String emailLike;
 
-        public Builder<S> sort(Sort<S> sort) {
+        @SuppressWarnings("unchecked")
+        protected SELF getSelf(){
+            return (SELF) this;
+        };
+        public SELF sort(Sort<S> sort) {
             this.sort = sort;
-            return this;
+            return getSelf();
         }
 
-        public Builder<S> minCreatedDate(LocalDateTime minCreatedDate) {
+        public SELF emailLike(String emailLike) {
+            this.emailLike = emailLike;
+            return getSelf();
+        }
+
+        public SELF minCreatedDate(LocalDateTime minCreatedDate) {
             this.minCreatedDate = minCreatedDate;
-            return this;
+            return getSelf();
         }
 
-        public Builder<S> maxCreatedDate(LocalDateTime maxCreatedDate) {
+        public SELF maxCreatedDate(LocalDateTime maxCreatedDate) {
             this.maxCreatedDate = maxCreatedDate;
-            return this;
+            return getSelf();
         }
 
-        public Builder<S> createdRange(LocalDateTime minCreatedDate, LocalDateTime maxCreatedDate) {
+        public SELF createdRange(LocalDateTime minCreatedDate, LocalDateTime maxCreatedDate) {
             this.minCreatedDate = minCreatedDate;
             this.maxCreatedDate = maxCreatedDate;
-            return this;
+            return getSelf();
         }
 
         public FindAllUsersQuery<?,S> build() {
-            return new  FindAllUsersQuery<>(sort,minCreatedDate, maxCreatedDate);
+            return new FindAllUsersQuery<>(sort,emailLike,minCreatedDate, maxCreatedDate);
         }
-
-
     }
 
     public enum UserSortableField implements SortField {

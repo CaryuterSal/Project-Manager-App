@@ -18,6 +18,7 @@ import dev.builder.usermanagement.application.view.AdminView;
 import dev.builder.usermanagement.application.view.ManagerView;
 import dev.builder.usermanagement.application.view.StudentView;
 import dev.builder.usermanagement.application.view.UserView;
+import dev.builder.usermanagement.domain.exception.UserExistsException;
 import dev.builder.usermanagement.domain.exception.UserNotFoundException;
 import dev.builder.usermanagement.domain.model.*;
 import dev.builder.usermanagement.domain.port.in.UserService;
@@ -78,8 +79,20 @@ public class UserApplicationService implements UserService {
 
     @Override
     public AdminView registerAdmin(InviteAdminCommand command) {
-        Admin admin = Admin.invite(new Admin.Id(command.email()));
-        Admin saved =  adminRepository.save(admin);
+        Admin.Id id = new Admin.Id(command.email());
+
+        Admin saved =  runInTransaction(
+                connectionManager,
+                log,
+                conn -> {
+                    Optional<Admin> existent = adminRepository.findById(id, conn);
+                    if(existent.isPresent()) {
+                        throw new UserExistsException(messageLocalizer);
+                    }
+                    Admin admin = Admin.invite(id);
+                    return adminRepository.save(admin, conn);
+                }
+        );
         return mapper.fromAdmin(saved);
     }
 
@@ -96,9 +109,14 @@ public class UserApplicationService implements UserService {
                                 sessionContext.clear();
                                 return new UnauthorizedException(messageLocalizer.getMessage("auth.session.stale"));
                             });
+                    Manager.Id id = new Manager.Id(command.email());
+                    Optional<Manager> existent = managerRepository.findById(id, con);
+                    if(existent.isPresent()) {
+                        throw new UserExistsException(messageLocalizer);
+                    }
                     Manager manager = UserRegistrationService.registerNewManager(
                             issuer,
-                            new Manager.Id(command.email())
+                            id
                     );
                     return managerRepository.save(manager, con);
                 }
@@ -119,9 +137,14 @@ public class UserApplicationService implements UserService {
                                 sessionContext.clear();
                                 return new UnauthorizedException(messageLocalizer.getMessage("auth.session.stale"));
                             });
+                    Student.Id id = new Student.Id(command.email());
+                    Optional<Student> existent = studentRepository.findById(id, con);
+                    if(existent.isPresent()) {
+                        throw new UserExistsException(messageLocalizer);
+                    }
                     Student student = UserRegistrationService.registerNewStudent(
                             issuer,
-                            new Student.Id(command.email()),
+                            id,
                             new Name(command.firstName(), command.lastName()),
                             new AcademicInfo(
                                     new AcademicQuarter(command.academicQuarter()),
@@ -250,7 +273,13 @@ public class UserApplicationService implements UserService {
 
     @Override
     public List<UserView> getAllUsers(FindAllUsersQuery<UserView, FindAllUsersQuery.UserSortableField> query) {
-        List<? extends User<?>> found = anyUserRepository.findAll();
+
+        List<? extends User<?>> found;
+        if(query.emailLike().isPresent()){
+            found = anyUserRepository.findWithEmailLike(query.emailLike().get());
+        } else {
+            found = anyUserRepository.findAll();
+        }
         found = filterByDate(found, query);
         if(query.sort().isPresent()){
             found = new ArrayList<>(found);
@@ -261,7 +290,12 @@ public class UserApplicationService implements UserService {
 
     @Override
     public List<AdminView> getAllAdmins(FindAllAdminsQuery query) {
-        List<Admin> found = adminRepository.findAll();
+        List<Admin> found;
+        if(query.emailLike().isPresent()){
+            found = adminRepository.findWithEmailLike(query.emailLike().get());
+        } else {
+            found = adminRepository.findAll();
+        }
         found = filterByDate(found, query);
         if(query.sort().isPresent()){
             found = new ArrayList<>(found);
@@ -272,7 +306,13 @@ public class UserApplicationService implements UserService {
 
     @Override
     public List<ManagerView> getAllManagers(FindAllManagersQuery query) {
-        List<Manager> found = managerRepository.findAll();
+        List<Manager> found;
+
+        if(query.emailLike().isPresent()){
+            found = managerRepository.findWithEmailLike(query.emailLike().get());
+        } else {
+            found = managerRepository.findAll();
+        }
         found = filterByDate(found, query);
         found = found.stream()
                 .filter(man -> query.createdBy().map(q -> man.createdBy().value().equals(q)).orElse(true))
@@ -286,7 +326,12 @@ public class UserApplicationService implements UserService {
 
     @Override
     public List<StudentView> getAllStudents(FindAllStudentsQuery query) {
-        List<Student> found = studentRepository.findAll();
+        List<Student> found;
+        if(query.emailLike().isPresent()){
+            found = studentRepository.findWithEmailLike(query.emailLike().get());
+        } else {
+            found = studentRepository.findAll();
+        }
         found = filterByDate(found, query);
         found = found.stream()
                 .filter(man -> query.createdBy().map(q -> man.createdBy().value().equals(q)).orElse(true))

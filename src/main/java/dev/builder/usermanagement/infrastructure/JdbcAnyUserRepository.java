@@ -55,6 +55,14 @@ public class JdbcAnyUserRepository implements AnyUserRepository {
             FROM app_user
             WHERE active = 1
             """;
+    private static final String SELECT_ALL_TYPE_WITH_EMAIL_LIKE = """
+            SELECT
+                email,
+                type
+            FROM app_user
+            WHERE email LIKE ?
+            AND active = 1
+            """;
     private static final String SELECT_TYPE_BY_ID = """
             SELECT type
             FROM app_user
@@ -89,6 +97,14 @@ public class JdbcAnyUserRepository implements AnyUserRepository {
             WHERE email = ?
             AND
             active = 1
+            """;
+
+    private static final String RECOVER = """
+            UPDATE app_user
+            SET active = 1
+            WHERE email = ?
+            AND
+            active = 0
             """;
 
 
@@ -165,6 +181,35 @@ public class JdbcAnyUserRepository implements AnyUserRepository {
         return executeQuery(
                 SELECT_ALL_WITH_TYPE,
                 PreparedStatementFiller.NO_OP,
+                rs -> {
+                    List<User<?>> users = new ArrayList<>();
+                    while (rs.next()) {
+                        String email = rs.getString("email");
+                        Optional<? extends User<?>> retrievedUser = findSpecificUserByEmail(email, rs, connection);
+                        retrievedUser.ifPresent(users::add);
+                    }
+                    return users;
+                },
+                LOGGER,
+                connection
+        );
+    }
+
+    @Override
+    public List<? extends User<?>> findWithEmailLike(String emailLike) {
+        return wrapWithConnection(
+                connectionManager,
+                LOGGER,
+                this::findWithEmailLike,
+                emailLike
+        );
+    }
+
+    @Override
+    public List<? extends User<?>> findWithEmailLike(String emailLike, Connection connection) {
+        return executeQuery(
+                SELECT_ALL_WITH_TYPE,
+                ps -> ps.setString(1, "%" + emailLike + "%"),
                 rs -> {
                     List<User<?>> users = new ArrayList<>();
                     while (rs.next()) {
@@ -305,6 +350,16 @@ public class JdbcAnyUserRepository implements AnyUserRepository {
             try(ResultSet rs = ps.executeQuery()){
                 return UserJdbcMapper.extractAuditInfo(rs);
             }
+        }
+    }
+
+    void recover(User.Id<?> id, Connection conn) {
+        try(PreparedStatement ps = conn.prepareStatement(RECOVER)) {
+            ps.setString(1, id.value());
+            ps.executeUpdate();
+        } catch (SQLException e) {
+            LOGGER.error(e.getMessage(), e);
+            throw new RepositoryException(e.getMessage(), e);
         }
     }
 }
