@@ -42,16 +42,13 @@ public record CompleteRegistrationCommand(String email, String password) impleme
 
     @Bean
     public static class CompleteRegistrationCommandValidator extends BaseRequestValidator<CompleteRegistrationCommand> {
-
         private final EmailValidator emailValidator;
         private final PasswordValidator passwordValidator;
-
         public CompleteRegistrationCommandValidator(PasswordValidator passwordValidator, EmailValidator emailValidator) {
             super(LoggerFactory.getLogger(CompleteRegistrationCommandValidator.class));
             this.passwordValidator = passwordValidator;
             this.emailValidator = emailValidator;
         }
-
         @Override
         public void validate(CompleteRegistrationCommand value) throws ValidationException {
             validate(() -> emailValidator.validate(Fields.EMAIL.value, value.email));

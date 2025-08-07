@@ -9,7 +9,6 @@
    <content>
       <VBox spacing="15.0" prefWidth="800.0" alignment="TOP_CENTER" style="-fx-padding: 20;">
          <children>
-            <!-- Encabezado con Logo y Título -->
             <HBox spacing="10.0" alignment="CENTER_LEFT">
                <children>
                   <ImageView fitHeight="50.0" fitWidth="50.0">
@@ -29,8 +28,6 @@
                   </Label>
                </children>
             </HBox>
-
-            <!-- Usuario Info -->
             <HBox spacing="10.0" alignment="CENTER_RIGHT">
                <children>
                   <ImageView fitHeight="30.0" fitWidth="30.0">
@@ -62,7 +59,6 @@
                   </Button>
                </children>
             </HBox>
-            <!-- Contenedor principal -->
             <AnchorPane VBox.vgrow="ALWAYS" style="-fx-background-color: #f7f7f7;" prefHeight="400">
                <children>
                   <VBox alignment="CENTER" layoutX="0" layoutY="0"
