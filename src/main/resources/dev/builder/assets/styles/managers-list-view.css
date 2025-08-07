@@ -8,3 +8,19 @@
 .list-view .viewport {
     -fx-background-color: transparent;
 }
+
+.list-cell {
+    -fx-background-color: transparent;
+}
+
+.list-cell:empty {
+    -fx-background-color: transparent;
+}
+
+.list-cell:filled:selected {
+    -fx-background-color: transparent;
+}
+.list-cell:filled:selected .text {
+    -fx-fill: black;
+}
+
