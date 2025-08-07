@@ -9,6 +9,7 @@ import dev.builder.core.application.ViewNavigation;
 import dev.builder.core.application.validation.ValidationException;
 import dev.builder.core.infrastructure.di.annotation.Bean;
 import dev.builder.core.infrastructure.di.runtime.DependencyContainer;
+import dev.builder.usermanagement.application.command.DeleteUserCommand;
 import dev.builder.usermanagement.application.query.FindAllManagersQuery;
 import dev.builder.usermanagement.application.view.ManagerView;
 import javafx.application.Platform;
@@ -30,6 +31,7 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.ResourceBundle;
 
 @Bean
@@ -40,6 +42,7 @@ public class AdminDashboardController implements Initializable {
     private final ViewNavigation viewNavigation;
     private final RegisterManagerController registerManagerController;
 
+    @FXML private Button clearSearch;
     @FXML private Button logoutBtn;
     @FXML private Button reloadButton;
     @FXML private ProgressIndicator searchProgressIndicator;
@@ -65,30 +68,7 @@ public class AdminDashboardController implements Initializable {
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         managersList.setItems(managers);
-        managersList.setCellFactory(lv -> new ListCell<>() {
-
-            @Override
-            protected void updateItem(ManagerView manager, boolean empty) {
-                super.updateItem(manager, empty);
-
-                if (empty || manager == null) {
-                    setText(null);
-                    setGraphic(null);
-                } else {
-                    try {
-                        FXMLLoader loader = new FXMLLoader(getClass().getResource("/dev/builder/views/templates/admin-view-manager-card.fxml"));
-                        loader.setControllerFactory(dependencyContainer::getInstance);
-                        HBox card = loader.load();
-                        ManagerCardController controller = loader.getController();
-                        controller.setEmail(manager.email());
-                        setGraphic(card);
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                        ErrorHandler.showError("Hubo un error al cargar la información de un maestro");
-                    }
-                }
-            }
-        });
+        managersList.setCellFactory(lv -> dependencyContainer.getInstance(ManagerCardCell.class));
         usernameLabel.setText(sessionContext.getCurrentUser());
         searchButton.setOnAction(event -> search());
         searchText.setOnKeyPressed(event -> {
@@ -98,6 +78,10 @@ public class AdminDashboardController implements Initializable {
         addManagerBtn.setOnAction(this::openManagerRegistration);
         logoutBtn.setOnAction(this::logout);
         reloadButton.setOnAction(event -> viewManagers());
+        clearSearch.setOnAction(ev -> {
+            searchText.clear();
+            search();
+        });
 
         viewManagers();
 
@@ -173,6 +157,10 @@ public class AdminDashboardController implements Initializable {
         loadListIndicator.setManaged(false);
         reloadButton.setVisible(false);
         reloadButton.setManaged(false);
+    }
+
+    private void showDeleteConfirmAlert(){
+
     }
 
     private void search(){
@@ -274,12 +262,25 @@ public class AdminDashboardController implements Initializable {
         new Thread(task).start();
     }
 
-    void onDeleteManager(String deletedEmail){
-        String email = managers.stream()
-                .map(ManagerView::email)
-                .filter(e -> e.equals(deletedEmail))
-                .findFirst()
-                .orElseThrow();
-        managers.removeIf(m -> m.email().equals(deletedEmail));
+    void onDeleteManager(ManagerView manager){
+        boolean delete = viewNavigation.showConfirmationDialog(
+                "Eliminar Maestro",
+                "¿Estás seguro que quieres eliminar al maestro de correo %s? Esta acción no se puede deshaces".formatted(manager.email()));
+        if(delete) {
+            Task<Void> task = new Task<Void>() {
+                @Override
+                protected Void call() throws Exception {
+                    requestDispatcher.dispatch(new DeleteUserCommand(manager.email()));
+                    return null;
+                }
+            };
+            task.setOnSucceeded(event -> {
+                managers.remove(manager);
+            });
+            task.setOnFailed(event -> {
+                ErrorHandler.showError("Hubo un error al eliminar el maestro");
+            });
+            new Thread(task).start();
+        }
     }
 }

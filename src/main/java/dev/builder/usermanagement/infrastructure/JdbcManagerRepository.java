@@ -250,6 +250,10 @@ public class JdbcManagerRepository extends TransactionalJdbcCrudRepository<Manag
 
     @Override
     public Manager save(Manager manager, Connection connection) {
+        if(existsDeletedById(manager.id(), connection)){
+            anyUserRepository.recover(manager.id(), connection);
+            return findById(manager.id(), connection).orElseThrow();
+        }
         if(existsById(manager.id(), connection)){
             return update(manager, connection);
         } else {

@@ -121,6 +121,10 @@ public class JdbcAdminRepository extends TransactionalJdbcCrudRepository<Admin,A
 
     @Override
     public Admin save(Admin admin, Connection connection) {
+        if(existsDeletedById(admin.id(), connection)){
+            anyUserRepository.recover(admin.id(), connection);
+            return findById(admin.id(), connection).orElseThrow();
+        }
         if(existsById(admin.id())){
             return update(admin, connection);
         } else {

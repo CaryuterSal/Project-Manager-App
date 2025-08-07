@@ -99,6 +99,14 @@ public class JdbcAnyUserRepository implements AnyUserRepository {
             active = 1
             """;
 
+    private static final String RECOVER = """
+            UPDATE app_user
+            SET active = 1
+            WHERE email = ?
+            AND
+            active = 0
+            """;
+
 
     private final AdminRepository adminRepository;
     private final ManagerRepository managerRepository;
@@ -342,6 +350,16 @@ public class JdbcAnyUserRepository implements AnyUserRepository {
             try(ResultSet rs = ps.executeQuery()){
                 return UserJdbcMapper.extractAuditInfo(rs);
             }
+        }
+    }
+
+    void recover(User.Id<?> id, Connection conn) {
+        try(PreparedStatement ps = conn.prepareStatement(RECOVER)) {
+            ps.setString(1, id.value());
+            ps.executeUpdate();
+        } catch (SQLException e) {
+            LOGGER.error(e.getMessage(), e);
+            throw new RepositoryException(e.getMessage(), e);
         }
     }
 }

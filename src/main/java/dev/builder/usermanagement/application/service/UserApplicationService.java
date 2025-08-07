@@ -18,6 +18,7 @@ import dev.builder.usermanagement.application.view.AdminView;
 import dev.builder.usermanagement.application.view.ManagerView;
 import dev.builder.usermanagement.application.view.StudentView;
 import dev.builder.usermanagement.application.view.UserView;
+import dev.builder.usermanagement.domain.exception.UserExistsException;
 import dev.builder.usermanagement.domain.exception.UserNotFoundException;
 import dev.builder.usermanagement.domain.model.*;
 import dev.builder.usermanagement.domain.port.in.UserService;
@@ -78,8 +79,20 @@ public class UserApplicationService implements UserService {
 
     @Override
     public AdminView registerAdmin(InviteAdminCommand command) {
-        Admin admin = Admin.invite(new Admin.Id(command.email()));
-        Admin saved =  adminRepository.save(admin);
+        Admin.Id id = new Admin.Id(command.email());
+
+        Admin saved =  runInTransaction(
+                connectionManager,
+                log,
+                conn -> {
+                    Optional<Admin> existent = adminRepository.findById(id, conn);
+                    if(existent.isPresent()) {
+                        throw new UserExistsException(messageLocalizer);
+                    }
+                    Admin admin = Admin.invite(id);
+                    return adminRepository.save(admin, conn);
+                }
+        );
         return mapper.fromAdmin(saved);
     }
 
@@ -96,9 +109,14 @@ public class UserApplicationService implements UserService {
                                 sessionContext.clear();
                                 return new UnauthorizedException(messageLocalizer.getMessage("auth.session.stale"));
                             });
+                    Manager.Id id = new Manager.Id(command.email());
+                    Optional<Manager> existent = managerRepository.findById(id, con);
+                    if(existent.isPresent()) {
+                        throw new UserExistsException(messageLocalizer);
+                    }
                     Manager manager = UserRegistrationService.registerNewManager(
                             issuer,
-                            new Manager.Id(command.email())
+                            id
                     );
                     return managerRepository.save(manager, con);
                 }
@@ -119,9 +137,14 @@ public class UserApplicationService implements UserService {
                                 sessionContext.clear();
                                 return new UnauthorizedException(messageLocalizer.getMessage("auth.session.stale"));
                             });
+                    Student.Id id = new Student.Id(command.email());
+                    Optional<Student> existent = studentRepository.findById(id, con);
+                    if(existent.isPresent()) {
+                        throw new UserExistsException(messageLocalizer);
+                    }
                     Student student = UserRegistrationService.registerNewStudent(
                             issuer,
-                            new Student.Id(command.email()),
+                            id,
                             new Name(command.firstName(), command.lastName()),
                             new AcademicInfo(
                                     new AcademicQuarter(command.academicQuarter()),
