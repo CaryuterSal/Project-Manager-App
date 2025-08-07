@@ -8,10 +8,14 @@ import org.slf4j.LoggerFactory;
 
 import javax.crypto.*;
 import javax.crypto.spec.IvParameterSpec;
+import javax.crypto.spec.PBEKeySpec;
+import javax.crypto.spec.SecretKeySpec;
 import java.io.*;
 import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
+import java.security.spec.KeySpec;
+import java.util.Base64;
 
 @Bean
 public class EncryptedTokenStorage implements TokenPersister {
@@ -22,14 +26,33 @@ public class EncryptedTokenStorage implements TokenPersister {
     private final Cipher cipher;
 
     @Inject
-    public EncryptedTokenStorage(SessionCipherProperties cipherProperties){
+    public EncryptedTokenStorage(SessionCipherProperties cipherProperties) {
         try {
-            this.secretKey = KeyGenerator.getInstance(cipherProperties.getCipherKeyType()).generateKey();
+            this.secretKey = deriveKeyFromPassword(
+                    cipherProperties.getCipherPassword(),
+                    cipherProperties.getCipherSalt(),
+                    cipherProperties.getCipherIterations(),
+                    cipherProperties.getCipherKeyLength(),
+                    cipherProperties.getCipherKeyType()
+            );
+
             this.cipher = Cipher.getInstance(cipherProperties.getCipherTransformation());
-        } catch (NoSuchAlgorithmException | NoSuchPaddingException e) {
+        } catch (Exception e) {
             throw new RuntimeException(e);
         }
     }
+
+    private SecretKey deriveKeyFromPassword(String password, String base64Salt, int iterations, int keyLength, String algorithm)
+            throws Exception {
+
+        byte[] salt = Base64.getDecoder().decode(base64Salt);
+
+        SecretKeyFactory factory = SecretKeyFactory.getInstance("PBKDF2WithHmacSHA256");
+        KeySpec spec = new PBEKeySpec(password.toCharArray(), salt, iterations, keyLength);
+        SecretKey tmp = factory.generateSecret(spec);
+        return new SecretKeySpec(tmp.getEncoded(), algorithm);
+    }
+
 
     @Override
     public SessionToken read(String filename) throws FileNotFoundException {
@@ -60,13 +83,16 @@ public class EncryptedTokenStorage implements TokenPersister {
             cipher.init(Cipher.ENCRYPT_MODE, secretKey);
             byte[] iv = cipher.getIV();
 
-            try (FileOutputStream fileOut = new FileOutputStream(filename);
-                 CipherOutputStream cipherOut = new CipherOutputStream(fileOut, cipher);
-                 ObjectOutputStream objectOut = new ObjectOutputStream(cipherOut)) {
-                LOGGER.debug("Guardando sesión en: {}", new File(filename).getAbsolutePath());
+            try (FileOutputStream fileOut = new FileOutputStream(filename)) {
                 fileOut.write(iv);
-                objectOut.writeObject(content);
+                try (
+                        CipherOutputStream cipherOut = new CipherOutputStream(fileOut, cipher);
+                        ObjectOutputStream objectOut = new ObjectOutputStream(cipherOut)
+                ) {
+                    objectOut.writeObject(content);
+                }
             }
+
         } catch (InvalidKeyException | IOException e) {
             if(e instanceof FileNotFoundException) throw (FileNotFoundException)e;
             throw new RuntimeException(e);

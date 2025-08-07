@@ -1,5 +1,8 @@
 package dev.builder;
 
+import dev.builder.auth.application.command.LoginCommand;
+import dev.builder.core.application.RequestDispatcher;
+import dev.builder.core.application.validation.ValidationException;
 import dev.builder.core.infrastructure.di.runtime.AnnotationAwareDependencyContainer;
 import dev.builder.core.infrastructure.di.runtime.DependencyContainer;
 import javafx.application.Application;

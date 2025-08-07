@@ -39,6 +39,20 @@ public class JdbcAdminRepository extends TransactionalJdbcCrudRepository<Admin,A
             ) m_active ON m_active.created_by = u.email
             """,
             UserJdbcMapper.ManagerColumns.AS_CREATED.columnName());
+    private static final String SELECT_ALL_WITH_EMAIL_LIKE = String.format("""
+            SELECT
+                u.*,
+                m_active.email as %s
+            FROM "ADMIN" a
+            JOIN app_user u ON u.email = a.email AND u.active = 1
+            LEFT JOIN (
+                SELECT m.email, m.created_by
+                FROM manager m
+                JOIN app_user mu ON mu.email = m.email AND mu.active = 1
+            ) m_active ON m_active.created_by = u.email
+            WHERE a.email LIKE ?
+            """,
+            UserJdbcMapper.ManagerColumns.AS_CREATED.columnName());
     private static final String SELECT_BY_ID = String.format("""
             SELECT
                 u.*,
@@ -153,6 +167,27 @@ public class JdbcAdminRepository extends TransactionalJdbcCrudRepository<Admin,A
         return executeQuery(
                 SELECT_ALL,
                 PreparedStatementFiller.NO_OP,
+                rs -> rs.next() ? UserJdbcMapper.rowToAdmins(rs) : Collections.emptyList(),
+                LOGGER,
+                connection
+        );
+    }
+
+    @Override
+    public List<Admin> findWithEmailLike(String emailLike) {
+        return wrapWithConnection(
+                connectionManager,
+                LOGGER,
+                this::findWithEmailLike,
+                emailLike
+        );
+    }
+
+    @Override
+    public List<Admin> findWithEmailLike(String emailLike, Connection connection) {
+        return executeQuery(
+                SELECT_ALL_WITH_EMAIL_LIKE,
+                ps -> ps.setString(1, "%" + emailLike + "%"),
                 rs -> rs.next() ? UserJdbcMapper.rowToAdmins(rs) : Collections.emptyList(),
                 LOGGER,
                 connection

@@ -1,0 +1,10 @@
+.list-view {
+    -fx-background-color: transparent;
+    -fx-border-color: transparent;
+    -fx-background-insets: 0;
+    -fx-padding: 0;
+}
+
+.list-view .viewport {
+    -fx-background-color: transparent;
+}

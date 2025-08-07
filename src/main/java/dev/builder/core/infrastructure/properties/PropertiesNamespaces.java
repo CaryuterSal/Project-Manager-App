@@ -12,6 +12,8 @@ class PropertiesNamespaces {
         static final String KEY_TYPE = PREFIX + ".secret.keytype";
         static final String FILENAME = PREFIX + ".name";
         static final String TTL = PREFIX + ".ttl.seconds";
+        static final String ITERATIONS = PREFIX + ".iterations";
+        static final String KEY_LENGTH = PREFIX + ".key.length";
     }
 
     static final String ENV_PROFILE_NAMESPACE = "KEDU_PROFILE";

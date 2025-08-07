@@ -50,6 +50,24 @@ public class JdbcManagerRepository extends TransactionalJdbcCrudRepository<Manag
             UserJdbcMapper.StudentColumns.AS_CREATED.columnName(),
             UserJdbcMapper.ManagerColumns.CREATED_BY.columnName());
 
+
+    private static final String SELECT_ALL_WITH_EMAIL_LIKE = String.format("""
+            SELECT
+                u.*,
+                s_active.email as %s,
+                m.created_by as %s
+            FROM manager m
+            JOIN app_user u ON u.email = m.email AND u.active = 1
+            LEFT JOIN (
+                SELECT s.email, s.created_by
+                FROM student s
+                JOIN app_user su ON su.email = s.email AND su.active = 1
+            ) s_active ON s_active.created_by = u.email
+            WHERE m.email LIKE ?
+            """,
+            UserJdbcMapper.StudentColumns.AS_CREATED.columnName(),
+            UserJdbcMapper.ManagerColumns.CREATED_BY.columnName());
+
     private static final String SELECT_BY_ID = String.format("""
             SELECT
                 u.*,
@@ -160,6 +178,27 @@ public class JdbcManagerRepository extends TransactionalJdbcCrudRepository<Manag
         return executeQuery(
                 SELECT_ALL,
                 PreparedStatementFiller.NO_OP,
+                rs -> rs.next() ? UserJdbcMapper.rowToManagers(rs) : Collections.emptyList(),
+                getLogger(),
+                connection
+        );
+    }
+
+    @Override
+    public List<Manager> findWithEmailLike(String emailLike) {
+        return wrapWithConnection(
+                connectionManager,
+                LOGGER,
+                this::findWithEmailLike,
+                emailLike
+        );
+    }
+
+    @Override
+    public List<Manager> findWithEmailLike(String emailLike, Connection connection) {
+        return executeQuery(
+                SELECT_ALL_WITH_EMAIL_LIKE,
+                ps -> ps.setString(1, "%" + emailLike + "%"),
                 rs -> rs.next() ? UserJdbcMapper.rowToManagers(rs) : Collections.emptyList(),
                 getLogger(),
                 connection

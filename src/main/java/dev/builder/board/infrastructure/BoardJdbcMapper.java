@@ -37,7 +37,7 @@ public class BoardJdbcMapper {
     }
 
     public static @NotNull List<Board> rowToBoards(ResultSet rs) throws SQLException {
-        List<Board> boards = new ArrayList<>();
+        Set<Board> boards = new HashSet<>();
         Map<Board.Id, Set<BoardCollaborator>> assignees = extractCollaboratorsByBoardId(rs);
         do {
             Board.Id id = extractBoardId(rs);
@@ -47,7 +47,7 @@ public class BoardJdbcMapper {
                         assignees.getOrDefault(id, new HashSet<>())
             ));
         } while(!rs.next());
-        return boards;
+        return boards.stream().toList();
     }
 
     public static @NotNull Board rowToBoard(ResultSet rs) throws SQLException {
