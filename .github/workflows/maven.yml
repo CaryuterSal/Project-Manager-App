@@ -28,4 +28,7 @@ jobs:
         distribution: 'temurin'
         cache: maven
     - name: Build with Maven
+      env: 
+        CIPHER_PASSWORD: ${{secrets.CIPHER_PASSWORD}}
+        CIPHER_SALT: ${{secrets.CIPHER_SALT}}
       run: mvn -B package --file pom.xml
