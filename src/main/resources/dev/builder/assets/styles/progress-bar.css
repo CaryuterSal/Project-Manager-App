@@ -1,0 +1,19 @@
+.progress-bar {
+    -fx-background-color: transparent; /* sin fondo */
+    -fx-background-insets: 0;
+    -fx-padding: 0;
+    -fx-border-color: transparent;     /* sin borde */
+    -fx-border-insets: 0;
+    -fx-border-width: 0;
+}
+
+.progress-bar > .track {
+    -fx-background-color: transparent; /* fondo del track invisible */
+}
+
+.progress-bar > .bar {
+    -fx-background-color: #3b82f6; /* azul plano (puedes cambiarlo) */
+    -fx-background-insets: 0;
+    -fx-padding: 5;
+    -fx-effect: null; /* sin sombra */
+}

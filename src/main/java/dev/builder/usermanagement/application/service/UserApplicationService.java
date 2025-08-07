@@ -250,7 +250,13 @@ public class UserApplicationService implements UserService {
 
     @Override
     public List<UserView> getAllUsers(FindAllUsersQuery<UserView, FindAllUsersQuery.UserSortableField> query) {
-        List<? extends User<?>> found = anyUserRepository.findAll();
+
+        List<? extends User<?>> found;
+        if(query.emailLike().isPresent()){
+            found = anyUserRepository.findWithEmailLike(query.emailLike().get());
+        } else {
+            found = anyUserRepository.findAll();
+        }
         found = filterByDate(found, query);
         if(query.sort().isPresent()){
             found = new ArrayList<>(found);
@@ -261,7 +267,12 @@ public class UserApplicationService implements UserService {
 
     @Override
     public List<AdminView> getAllAdmins(FindAllAdminsQuery query) {
-        List<Admin> found = adminRepository.findAll();
+        List<Admin> found;
+        if(query.emailLike().isPresent()){
+            found = adminRepository.findWithEmailLike(query.emailLike().get());
+        } else {
+            found = adminRepository.findAll();
+        }
         found = filterByDate(found, query);
         if(query.sort().isPresent()){
             found = new ArrayList<>(found);
@@ -272,7 +283,13 @@ public class UserApplicationService implements UserService {
 
     @Override
     public List<ManagerView> getAllManagers(FindAllManagersQuery query) {
-        List<Manager> found = managerRepository.findAll();
+        List<Manager> found;
+
+        if(query.emailLike().isPresent()){
+            found = managerRepository.findWithEmailLike(query.emailLike().get());
+        } else {
+            found = managerRepository.findAll();
+        }
         found = filterByDate(found, query);
         found = found.stream()
                 .filter(man -> query.createdBy().map(q -> man.createdBy().value().equals(q)).orElse(true))
@@ -286,7 +303,12 @@ public class UserApplicationService implements UserService {
 
     @Override
     public List<StudentView> getAllStudents(FindAllStudentsQuery query) {
-        List<Student> found = studentRepository.findAll();
+        List<Student> found;
+        if(query.emailLike().isPresent()){
+            found = studentRepository.findWithEmailLike(query.emailLike().get());
+        } else {
+            found = studentRepository.findAll();
+        }
         found = filterByDate(found, query);
         found = found.stream()
                 .filter(man -> query.createdBy().map(q -> man.createdBy().value().equals(q)).orElse(true))

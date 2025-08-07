@@ -46,7 +46,7 @@ public class TaskJdbcMapper {
     }
 
     public static @NotNull List<Task> rowToTasks(ResultSet resultSet) throws SQLException {
-        List<Task> tasks = new ArrayList<>();
+        Set<Task> tasks = new HashSet<>();
         Map<Task.Id, Set<Attachment.Id>> attachments = extractAttachmentsByTask(resultSet);
         Map<Task.Id, Set<Student.Id>> assignations =  extractAssignationsByTask(resultSet);
         do {
@@ -58,7 +58,7 @@ public class TaskJdbcMapper {
                     assignations.getOrDefault(id, new HashSet<>()))
             );
         } while(resultSet.next());
-        return tasks;
+        return tasks.stream().toList();
     }
 
     public static @NotNull Task rowToTask(ResultSet resultSet) throws SQLException {

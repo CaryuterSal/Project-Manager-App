@@ -41,11 +41,27 @@ public class JdbcStudentRepository extends TransactionalJdbcCrudRepository<Stude
                 s.created_by as %s
             FROM student s
             JOIN app_user u ON u.email = s.email AND u.active = 1
-            WHERE u.active = 1
             """,
             UserJdbcMapper.StudentColumns.ACADEMIC_GROUP.columnName(),
             UserJdbcMapper.StudentColumns.ACADEMIC_QUARTER.columnName(),
             UserJdbcMapper.StudentColumns.CREATED_BY.columnName());
+
+    private static final String SELECT_ALL_WITH_EMAIL_LIKE = String.format("""
+            SELECT
+                u.*,
+                s.first_name,
+                s.last_name,
+                s.qgp_agp_name as %s,
+                s.qgp_aqr_number as %s,
+                s.created_by as %s
+            FROM student s
+            JOIN app_user u ON u.email = s.email AND u.active = 1
+            WHERE s.email LIKE ?
+            """,
+            UserJdbcMapper.StudentColumns.ACADEMIC_GROUP.columnName(),
+            UserJdbcMapper.StudentColumns.ACADEMIC_QUARTER.columnName(),
+            UserJdbcMapper.StudentColumns.CREATED_BY.columnName());
+
     private static final String SELECT_BY_ID = String.format("""
             SELECT
                 u.*,
@@ -57,8 +73,6 @@ public class JdbcStudentRepository extends TransactionalJdbcCrudRepository<Stude
             FROM student s
             JOIN app_user u ON u.email = s.email AND u.active = 1
             WHERE u.email = ?
-            AND
-            u.active = 1
             """,
             UserJdbcMapper.StudentColumns.ACADEMIC_GROUP.columnName(),
             UserJdbcMapper.StudentColumns.ACADEMIC_QUARTER.columnName(),
@@ -193,6 +207,27 @@ public class JdbcStudentRepository extends TransactionalJdbcCrudRepository<Stude
         return executeQuery(
                 SELECT_ALL,
                 PreparedStatementFiller.NO_OP,
+                rs -> rs.next() ? UserJdbcMapper.rowToStudents(rs) : Collections.emptyList(),
+                LOGGER,
+                connection
+        );
+    }
+
+    @Override
+    public List<Student> findWithEmailLike(String emailLike) {
+        return wrapWithConnection(
+                connectionManager,
+                LOGGER,
+                this::findWithEmailLike,
+                emailLike
+        );
+    }
+
+    @Override
+    public List<Student> findWithEmailLike(String emailLike, Connection connection) {
+        return executeQuery(
+                SELECT_ALL,
+                ps -> ps.setString(1, "%" + emailLike + "%"),
                 rs -> rs.next() ? UserJdbcMapper.rowToStudents(rs) : Collections.emptyList(),
                 LOGGER,
                 connection
