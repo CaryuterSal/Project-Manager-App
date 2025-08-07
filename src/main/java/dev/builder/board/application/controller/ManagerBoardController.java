@@ -1,52 +1,56 @@
 package dev.builder.board.application.controller;
 
-import dev.builder.auth.domain.model.Role;
-import dev.builder.auth.domain.model.User;
 import dev.builder.auth.domain.port.out.SessionContext;
-import dev.builder.board.application.command.GetManagerBoardCommand;
-import dev.builder.board.application.view.BoardView;
-import dev.builder.board.application.view.StageView;
+import dev.builder.auth.infrastructure.Role;
 import dev.builder.board.application.view.TaskView;
+import dev.builder.board.application.command.CreateTaskCommand;
+import dev.builder.board.domain.model.Color;
+import dev.builder.board.domain.model.Stage.StageState;
 import dev.builder.core.application.RequestDispatcher;
+import dev.builder.core.application.ViewNavigation;
 import dev.builder.core.infrastructure.di.annotation.Bean;
 import dev.builder.core.infrastructure.di.annotation.Inject;
-import dev.builder.core.application.ViewNavigation;
-import dev.builder.core.application.validation.ValidationException;
-import javafx.application.Platform;
-import javafx.concurrent.Task;
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.scene.Node;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.Hyperlink;
 import javafx.scene.control.Label;
-import javafx.scene.control.TextField;
 import javafx.scene.layout.VBox;
-import javafx.scene.text.Text;
+import javafx.stage.Modality;
+import javafx.stage.Stage;
+import javafx.concurrent.Task;
 
+import java.io.IOException;
 import java.net.URL;
+import java.time.LocalDateTime;
+import java.util.List;
 import java.util.ResourceBundle;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 @Bean
 public class ManagerBoardController implements Initializable {
 
-    @FXML
-    private TextField txtSearch;
-
-    @FXML
-    private Button btnSearch, btnBoard, btnAccount, btnInvite;
-
-    @FXML
-    private Label lblError;
-
-    @FXML
-    private VBox boardContainer;
+    @FXML private VBox todoList;
+    @FXML private VBox inProgressList;
+    @FXML private VBox doneList;
+    @FXML private Hyperlink btnAddTask;
+    @FXML private Label lblError;
+    @FXML private Button btnAddStudent, btnAccount, btnBoard;
 
     private final SessionContext sessionContext;
     private final RequestDispatcher requestDispatcher;
     private final ViewNavigation viewNavigation;
+    private final ExecutorService executorService = Executors.newSingleThreadExecutor();
 
     @Inject
-    public ManagerBoardController(SessionContext sessionContext, RequestDispatcher requestDispatcher, ViewNavigation viewNavigation) {
+    public ManagerBoardController(SessionContext sessionContext,
+                                  RequestDispatcher requestDispatcher,
+                                  ViewNavigation viewNavigation) {
         this.sessionContext = sessionContext;
         this.requestDispatcher = requestDispatcher;
         this.viewNavigation = viewNavigation;
@@ -54,84 +58,109 @@ public class ManagerBoardController implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        User currentUser = sessionContext.activeUser();
-
-        if (currentUser == null || !currentUser.hasRole(Role.MANAGER)) {
-            lblError.setText("Acceso denegado: solo usuarios MANAGER.");
+        if (sessionContext.hasRole(Role.MANAGER)) {
+            btnAddTask.setOnAction(e -> onAddTaskClicked());
+        } else if (sessionContext.hasRole(Role.STUDENT)) {
+            Stage stage = (Stage) lblError.getScene().getWindow();
+            viewNavigation.navigate("board-student-view.fxml", stage);
             return;
+        } else {
+            lblError.setText("No tienes permisos para acceder a este panel.");
         }
-
-        btnSearch.setOnAction(this::buscar);
-        btnBoard.setOnAction(this::cargarTablero);
-        btnInvite.setOnAction(event -> viewNavigation.navigate("invite-student-form-view.fxml"));
-
-        cargarTablero(null);
     }
 
-    private void cargarTablero(ActionEvent event) {
-        lblError.setText("");
+    @FXML
+    private void onAddTaskClicked() {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/dev/builder/views/create-task-view.fxml"));
 
-        Task<BoardView> task = new Task<>() {
-            @Override
-            protected BoardView call() throws Exception {
-                return requestDispatcher.dispatch(new GetManagerBoardCommand());
+            if (loader.getLocation() == null) {
+                System.out.println("Error: La ruta al FXML no es correcta.");
             }
-        };
 
-        task.setOnSucceeded(e -> {
-            BoardView board = task.getValue();
-            mostrarTablero(board);
-        });
+            Parent dialogRoot = loader.load();
 
-        task.setOnFailed(e -> {
-            Throwable ex = task.getException();
-            if (ex instanceof ValidationException ve) {
-                lblError.setText(ve.getMessage());
+            Stage dialog = new Stage();
+            dialog.initModality(Modality.APPLICATION_MODAL);
+            dialog.initOwner(todoList.getScene().getWindow());
+            dialog.setTitle("Crear nueva tarea");
+            dialog.setScene(new Scene(dialogRoot));
+
+            TaskController addCtrl = loader.getController();
+            addCtrl.setDialogStage(dialog);
+            dialog.showAndWait();
+
+            TaskView newTask = addCtrl.getCreatedTask();
+            if (newTask != null) {
+                Node card = createTaskCard(newTask);
+                todoList.getChildren().add(card);
+            }
+        } catch (IOException ex) {
+            if (lblError != null) {
+                lblError.setText("No se pudo abrir el formulario: " + ex.getMessage());
             } else {
-                lblError.setText("Error al cargar el tablero.");
+                System.err.println("lblError no está inicializado.");
             }
             ex.printStackTrace();
-        });
-
-        new Thread(task).start();
+        }
     }
 
-    private void mostrarTablero(BoardView board) {
-        boardContainer.getChildren().clear();
+    private Node createTaskCard(TaskView task) {
+        Label title = new Label(task.title());
+        title.getStyleClass().add("task-card-title");
+        VBox card = new VBox(title);
+        card.getStyleClass().add("task-card");
+        card.setMaxWidth(Double.MAX_VALUE);
+        card.setOnMouseClicked(evt -> {
+            try {
+                FXMLLoader loader = new FXMLLoader(
+                        getClass().getResource("/dev/builder/views/create-task-view.fxml")
+                );
+                Parent detailRoot = loader.load();
+                TaskController detailCtrl = loader.getController();
+                detailCtrl.setTask(task);
+                Stage detailStage = new Stage();
+                detailStage.initModality(Modality.APPLICATION_MODAL);
+                detailStage.initOwner(card.getScene().getWindow());
+                detailStage.setTitle("Detalles de tarea");
+                detailStage.setScene(new Scene(detailRoot));
+                detailStage.showAndWait();
+            } catch (IOException e) {
+                if (lblError != null) {
+                    lblError.setText("Error al abrir detalles: " + e.getMessage());
+                } else {
+                    System.err.println("lblError no está inicializado.");
+                }
+            }
+        });
+        return card;
+    }
 
-        if (board.stages().isEmpty()) {
-            boardContainer.getChildren().add(new Label("No hay etapas disponibles."));
-            return;
-        }
+    @FXML
+    private void onAccountClicked() {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/dev/builder/views/add-student-view.fxml"));
 
-        for (StageView stage : board.stages()) {
-            VBox etapaBox = new VBox();
-            etapaBox.setStyle("-fx-border-color: black; -fx-padding: 10; -fx-spacing: 5;");
-            etapaBox.getChildren().add(new Label("Etapa: " + stage.name()));
-
-            for (TaskView task : stage.tasks()) {
-                VBox taskBox = new VBox();
-                taskBox.setStyle("-fx-border-color: #ccc; -fx-background-color: #fff; -fx-padding: 5;");
-                taskBox.setSpacing(2);
-
-                Text titulo = new Text("Título: " + task.title());
-                Text fecha = new Text("Vence: " + (task.dueDate() != null ? task.dueDate().toString() : "Sin fecha"));
-
-                taskBox.getChildren().addAll(titulo, fecha);
-                etapaBox.getChildren().add(taskBox);
+            if (loader.getLocation() == null) {
+                System.out.println("Error: La ruta al FXML de cuentas no es correcta.");
             }
 
-            boardContainer.getChildren().add(etapaBox);
-        }
-    }
+            Parent cuentasRoot = loader.load();
 
-    private void buscar(ActionEvent event) {
-        String texto = txtSearch.getText().trim();
-        if (texto.isBlank()) {
-            lblError.setText("Ingrese un término para buscar.");
-            return;
-        }
+            Stage cuentasStage = new Stage();
+            cuentasStage.initModality(Modality.APPLICATION_MODAL);
+            cuentasStage.initOwner(todoList.getScene().getWindow());
+            cuentasStage.setTitle("Cuentas");
+            cuentasStage.setScene(new Scene(cuentasRoot));
+            cuentasStage.show();
 
-        lblError.setText("Función de búsqueda no implementada aún.");
+        } catch (IOException ex) {
+            if (lblError != null) {
+                lblError.setText("Error al abrir la vista de Cuentas: " + ex.getMessage());
+            } else {
+                System.err.println("lblError no está inicializado.");
+            }
+            ex.printStackTrace();
+        }
     }
 }
