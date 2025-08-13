@@ -160,7 +160,7 @@ ALTER TABLE ADMIN.student_board ADD CONSTRAINT students_board_pk PRIMARY KEY ( s
 CREATE TABLE ADMIN.task (
                       id          RAW(16) NOT NULL,
                       title       VARCHAR2(63) NOT NULL,
-                      description VARCHAR2(255) NOT NULL,
+                      description VARCHAR2(4000) NOT NULL,
                       created_at  TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP NOT NULL,
                       started_at  TIMESTAMP WITH TIME ZONE,
                       finished_at TIMESTAMP WITH TIME ZONE,
