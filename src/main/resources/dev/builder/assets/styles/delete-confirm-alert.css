@@ -1,0 +1,50 @@
+.dialog-pane.custom-alert {
+    -fx-background-color: #ffff;
+    -fx-padding: 20;
+    -fx-border-radius: 8;
+    -fx-background-radius: 8;
+}
+
+/* Texto del encabezado */
+.dialog-pane .header-panel .label {
+    -fx-text-fill: #000000;
+    -fx-font-size: 16px;
+    -fx-font-weight: bold;
+}
+
+/* Texto del contenido */
+.dialog-pane .content.label {
+    -fx-text-fill: #000000;
+    -fx-font-size: 14px;
+}
+
+/* Confirmar botón */
+.button.confirmar-button {
+    -fx-background-color: #131313;
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+    -fx-background-radius: 15;
+    -fx-border-radius: 15;
+    -fx-cursor:  hand;
+    -fx-padding: 8 15 8 15;
+}
+
+.button.confirmar-button:hover {
+    -fx-background-color: #000000;
+}
+
+/* Eliminar botón */
+.button.eliminar-button {
+    -fx-background-color: #cccccc;
+    -fx-text-fill: #000000;
+    -fx-font-weight: bold;
+    -fx-border-width: 1px;
+    -fx-border-color: #000;
+    -fx-border-radius: 15;
+    -fx-background-radius: 15;
+    -fx-cursor: hand;
+}
+
+.button.eliminar-button:hover {
+    -fx-background-color: #ffffff;
+}

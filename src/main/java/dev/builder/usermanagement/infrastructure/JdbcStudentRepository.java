@@ -41,11 +41,27 @@ public class JdbcStudentRepository extends TransactionalJdbcCrudRepository<Stude
                 s.created_by as %s
             FROM student s
             JOIN app_user u ON u.email = s.email AND u.active = 1
-            WHERE u.active = 1
             """,
             UserJdbcMapper.StudentColumns.ACADEMIC_GROUP.columnName(),
             UserJdbcMapper.StudentColumns.ACADEMIC_QUARTER.columnName(),
             UserJdbcMapper.StudentColumns.CREATED_BY.columnName());
+
+    private static final String SELECT_ALL_WITH_EMAIL_LIKE = String.format("""
+            SELECT
+                u.*,
+                s.first_name,
+                s.last_name,
+                s.qgp_agp_name as %s,
+                s.qgp_aqr_number as %s,
+                s.created_by as %s
+            FROM student s
+            JOIN app_user u ON u.email = s.email AND u.active = 1
+            WHERE s.email LIKE ?
+            """,
+            UserJdbcMapper.StudentColumns.ACADEMIC_GROUP.columnName(),
+            UserJdbcMapper.StudentColumns.ACADEMIC_QUARTER.columnName(),
+            UserJdbcMapper.StudentColumns.CREATED_BY.columnName());
+
     private static final String SELECT_BY_ID = String.format("""
             SELECT
                 u.*,
@@ -57,8 +73,6 @@ public class JdbcStudentRepository extends TransactionalJdbcCrudRepository<Stude
             FROM student s
             JOIN app_user u ON u.email = s.email AND u.active = 1
             WHERE u.email = ?
-            AND
-            u.active = 1
             """,
             UserJdbcMapper.StudentColumns.ACADEMIC_GROUP.columnName(),
             UserJdbcMapper.StudentColumns.ACADEMIC_QUARTER.columnName(),
@@ -115,7 +129,7 @@ public class JdbcStudentRepository extends TransactionalJdbcCrudRepository<Stude
     private static final String EXISTS_DELETED_BY_ID = """
             SELECT count(*) AS total
             FROM STUDENT s
-            JOIN APP_USER u ON u.email = s.email AND u.active = 1
+            JOIN APP_USER u ON u.email = s.email AND u.active = 0
             WHERE s.email = ?
             """;
 
@@ -193,6 +207,27 @@ public class JdbcStudentRepository extends TransactionalJdbcCrudRepository<Stude
         return executeQuery(
                 SELECT_ALL,
                 PreparedStatementFiller.NO_OP,
+                rs -> rs.next() ? UserJdbcMapper.rowToStudents(rs) : Collections.emptyList(),
+                LOGGER,
+                connection
+        );
+    }
+
+    @Override
+    public List<Student> findWithEmailLike(String emailLike) {
+        return wrapWithConnection(
+                connectionManager,
+                LOGGER,
+                this::findWithEmailLike,
+                emailLike
+        );
+    }
+
+    @Override
+    public List<Student> findWithEmailLike(String emailLike, Connection connection) {
+        return executeQuery(
+                SELECT_ALL,
+                ps -> ps.setString(1, "%" + emailLike + "%"),
                 rs -> rs.next() ? UserJdbcMapper.rowToStudents(rs) : Collections.emptyList(),
                 LOGGER,
                 connection
@@ -279,17 +314,24 @@ public class JdbcStudentRepository extends TransactionalJdbcCrudRepository<Stude
 
     @Override
     public Student save(Student student, Connection connection) {
+        if(existsDeletedById(student.id(), connection)){
+            anyUserRepository.recover(student.id(), connection);
+            return update(student, false, connection);
+        }
         if (existsById(student.id(), connection)) {
-            return update(student, connection);
+            return update(student, true, connection);
         } else {
             return create(student, connection);
         }
     }
 
-    private Student update(Student student, Connection connection) {
+    private Student update(Student student, boolean saveBase, Connection connection) {
         try(PreparedStatement ps = connection.prepareStatement(UPDATE)){
+            AuditInfo auditInfo = null;
+            if(saveBase) {
+                auditInfo = anyUserRepository.updateBaseUserInfo(student, connection);
+            }
             academicInfoRepository.createOrIgnore(student.academicInfo(), connection);
-            AuditInfo auditInfo = anyUserRepository.updateBaseUserInfo(student, connection);
             ps.setString(1, student.name().firstName());
             ps.setString(2, student.name().lastName());
             ps.setString(3, student.createdBy().value());
@@ -299,7 +341,7 @@ public class JdbcStudentRepository extends TransactionalJdbcCrudRepository<Stude
             if(ps.executeUpdate() <= 0){
                 throw new RepositoryException(String.format("Error updating student with name: %s", student.name()));
             }
-            return student.hydratedWithAuditInfo(auditInfo);
+            return auditInfo == null ? student : student.hydratedWithAuditInfo(auditInfo);
         } catch (SQLException e) {
             LOGGER.error(e.getMessage(), e);
             throw new RepositoryException(e.getMessage(), e);

@@ -28,13 +28,13 @@ import java.time.LocalDateTime;
  **/
 public class FindAllAdminsQuery extends FindAllUsersQuery<AdminView, FindAllUsersQuery.UserSortableField> {
 
-    private FindAllAdminsQuery(Sort<UserSortableField> sort, LocalDateTime minCreatedDate, LocalDateTime maxCreatedDate) {
-        super(sort, minCreatedDate, maxCreatedDate);
+    private FindAllAdminsQuery(Sort<UserSortableField> sort, String emailLike, LocalDateTime minCreatedDate, LocalDateTime maxCreatedDate) {
+        super(sort, emailLike, minCreatedDate, maxCreatedDate);
     }
 
     @Contract(" -> new")
     public static @NotNull FindAllAdminsQuery asActive(){
-        return new FindAllAdminsQuery(null, null, null);
+        return new FindAllAdminsQuery(null, null,null, null);
     }
 
     @Contract(value = " -> new", pure = true)
@@ -43,10 +43,16 @@ public class FindAllAdminsQuery extends FindAllUsersQuery<AdminView, FindAllUser
     }
 
 
-    public static class Builder extends  FindAllUsersQuery.Builder<UserSortableField> {
+    public static class Builder extends  FindAllUsersQuery.Builder<Builder,UserSortableField> {
+
+        @Override
+        protected Builder getSelf() {
+            return this;
+        }
+
         @Override
         public FindAllAdminsQuery build(){
-            return new FindAllAdminsQuery(sort,  minCreatedDate, maxCreatedDate);
+            return new FindAllAdminsQuery(sort,  emailLike,minCreatedDate, maxCreatedDate);
         }
     }
 

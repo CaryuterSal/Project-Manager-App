@@ -82,7 +82,7 @@ public class UserJdbcMapper {
         }
     }
     public static List<Admin> rowToAdmins(ResultSet rs) throws SQLException {
-        List<Admin> admins = new ArrayList<>();
+        Set<Admin> admins = new HashSet<>();
         Map<Admin.Id, Set<Manager.Id>> managersCreated = extractManagersCreatedByAdmin(rs);
         do{
             CommonUserInfo baseInfo = CommonUserInfo.fromResultSet(rs);
@@ -94,7 +94,7 @@ public class UserJdbcMapper {
                     managersCreated.getOrDefault(id, new HashSet<>())
             ).hydratedWithAuditInfo(baseInfo.auditInfo()));
         } while (rs.next());
-        return admins;
+        return admins.stream().toList();
     }
 
     public static @NotNull Admin rowToAdmin(@NotNull ResultSet rs) throws SQLException {
@@ -110,7 +110,7 @@ public class UserJdbcMapper {
     }
 
     public static List<Manager> rowToManagers(ResultSet rs) throws SQLException {
-        List<Manager> managers = new ArrayList<>();
+        Set<Manager> managers = new HashSet<>();
         Map<Manager.Id, Set<Student.Id>> managersCreated = extractStudentsCreatedByManager(rs);
         do{
             CommonUserInfo baseInfo = CommonUserInfo.fromResultSet(rs);
@@ -124,7 +124,7 @@ public class UserJdbcMapper {
                     managersCreated.getOrDefault(id, new HashSet<>())
             ).hydratedWithAuditInfo(baseInfo.auditInfo()));
         } while (rs.next());
-        return managers;
+        return managers.stream().toList();
     }
 
     public static @NotNull Manager rowToManager(@NotNull ResultSet rs) throws SQLException {
@@ -142,7 +142,7 @@ public class UserJdbcMapper {
     }
 
     public static List<Student> rowToStudents(ResultSet rs) throws SQLException {
-        List<Student> students = new ArrayList<>();
+        Set<Student> students = new HashSet<>();
         do{
             CommonUserInfo baseInfo = CommonUserInfo.fromResultSet(rs);
             Student.Id id = new Student.Id(baseInfo.email());
@@ -164,7 +164,7 @@ public class UserJdbcMapper {
                     baseInfo.verified()
             ).hydratedWithAuditInfo(baseInfo.auditInfo()));
         } while (rs.next());
-        return students;
+        return students.stream().toList();
     }
 
     public static @NotNull Student rowToStudent(@NotNull ResultSet rs) throws SQLException {

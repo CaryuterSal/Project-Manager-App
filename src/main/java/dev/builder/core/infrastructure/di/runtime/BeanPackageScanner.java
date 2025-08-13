@@ -1,6 +1,7 @@
 package dev.builder.core.infrastructure.di.runtime;
 
 import dev.builder.core.infrastructure.di.annotation.Bean;
+import dev.builder.core.infrastructure.di.annotation.Prototype;
 import dev.builder.core.infrastructure.di.annotation.Singleton;
 import dev.builder.core.infrastructure.di.exception.PackageNotFoundException;
 import org.reflections.Reflections;
@@ -25,6 +26,7 @@ public class BeanPackageScanner {
         Set<Class<?>> packageClasses = new HashSet<>();
         Reflections reflections = new Reflections(packageName, Scanners.TypesAnnotated);
         packageClasses.addAll(reflections.getTypesAnnotatedWith(Bean.class));
+        packageClasses.addAll(reflections.getTypesAnnotatedWith(Prototype.class));
         packageClasses.addAll(reflections.getTypesAnnotatedWith(Singleton.class));
         return packageClasses;
     }

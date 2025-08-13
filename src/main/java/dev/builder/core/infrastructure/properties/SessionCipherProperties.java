@@ -15,4 +15,10 @@ public interface SessionCipherProperties {
      * @return el nombre del cifrado
      */
     String getCipherKeyType();
+
+
+    String getCipherPassword();
+    String getCipherSalt();
+    int getCipherIterations();
+    int getCipherKeyLength();
 }

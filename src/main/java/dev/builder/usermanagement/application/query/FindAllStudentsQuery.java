@@ -46,8 +46,8 @@ public class FindAllStudentsQuery extends FindAllUsersQuery<StudentView, FindAll
     private final Integer academicQuarter;
     private final String createdBy;
 
-    private FindAllStudentsQuery(Sort<StudentSortableField> sort, LocalDateTime minCreatedDate, LocalDateTime maxCreatedDate, Character academicGroup, Integer academicQuarter, String createdBy) {
-        super(null, minCreatedDate, maxCreatedDate);
+    private FindAllStudentsQuery(Sort<StudentSortableField> sort, String emailLike, LocalDateTime minCreatedDate, LocalDateTime maxCreatedDate, Character academicGroup, Integer academicQuarter, String createdBy) {
+        super(sort, emailLike, minCreatedDate, maxCreatedDate);
         this.academicGroup = academicGroup;
         this.academicQuarter = academicQuarter;
         this.createdBy = createdBy;
@@ -73,7 +73,7 @@ public class FindAllStudentsQuery extends FindAllUsersQuery<StudentView, FindAll
 
     @Contract(" -> new")
     public static @NotNull FindAllStudentsQuery asActive(){
-        return new FindAllStudentsQuery(null, null, null, null, null, null);
+        return new FindAllStudentsQuery(null, null,null, null, null, null, null);
     }
 
     @Contract(value = " -> new", pure = true)
@@ -81,7 +81,7 @@ public class FindAllStudentsQuery extends FindAllUsersQuery<StudentView, FindAll
         return new FindAllStudentsQuery.Builder();
     }
 
-    public static class Builder extends FindAllUsersQuery.Builder<StudentSortableField> {
+    public static class Builder extends FindAllUsersQuery.Builder<Builder,StudentSortableField> {
         private Character academicGroup;
         private Integer academicQuarter;
         private String createdBy;
@@ -102,8 +102,13 @@ public class FindAllStudentsQuery extends FindAllUsersQuery<StudentView, FindAll
         }
 
         @Override
+        protected Builder getSelf() {
+            return this;
+        }
+
+        @Override
         public FindAllStudentsQuery build() {
-            return new FindAllStudentsQuery(sort,minCreatedDate,maxCreatedDate,academicGroup,academicQuarter,createdBy);
+            return new FindAllStudentsQuery(sort,emailLike,minCreatedDate,maxCreatedDate,academicGroup,academicQuarter,createdBy);
         }
     }
 

@@ -138,7 +138,7 @@ public class JdbcBoardRepository extends TransactionalJdbcCrudRepository<Board, 
     @Override
     public List<Board> findAll(Connection connection) {
         return executeQuery(
-                SELECT,
+                SELECT_ALL,
                 PreparedStatementFiller.NO_OP,
                 rs -> rs.next() ? BoardJdbcMapper.rowToBoards(rs) : new ArrayList<>(),
                 log,

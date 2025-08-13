@@ -22,6 +22,7 @@ import dev.builder.usermanagement.application.command.CompleteRegistrationComman
 import dev.builder.usermanagement.application.command.InviteManagerCommand;
 import dev.builder.usermanagement.application.query.FindUserQuery;
 import dev.builder.usermanagement.application.view.UserView;
+import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -68,15 +69,6 @@ public class LoginController implements Initializable {
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
-        try{
-            boolean isRecovered = requestDispatcher.dispatch(new RestoreSessionCommand());
-            if(isRecovered){
-                loginAndRedirect();
-            }
-        }catch(Exception e){
-            System.out.println("error"+e.getMessage());
-        }
-
         btnLogin.setOnAction(this::validarCorreo);
         btnCancel.setOnAction(this::cancel);
         //btnLogin.setOnAction(this::navigate);

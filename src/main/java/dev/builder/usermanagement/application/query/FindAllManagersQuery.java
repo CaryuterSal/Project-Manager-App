@@ -39,8 +39,8 @@ public class FindAllManagersQuery extends  FindAllUsersQuery<ManagerView, FindAl
 
     private final String createdBy;
 
-    private FindAllManagersQuery(Sort<ManagerSortableField> sort,  LocalDateTime minCreatedDate, LocalDateTime maxCreatedDate, String createdBy) {
-        super(sort, minCreatedDate, maxCreatedDate);
+    private FindAllManagersQuery(Sort<ManagerSortableField> sort,  String emailLike, LocalDateTime minCreatedDate, LocalDateTime maxCreatedDate, String createdBy) {
+        super(sort, emailLike,minCreatedDate, maxCreatedDate);
         this.createdBy = createdBy;
     }
 
@@ -50,10 +50,10 @@ public class FindAllManagersQuery extends  FindAllUsersQuery<ManagerView, FindAl
 
     @Contract(" -> new")
     public static @NotNull FindAllManagersQuery asActive(){
-        return new FindAllManagersQuery(null, null, null, null);
+        return new FindAllManagersQuery(null, null,null, null, null);
     }
 
-    public static class Builder extends  FindAllUsersQuery.Builder<ManagerSortableField> {
+    public static class Builder extends  FindAllUsersQuery.Builder<Builder, ManagerSortableField> {
         private String createdBy;
 
         public Builder createdBy(String createdBy){
@@ -62,8 +62,13 @@ public class FindAllManagersQuery extends  FindAllUsersQuery<ManagerView, FindAl
         }
 
         @Override
+        protected Builder getSelf() {
+            return this;
+        }
+
+        @Override
         public FindAllManagersQuery build(){
-            return new FindAllManagersQuery(sort, minCreatedDate, maxCreatedDate, createdBy);
+            return new FindAllManagersQuery(sort, emailLike,minCreatedDate, maxCreatedDate, createdBy);
         }
     }
 

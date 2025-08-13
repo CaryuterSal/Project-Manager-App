@@ -31,8 +31,9 @@ public abstract class BaseRequestValidator<T extends Request<?>> implements Requ
 
     public void throwIfAny() throws ValidationException {
         if (!violations.isEmpty()) {
+            List<FieldViolationException> errors = new ArrayList<>(violations);
             violations.clear();
-            throw new ValidationException(violations);
+            throw new ValidationException(errors);
         }
     }
 
