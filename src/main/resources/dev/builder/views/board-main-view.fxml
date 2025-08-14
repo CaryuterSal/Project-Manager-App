@@ -1,27 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import java.lang.String?>
-<?import javafx.geometry.Insets?>
-<?import javafx.scene.Cursor?>
-<?import javafx.scene.control.Button?>
-<?import javafx.scene.control.Label?>
-<?import javafx.scene.control.ListView?>
-<?import javafx.scene.control.MenuButton?>
-<?import javafx.scene.control.MenuItem?>
-<?import javafx.scene.control.ProgressIndicator?>
-<?import javafx.scene.control.TextField?>
-<?import javafx.scene.image.Image?>
-<?import javafx.scene.image.ImageView?>
-<?import javafx.scene.layout.ColumnConstraints?>
-<?import javafx.scene.layout.GridPane?>
-<?import javafx.scene.layout.HBox?>
-<?import javafx.scene.layout.Region?>
-<?import javafx.scene.layout.RowConstraints?>
-<?import javafx.scene.layout.VBox?>
-<?import javafx.scene.text.Font?>
+<?import java.lang.*?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
 
-
-<GridPane prefHeight="819.0" prefWidth="1152.0" style="-fx-background-color: white;" vgap="30.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="dev.builder.board.application.controller.ManagerBoardController">
+<GridPane prefHeight="819.0" prefWidth="1152.0" style="-fx-background-color: white;" vgap="30.0" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="dev.builder.board.application.controller.ManagerBoardController">
    <columnConstraints>
       <ColumnConstraints hgrow="SOMETIMES" />
       <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" />
@@ -201,8 +188,8 @@
                   <Insets left="5.0" top="3.0" />
                </VBox.margin>
             </Label>
-            <ListView stylesheets="@../assets/styles/transparent-list-view.css" VBox.vgrow="NEVER" />
-            <Button mnemonicParsing="false" styleClass="add-task-button" text="Agregar">
+            <ListView fx:id="todoList" stylesheets="@../assets/styles/transparent-list-view.css" VBox.vgrow="NEVER" />
+            <Button fx:id="btnAddTask" mnemonicParsing="false" styleClass="add-task-button" text="Agregar">
                <graphic>
                   <ImageView fitHeight="24.0" fitWidth="24.0" pickOnBounds="true" preserveRatio="true">
                      <image>
@@ -229,16 +216,7 @@
                   <Font size="17.0" />
                </font>
             </Label>
-            <ListView maxHeight="-Infinity" maxWidth="-Infinity" stylesheets="@../assets/styles/transparent-list-view.css" />
-            <Button mnemonicParsing="false" styleClass="add-task-button" text="Agregar">
-               <graphic>
-                  <ImageView fitHeight="24.0" fitWidth="24.0" pickOnBounds="true" preserveRatio="true">
-                     <image>
-                        <Image url="@../assets/images/add_icon_grey.png" />
-                     </image>
-                  </ImageView>
-               </graphic>
-            </Button>
+            <ListView fx:id="inProgressList" maxHeight="-Infinity" maxWidth="-Infinity" stylesheets="@../assets/styles/transparent-list-view.css" />
          </VBox>
 
                         <!-- "Finalizadas" column -->
@@ -251,16 +229,7 @@
                   <Insets left="5.0" top="3.0" />
                </VBox.margin>
             </Label>
-            <ListView stylesheets="@../assets/styles/transparent-list-view.css" />
-            <Button mnemonicParsing="false" styleClass="add-task-button" text="Agregar">
-               <graphic>
-                  <ImageView fitHeight="24.0" fitWidth="24.0" pickOnBounds="true" preserveRatio="true">
-                     <image>
-                        <Image url="@../assets/images/add_icon_grey.png" />
-                     </image>
-                  </ImageView>
-               </graphic>
-            </Button>
+            <ListView fx:id="doneList" stylesheets="@../assets/styles/transparent-list-view.css" />
          </VBox>
          <ProgressIndicator prefHeight="200.0" prefWidth="200.0" style="-fx-progress-color: black;" visible="false" />
          <GridPane.margin>

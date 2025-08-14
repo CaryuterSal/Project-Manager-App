@@ -31,7 +31,7 @@ public class DefaultConnectionManager extends BaseConnectionManager {
         CONN_PROPS.setProperty("defaultNChar", "false");
         CONN_PROPS.setProperty("AccumulateBatchResult", "false");
         try {
-            WALLET = unzipWallet().toString();
+            WALLET = unzipWallet().toString().replaceAll("\\\\", "/");
         } catch (IOException e) {
             LOGGER.error(e.getMessage());
             throw new RuntimeException(e);

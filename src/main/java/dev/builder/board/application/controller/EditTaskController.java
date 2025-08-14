@@ -1,9 +1,7 @@
 package dev.builder.board.application.controller;
 
-import dev.builder.board.application.command.CreateTaskCommand;
-import dev.builder.board.application.view.StageView;
-import dev.builder.board.application.view.TaskView;
 import dev.builder.board.application.command.EditTaskCommand;
+import dev.builder.board.application.view.TaskView;
 import dev.builder.board.domain.model.Color;
 import dev.builder.core.application.RequestDispatcher;
 import dev.builder.core.application.ViewNavigation;
@@ -23,17 +21,18 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 @Bean
-public class TaskController implements Initializable {
+public class EditTaskController implements Initializable {
 
-    @FXML private TextField txtTitle, txtEditTitle;
-    @FXML private DatePicker dpEnd, dpEndEdit;
-    @FXML private Button btnAdd, btnSave;
+    @FXML
+    private TextField txtEditTitle;
+    @FXML private DatePicker dpEndEdit;
+    @FXML private Button btnSave;
     @FXML private Button btnCancel;
     @FXML private Label lblError;
     @FXML private RadioButton rbTitle;
-    @FXML private Button btnMembers, btnEditMembers;
-    @FXML private DatePicker dpStart, dpStartEdit;
-    @FXML private HTMLEditor descriptionEditor, descriptionEditorEdit;
+    @FXML private Button btnEditMembers;
+    @FXML private DatePicker dpStartEdit;
+    @FXML private HTMLEditor descriptionEditorEdit;
 
     private final RequestDispatcher requestDispatcher;
     private final ManagerBoardController managerBoardController;
@@ -44,7 +43,7 @@ public class TaskController implements Initializable {
     private TaskView task;
 
     @Inject
-    public TaskController(RequestDispatcher requestDispatcher, ManagerBoardController managerBoardController,
+    public EditTaskController(RequestDispatcher requestDispatcher, ManagerBoardController managerBoardController,
                           ViewNavigation viewNavigation) {
         this.requestDispatcher = requestDispatcher;
         this.managerBoardController = managerBoardController;
@@ -54,7 +53,7 @@ public class TaskController implements Initializable {
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         btnCancel.setOnAction(e -> dialogStage.close());
-        btnAdd.setOnAction(e -> onAddTask());
+        btnSave.setOnAction(e -> onSaveTask());
     }
 
     public void setTask(TaskView task) {
@@ -67,55 +66,47 @@ public class TaskController implements Initializable {
         }
     }
 
-    public void setDialogStage(Stage stage) {
-        this.dialogStage = stage;
-    }
+    private void onSaveTask() {
+        if (task == null) {
+            lblError.setText("No se puede editar, tarea no encontrada.");
+            return;
+        }
 
-    private void onAddTask() {
-        String title = txtTitle.getText();
-        LocalDateTime due = dpEnd.getValue().atStartOfDay();
-        String desc = descriptionEditor.getHtmlText();
+        String title = txtEditTitle.getText();
+        String description = descriptionEditorEdit.getHtmlText();
+        LocalDateTime startDate = dpStartEdit.getValue().atStartOfDay();
+        LocalDateTime endDate = dpEndEdit.getValue().atStartOfDay();
 
-        CreateTaskCommand cmd = new CreateTaskCommand(
-                dev.builder.board.domain.model.Stage.StageState.TO_DO,
+        EditTaskCommand editCmd = new EditTaskCommand(
+                task.id(),
                 title,
-                desc,
+                description,
                 Color.PINK,
-                due
+                endDate
         );
 
         executor.submit(() -> {
             try {
-                Task<StageView> creationTask = new Task<>() {
+                Task<TaskView> editTask = new Task<>() {
                     @Override
-                    protected StageView call() throws Exception {
-                        return requestDispatcher.dispatch(cmd);
+                    protected TaskView call() throws Exception {
+                        return requestDispatcher.dispatch(editCmd);
                     }
                 };
 
-                creationTask.setOnSucceeded(e -> {
-                    StageView updatedStage = creationTask.getValue();
-                    createdTask = updatedStage.tasks().getLast();
-                    managerBoardController.onTaskCreated(updatedStage);
+                editTask.setOnSucceeded(e -> {
+                    task = editTask.getValue();
                     dialogStage.close();
                 });
 
-                creationTask.setOnFailed(e -> {
-                    lblError.setText(creationTask.getException().getMessage());
+                editTask.setOnFailed(e -> {
+                    lblError.setText("Error al guardar los cambios: " + editTask.getException().getMessage());
                 });
 
-                executor.submit(creationTask);
+                executor.submit(editTask);
             } catch (Exception e) {
-                lblError.setText("Error al agregar la tarea: " + e.getMessage());
+                lblError.setText("Error al guardar los cambios: " + e.getMessage());
             }
         });
-    }
-
-    public TaskView getCreatedTask() {
-        return createdTask;
-    }
-
-    public TaskView getTask() {
-        return task;
     }
 }
