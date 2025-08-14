@@ -1,19 +1,41 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.geometry.*?>
-<?import javafx.scene.control.*?>
-<?import javafx.scene.image.*?>
-<?import javafx.scene.layout.*?>
-<?import javafx.scene.text.*?>
+<?import java.lang.String?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.Cursor?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ListView?>
+<?import javafx.scene.control.MenuButton?>
+<?import javafx.scene.control.MenuItem?>
+<?import javafx.scene.control.ProgressIndicator?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.effect.ColorAdjust?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
 
-<BorderPane prefHeight="609.0" prefWidth="1053.0" style="-fx-background-color: #ffffff;" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="dev.builder.board.application.controller.ManagerBoardController">
-   <!-- Side navigation -->
-   <left>
-      <VBox prefHeight="609.0" prefWidth="222.0" spacing="20" style="-fx-background-color: #f7f7f7;" BorderPane.alignment="CENTER">
-         <padding>
-            <Insets bottom="20" left="20" right="20" top="20" />
-         </padding>
-         <Label text="Kedu">
+
+<GridPane prefHeight="819.0" prefWidth="1152.0" style="-fx-background-color: white;" vgap="30.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="dev.builder.board.application.controller.ManagerBoardController">
+   <columnConstraints>
+      <ColumnConstraints hgrow="SOMETIMES" />
+      <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" />
+      <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" />
+      <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" />
+   </columnConstraints>
+   <rowConstraints>
+      <RowConstraints maxHeight="-Infinity" minHeight="100.0" vgrow="SOMETIMES" />
+      <RowConstraints maxHeight="819.0" minHeight="10.0" prefHeight="654.0" vgrow="SOMETIMES" />
+   </rowConstraints>
+   <children>
+      <VBox maxHeight="1.7976931348623157E308" maxWidth="-Infinity" spacing="20" style="-fx-background-color: #f7f7f7;" stylesheets="@../assets/styles/board-side-menu.css" GridPane.rowSpan="2">
+         <Label graphicTextGap="20.0" text="Kedu">
             <graphic>
                <ImageView fx:id="logoImageView" fitHeight="50.0" fitWidth="34.0" preserveRatio="true">
                   <image>
@@ -25,145 +47,216 @@
                <Font name="System Bold" size="25.0" />
             </font>
          </Label>
-         <VBox fx:id="navButtons" spacing="10">
-            <Button fx:id="btnBoard" style="-fx-background-color: black; -fx-background-radius: 28;" text="Tablero" textFill="WHITE">
-               <font>
-                  <Font name="System Bold" size="23.0" />
-               </font>
-               <VBox.margin>
-                  <Insets left="15.0" right="15.0" top="10.0" />
-               </VBox.margin>
-               <graphic>
-                  <Pane prefHeight="33.0" prefWidth="32.0" style="-fx-background-color: white; -fx-background-radius: 50;">
-                     <children>
-                        <ImageView fitHeight="33.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true" x="1.0" y="2.0">
-                           <image>
-                              <Image url="@../assets/images/board_icon.png" />
-                           </image>
-                        </ImageView>
-                     </children>
-                  </Pane>
-               </graphic></Button>
-            <Button fx:id="btnAccount" onAction="#onAccountClicked" style="-fx-background-color: #f7f7f7; -fx-border-color: #f7f7f7;" text="Cuentas" textFill="#919191">
-               <font>
-                  <Font name="System Bold" size="23.0" />
-               </font>
-               <VBox.margin>
-                  <Insets left="9.0" right="15.0" />
-               </VBox.margin>
-               <graphic>
-                  <ImageView fitHeight="50.0" fitWidth="34.0" pickOnBounds="true" preserveRatio="true">
-                     <image>
-                        <Image url="@../assets/images/add_manager_icon.png" />
-                     </image>
-                  </ImageView>
-               </graphic></Button>
-         </VBox>
-         <VBox.vgrow>ALWAYS</VBox.vgrow>
+         <Button fx:id="btnBoard" graphicTextGap="10.0" text="Tablero" textFill="WHITE">
+            <font>
+               <Font name="System Bold" size="20.0" />
+            </font>
+            <VBox.margin>
+               <Insets top="20.0" />
+            </VBox.margin>
+            <graphic>
+               <ImageView fitHeight="25.0" fitWidth="25.0" pickOnBounds="true" preserveRatio="true" x="1.0" y="2.0">
+                  <image>
+                     <Image url="@../assets/images/board_white_icon.png" />
+                  </image>
+               </ImageView>
+            </graphic>
+            <styleClass>
+               <String fx:value="active" />
+               <String fx:value="menu-item" />
+            </styleClass>
+         </Button>
+         <Button fx:id="btnAccount" onAction="#onAccountClicked" style="-fx-background-color: #f7f7f7; -fx-border-color: #f7f7f7;" styleClass="menu-item" text="Cuentas" textFill="#919191">
+            <font>
+               <Font name="System Bold" size="20.0" />
+            </font>
+            <VBox.margin>
+               <Insets />
+            </VBox.margin>
+            <graphic>
+               <ImageView fitHeight="25.0" fitWidth="25.0" pickOnBounds="true" preserveRatio="true">
+                  <image>
+                     <Image url="@../assets/images/add_manager_icon.png" />
+                  </image>
+               </ImageView>
+            </graphic>
+         </Button>
+         <padding>
+            <Insets bottom="30.0" left="30.0" right="15.0" top="30.0" />
+         </padding>
       </VBox>
-   </left>
-
-   <!-- Main content -->
-   <center>
-      <VBox spacing="15" style="-fx-background-color: white; -fx-background-radius: 20;">
+      <VBox spacing="15">
          <padding>
             <Insets bottom="20" left="20" right="20" top="20" />
          </padding>
          <!-- Header with title, search and invite -->
          <HBox spacing="10">
-            <VBox prefHeight="100.0" prefWidth="241.0">
-               <children>
-                  <Label styleClass="header-title" text="Incubadora">
-                     <font>
-                        <Font name="System Bold" size="26.0" />
-                     </font>
-                  </Label>
-                  <TextField fx:id="txtSearch" alignment="CENTER" prefHeight="25.0" prefWidth="144.0" promptText="Buscar" style="-fx-background-radius: 28; -fx-background-color: #dcdcdc;">
-                     <VBox.margin>
-                        <Insets right="5.0" top="30.0" />
-                     </VBox.margin>
-                     <font>
-                        <Font size="14.0" />
-                     </font>
-                  </TextField>
-               </children>
-            </VBox>
             <Region HBox.hgrow="ALWAYS" />
-            <VBox prefHeight="105.0" prefWidth="164.0">
-               <children>
-                  <Button fx:id="btnInvite" style="-fx-background-color: black; -fx-background-radius: 28;" text="Invitar" textFill="WHITE">
-                     <VBox.margin>
-                        <Insets top="55.0" />
-                     </VBox.margin>
-                     <font>
-                        <Font name="System Bold" size="16.0" />
-                     </font>
-                     <graphic>
-                        <ImageView fitHeight="33.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true">
-                           <image>
-                              <Image url="@../assets/images/add_icon_white.png" />
-                           </image>
-                        </ImageView>
-                     </graphic>
-                  </Button>
-               </children>
-            </VBox>
          </HBox>
 
-         <Label fx:id="lblError" text="" style="-fx-text-fill: red;" />
-
-         <!-- Board columns inside a scrollable area -->
-         <ScrollPane fitToHeight="true" fitToWidth="true" hbarPolicy="NEVER" style="-fx-background-color: #f7f7f7; -fx-background-radius: 15;" vbarPolicy="AS_NEEDED">
-            <content>
-               <HBox spacing="20" style="-fx-background-color: #f7f7f7; -fx-background-radius: 15;">
-                  <padding>
-                     <Insets bottom="10" left="10" right="10" top="10" />
-                  </padding>
-                  <!-- "Por hacer" column -->
-                  <VBox fx:id="todoColumn" spacing="10" style="-fx-background-color: white; -fx-background-radius: 10;" HBox.hgrow="ALWAYS">
-                     <Label styleClass="column-title" text="Por hacer">
-                        <font>
-                           <Font size="17.0" />
-                        </font>
-                        <VBox.margin>
-                           <Insets left="5.0" top="3.0" />
-                        </VBox.margin></Label>
-                     <VBox fx:id="todoList" spacing="10">
-                        <VBox.vgrow>ALWAYS</VBox.vgrow>
-                     </VBox>
-                     <Hyperlink fx:id="btnAddTask" text="+ Agregar" onAction="#onAddTaskClicked"/>
-                  </VBox>
-
-                  <!-- "En ejecución" column -->
-                  <VBox fx:id="inProgressColumn" spacing="10" style="-fx-background-color: white; -fx-background-radius: 10;" HBox.hgrow="ALWAYS">
-                     <Label styleClass="column-title" text="En ejecución">
-                        <VBox.margin>
-                           <Insets left="5.0" top="3.0" />
-                        </VBox.margin>
-                        <font>
-                           <Font size="17.0" />
-                        </font></Label>
-                     <VBox fx:id="inProgressList" spacing="10">
-                        <VBox.vgrow>ALWAYS</VBox.vgrow>
-                     </VBox>
-                  </VBox>
-
-                  <!-- "Finalizadas" column -->
-                  <VBox fx:id="doneColumn" spacing="10" style="-fx-background-color: white; -fx-background-radius: 10;" HBox.hgrow="ALWAYS">
-                     <Label styleClass="column-title" text="Finalizadas">
-                        <font>
-                           <Font size="17.0" />
-                        </font>
-                        <VBox.margin>
-                           <Insets left="5.0" top="3.0" />
-                        </VBox.margin></Label>
-                     <VBox fx:id="doneList" spacing="10">
-                        <VBox.vgrow>ALWAYS</VBox.vgrow>
-                     </VBox>
-                  </VBox>
-               </HBox>
-            </content>
-         </ScrollPane>
+               <Label fx:id="lblError" style="-fx-text-fill: red;" text="" />
       </VBox>
-   </center>
-</BorderPane>
+      <VBox alignment="BOTTOM_LEFT" spacing="20.0" GridPane.columnIndex="1">
+         <children>
+            <Label styleClass="header-title" text="Incubadora">
+               <font>
+                  <Font name="System Bold" size="26.0" />
+               </font>
+            </Label>
+            <HBox alignment="CENTER" maxWidth="-Infinity" spacing="20.0">
+               <children>
+                  <HBox maxHeight="-Infinity" maxWidth="-Infinity" styleClass="search-bar" stylesheets="@../assets/styles/search-bar.css">
+                     <children>
+                        <Button mnemonicParsing="false">
+                           <graphic>
+                              <ImageView fitHeight="24.0" fitWidth="24.0" pickOnBounds="true" preserveRatio="true">
+                                 <image>
+                                    <Image url="@../assets/images/search_icon.png" />
+                                 </image>
+                              </ImageView>
+                           </graphic>
+                        </Button>
+                        <TextField fx:id="txtSearch" alignment="CENTER" promptText="Buscar" HBox.hgrow="ALWAYS">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </TextField>
+                        <Button mnemonicParsing="false">
+                           <graphic>
+                              <ImageView fitHeight="24.0" fitWidth="24.0" pickOnBounds="true" preserveRatio="true">
+                                 <image>
+                                    <Image url="@../assets/images/close_icon.png" />
+                                 </image>
+                              </ImageView>
+                           </graphic>
+                        </Button>
+                     </children>
+                  </HBox>
+                  <ProgressIndicator minHeight="40.0" prefWidth="40.0" style="-fx-progress-color: black;" />
+               </children>
+            </HBox>
+         </children>
+         <GridPane.margin>
+            <Insets left="15.0" top="20.0" />
+         </GridPane.margin>
+      </VBox>
+      <VBox alignment="CENTER_RIGHT" maxHeight="1.7976931348623157E308" maxWidth="-Infinity" spacing="15.0" GridPane.columnIndex="3" GridPane.halignment="RIGHT" GridPane.valignment="BOTTOM">
+         <children>
+            <MenuButton mnemonicParsing="false" stylesheets="@../assets/styles/username-button.css" text="usuario@example.com">
+              <items>
+                <MenuItem mnemonicParsing="false" styleClass="logout" text="Cerrar sesión">
+                     <graphic>
+                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                           <image>
+                              <Image url="@../assets/images/logout.png" />
+                           </image>
+                           <effect>
+                              <ColorAdjust brightness="0.45" contrast="-0.48" hue="-0.64" saturation="0.48" />
+                           </effect>
+                        </ImageView>
+                     </graphic>
+                  </MenuItem>
+              </items>
+               <font>
+                  <Font size="18.0" />
+               </font>
+               <graphic>
+                  <ImageView fitHeight="30.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@../assets/images/user-icon.png" />
+                     </image>
+                  </ImageView>
+               </graphic>
+            </MenuButton>
+            <Button fx:id="btnInvite" stylesheets="@../assets/styles/primary-button.css" text="Invitar" textFill="WHITE">
+               <VBox.margin>
+                  <Insets />
+               </VBox.margin>
+               <font>
+                  <Font name="System Bold" size="16.0" />
+               </font>
+               <graphic>
+                  <ImageView fitHeight="33.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@../assets/images/add_icon_white.png" />
+                     </image>
+                  </ImageView>
+               </graphic>
+               <cursor>
+                  <Cursor fx:constant="HAND" />
+               </cursor>
+            </Button>
+         </children>
+         <GridPane.margin>
+            <Insets right="20.0" top="20.0" />
+         </GridPane.margin>
+      </VBox>
+      <HBox spacing="20" style="-fx-background-color: #f7f7f7; -fx-background-radius: 15;" stylesheets="@../assets/styles/board-stages.css" GridPane.columnIndex="1" GridPane.columnSpan="3" GridPane.rowIndex="1">
+         <padding>
+            <Insets bottom="30.0" left="30.0" right="30.0" top="30.0" />
+         </padding>
+         <!-- "Por hacer" column -->
+         <VBox fx:id="todoColumn" maxHeight="-Infinity" spacing="10" styleClass="stage-container" HBox.hgrow="ALWAYS">
+            <Label styleClass="column-title" text="Por hacer">
+               <font>
+                  <Font size="17.0" />
+               </font>
+               <VBox.margin>
+                  <Insets left="5.0" top="3.0" />
+               </VBox.margin>
+            </Label>
+            <ListView />
+            <Button mnemonicParsing="false" styleClass="add-task-button" text="Agregar">
+               <graphic>
+                  <ImageView fitHeight="24.0" fitWidth="24.0" pickOnBounds="true" preserveRatio="true" />
+               </graphic>
+               <font>
+                  <Font size="15.0" />
+               </font>
+            </Button>
+            <padding>
+               <Insets bottom="10.0" left="20.0" right="20.0" top="10.0" />
+            </padding>
+         </VBox>
+
+                        <!-- "En ejecución" column -->
+         <VBox fx:id="inProgressColumn" maxHeight="-Infinity" spacing="10" style="-fx-background-color: white; -fx-background-radius: 10;" styleClass="stage-container" HBox.hgrow="ALWAYS">
+            <Label styleClass="column-title" text="En ejecución">
+               <VBox.margin>
+                  <Insets left="5.0" top="3.0" />
+               </VBox.margin>
+               <font>
+                  <Font size="17.0" />
+               </font>
+            </Label>
+            <ListView />
+            <Button mnemonicParsing="false" styleClass="add-task-button" text="Agregar">
+               <graphic>
+                  <ImageView fitHeight="24.0" fitWidth="24.0" pickOnBounds="true" preserveRatio="true" />
+               </graphic>
+            </Button>
+         </VBox>
+
+                        <!-- "Finalizadas" column -->
+         <VBox fx:id="doneColumn" maxHeight="-Infinity" spacing="10" style="-fx-background-color: white; -fx-background-radius: 10;" styleClass="stage-container" HBox.hgrow="ALWAYS">
+            <Label styleClass="column-title" text="Finalizadas">
+               <font>
+                  <Font size="17.0" />
+               </font>
+               <VBox.margin>
+                  <Insets left="5.0" top="3.0" />
+               </VBox.margin>
+            </Label>
+            <ListView />
+            <Button mnemonicParsing="false" styleClass="add-task-button" text="Agregar">
+               <graphic>
+                  <ImageView fitHeight="24.0" fitWidth="24.0" pickOnBounds="true" preserveRatio="true" />
+               </graphic>
+            </Button>
+         </VBox>
+         <GridPane.margin>
+            <Insets bottom="15.0" left="15.0" right="15.0" />
+         </GridPane.margin>
+      </HBox>
+   </children>
+</GridPane>

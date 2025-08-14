@@ -70,7 +70,7 @@
                </cursor>
             </Button>
             <ProgressIndicator fx:id="loadListIndicator" maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="200.0" prefWidth="200.0" style="-fx-progress-color: black;" stylesheets="@../assets/styles/progress-bar.css" />
-            <ListView fx:id="managersList" stylesheets="@../assets/styles/managers-list-view.css" VBox.vgrow="ALWAYS" />
+            <ListView fx:id="managersList" stylesheets="@../assets/styles/transparent-list-view.css" VBox.vgrow="ALWAYS" />
          </children>
          <GridPane.margin>
             <Insets />

@@ -1,0 +1,44 @@
+.menu-item {
+    -fx-cursor:  hand;
+    -fx-graphic-text-gap: 10px;
+    -fx-padding: 10px 16px;
+    -fx-border-radius: 999px;
+    -fx-background-radius: 999px;
+    -fx-text-fill: #919191;
+}
+
+
+.menu-item:hover {
+    -fx-background-color: rgba(0,0,0,0.1) !important;
+}
+
+.menu-item.active:hover {
+    -fx-background-color: black !important;
+}
+
+
+.menu-item.active {
+    -fx-cursor: default;
+    -fx-background-color: black;
+    -fx-text-fill: white;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.15), 6, 0.1, 0, 2);
+}
+
+#btnBoard.active {
+    -fx-graphic: url("dev/builder/assets/images/board_white_icon.png");
+}
+
+
+#btnBoard:not(.active) {
+    -fx-graphic: url("dev/builder/assets/images/board_grey_icon.png");
+}
+
+
+#btnAccount.active {
+    -fx-graphic: url("dev/builder/assets/images/add_icon_white.png");
+}
+
+
+#btnAccount:not(.active) {
+    -fx-graphic: url("dev/builder/assets/images/add_icon_grey.png");
+}

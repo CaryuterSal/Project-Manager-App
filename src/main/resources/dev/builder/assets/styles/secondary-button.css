@@ -1,0 +1,13 @@
+.button {
+    -fx-cursor:  hand;
+    -fx-graphic-text-gap: 10px;
+    -fx-padding: 10px 16px;
+    -fx-border-radius: 999px;
+    -fx-background-radius: 999px;
+    -fx-text-fill: #111111;
+    -fx-background-color: transparent;
+}
+
+.button:hover {
+    -fx-background-color: rgba(0,0,0,0.1)
+}

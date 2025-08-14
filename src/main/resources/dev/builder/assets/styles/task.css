@@ -1,0 +1,5 @@
+.task-card {
+    -fx-background-color:  #f7f7f7;
+    -fx-background-radius: 8px;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.08), 8, 0.1, 0, 2);
+}
