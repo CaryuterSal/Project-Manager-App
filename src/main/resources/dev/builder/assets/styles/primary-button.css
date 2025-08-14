@@ -1,0 +1,14 @@
+.button {
+    -fx-graphic-text-gap: 10px;
+    -fx-padding: 7px 30px;
+    -fx-text-fill: white;
+    -fx-background-radius: 999px;
+    -fx-border-radius: 999px;
+    -fx-cursor: hand;
+    -fx-background-color: black;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.15), 6, 0.1, 0, 2);
+}
+
+.button:hover {
+    -fx-background-color: #222;
+}

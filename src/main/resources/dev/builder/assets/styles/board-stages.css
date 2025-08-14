@@ -1,0 +1,21 @@
+.stage-container {
+    -fx-background-color: white;
+    -fx-background-radius: 10px;
+    -fx-border-radius: 10px;
+    -fx-padding: 10px 20px;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.06), 10, 0.05, 0, 3);
+}
+
+.add-task-button {
+    -fx-graphic: url("dev/builder/assets/images/add_icon_grey.png");
+    -fx-background-color: transparent;
+    -fx-text-fill: #555;
+    -fx-background-radius: 8px;
+    -fx-border-color: transparent;
+}
+
+.add-task-button:hover {
+    -fx-text-fill: #333;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1), 3, 0.1, 0, 2);
+    -fx-cursor: hand;
+}

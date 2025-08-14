@@ -1,0 +1,16 @@
+.search-bar {
+    -fx-background-color: #DCDCDC;
+    -fx-border-radius: 999px;
+    -fx-background-radius: 999px;
+    -fx-padding: 5px 10px;
+    -fx-text-fill: #636366;
+}
+
+.search-bar > .button,
+.search-bar > .text-input{
+    -fx-background-color: transparent;
+}
+
+.search-bar > .button {
+    -fx-cursor: hand;
+}
