@@ -12,6 +12,7 @@ import dev.builder.core.infrastructure.di.annotation.Inject;
 import javafx.concurrent.Task;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.web.HTMLEditor;
 import javafx.stage.Stage;
@@ -40,7 +41,6 @@ public class TaskController implements Initializable {
     private final ViewNavigation viewNavigation;
     private final ExecutorService executor = Executors.newSingleThreadExecutor();
     private TaskView createdTask;
-    private Stage dialogStage;
     private TaskView task;
 
     @Inject
@@ -53,7 +53,7 @@ public class TaskController implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        btnCancel.setOnAction(e -> dialogStage.close());
+        btnCancel.setOnAction(e -> close());
         btnAdd.setOnAction(e -> onAddTask());
     }
 
@@ -65,10 +65,6 @@ public class TaskController implements Initializable {
             dpStartEdit.setValue(task.startedAt().orElse(null).toLocalDate());
             dpEndEdit.setValue(task.deadline().toLocalDate());
         }
-    }
-
-    public void setDialogStage(Stage stage) {
-        this.dialogStage = stage;
     }
 
     private void onAddTask() {
@@ -97,7 +93,7 @@ public class TaskController implements Initializable {
                     StageView updatedStage = creationTask.getValue();
                     createdTask = updatedStage.tasks().getLast();
                     managerBoardController.onTaskCreated(updatedStage);
-                    dialogStage.close();
+                    close();
                 });
 
                 creationTask.setOnFailed(e -> {
@@ -109,6 +105,10 @@ public class TaskController implements Initializable {
                 lblError.setText("Error al agregar la tarea: " + e.getMessage());
             }
         });
+    }
+
+    private void close(){
+        ((Stage)txtTitle.getScene().getWindow()).close();
     }
 
     public TaskView getCreatedTask() {
