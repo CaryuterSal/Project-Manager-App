@@ -10,7 +10,6 @@
 <?import javafx.scene.control.MenuItem?>
 <?import javafx.scene.control.ProgressIndicator?>
 <?import javafx.scene.control.TextField?>
-<?import javafx.scene.effect.ColorAdjust?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.ColumnConstraints?>
@@ -150,9 +149,6 @@
                            <image>
                               <Image url="@../assets/images/logout.png" />
                            </image>
-                           <effect>
-                              <ColorAdjust brightness="0.45" contrast="-0.48" hue="-0.64" saturation="0.48" />
-                           </effect>
                         </ImageView>
                      </graphic>
                   </MenuItem>
@@ -196,7 +192,7 @@
             <Insets bottom="30.0" left="30.0" right="30.0" top="30.0" />
          </padding>
          <!-- "Por hacer" column -->
-         <VBox fx:id="todoColumn" maxHeight="-Infinity" spacing="10" styleClass="stage-container" HBox.hgrow="ALWAYS">
+         <VBox fx:id="todoColumn" maxHeight="-Infinity" spacing="10" styleClass="stage-container" HBox.hgrow="NEVER">
             <Label styleClass="column-title" text="Por hacer">
                <font>
                   <Font size="17.0" />
@@ -205,10 +201,14 @@
                   <Insets left="5.0" top="3.0" />
                </VBox.margin>
             </Label>
-            <ListView />
+            <ListView stylesheets="@../assets/styles/transparent-list-view.css" VBox.vgrow="NEVER" />
             <Button mnemonicParsing="false" styleClass="add-task-button" text="Agregar">
                <graphic>
-                  <ImageView fitHeight="24.0" fitWidth="24.0" pickOnBounds="true" preserveRatio="true" />
+                  <ImageView fitHeight="24.0" fitWidth="24.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@../assets/images/add_icon_grey.png" />
+                     </image>
+                  </ImageView>
                </graphic>
                <font>
                   <Font size="15.0" />
@@ -220,7 +220,7 @@
          </VBox>
 
                         <!-- "En ejecución" column -->
-         <VBox fx:id="inProgressColumn" maxHeight="-Infinity" spacing="10" style="-fx-background-color: white; -fx-background-radius: 10;" styleClass="stage-container" HBox.hgrow="ALWAYS">
+         <VBox fx:id="inProgressColumn" maxHeight="-Infinity" spacing="10" style="-fx-background-color: white; -fx-background-radius: 10;" styleClass="stage-container" HBox.hgrow="NEVER">
             <Label styleClass="column-title" text="En ejecución">
                <VBox.margin>
                   <Insets left="5.0" top="3.0" />
@@ -229,16 +229,20 @@
                   <Font size="17.0" />
                </font>
             </Label>
-            <ListView />
+            <ListView maxHeight="-Infinity" maxWidth="-Infinity" stylesheets="@../assets/styles/transparent-list-view.css" />
             <Button mnemonicParsing="false" styleClass="add-task-button" text="Agregar">
                <graphic>
-                  <ImageView fitHeight="24.0" fitWidth="24.0" pickOnBounds="true" preserveRatio="true" />
+                  <ImageView fitHeight="24.0" fitWidth="24.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@../assets/images/add_icon_grey.png" />
+                     </image>
+                  </ImageView>
                </graphic>
             </Button>
          </VBox>
 
                         <!-- "Finalizadas" column -->
-         <VBox fx:id="doneColumn" maxHeight="-Infinity" spacing="10" style="-fx-background-color: white; -fx-background-radius: 10;" styleClass="stage-container" HBox.hgrow="ALWAYS">
+         <VBox fx:id="doneColumn" maxHeight="-Infinity" spacing="10" style="-fx-background-color: white; -fx-background-radius: 10;" styleClass="stage-container" HBox.hgrow="NEVER">
             <Label styleClass="column-title" text="Finalizadas">
                <font>
                   <Font size="17.0" />
@@ -247,13 +251,18 @@
                   <Insets left="5.0" top="3.0" />
                </VBox.margin>
             </Label>
-            <ListView />
+            <ListView stylesheets="@../assets/styles/transparent-list-view.css" />
             <Button mnemonicParsing="false" styleClass="add-task-button" text="Agregar">
                <graphic>
-                  <ImageView fitHeight="24.0" fitWidth="24.0" pickOnBounds="true" preserveRatio="true" />
+                  <ImageView fitHeight="24.0" fitWidth="24.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@../assets/images/add_icon_grey.png" />
+                     </image>
+                  </ImageView>
                </graphic>
             </Button>
          </VBox>
+         <ProgressIndicator prefHeight="200.0" prefWidth="200.0" style="-fx-progress-color: black;" visible="false" />
          <GridPane.margin>
             <Insets bottom="15.0" left="15.0" right="15.0" />
          </GridPane.margin>
