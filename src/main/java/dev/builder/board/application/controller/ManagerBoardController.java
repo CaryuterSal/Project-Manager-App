@@ -128,7 +128,7 @@ public class ManagerBoardController implements Initializable {
             Stage cuentasStage = new Stage();
             cuentasStage.initModality(Modality.APPLICATION_MODAL);
             cuentasStage.initOwner(todoList.getScene().getWindow());
-            viewNavigation.navigate("add-student-view.fxml", cuentasStage);
+            viewNavigation.navigate("manager-account-view.fxml", cuentasStage);
             cuentasStage.setTitle("Cuentas");
             cuentasStage.show();
         } catch (Exception ex) {

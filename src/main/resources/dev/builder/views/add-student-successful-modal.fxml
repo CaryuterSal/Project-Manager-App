@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+
+<VBox alignment="CENTER" style="-fx-background-color: white;" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1">
+   <children>
+      <ImageView fitHeight="78.0" fitWidth="85.0" pickOnBounds="true" preserveRatio="true">
+         <image>
+            <Image url="@../assets/images/verificated.png" />
+         </image>
+      </ImageView>
+      <Label text="Registro exitoso!">
+         <font>
+            <Font name="System Bold" size="40.0" />
+         </font>
+      </Label>
+      <Label text="El estudiante se ha dado de alta de">
+         <font>
+            <Font size="24.0" />
+         </font>
+      </Label>
+      <Label text="manera exitosa">
+         <font>
+            <Font size="24.0" />
+         </font>
+      </Label>
+   </children>
+   <padding>
+      <Insets bottom="20.0" left="40.0" right="40.0" top="20.0" />
+   </padding>
+</VBox>
