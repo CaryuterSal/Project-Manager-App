@@ -9,15 +9,13 @@
       <option name="IS_ENABLE_EXPERIMENTAL_INTEGRATIONS" value="false" />
       <ENTRIES>
         <ENTRY IS_ENABLED="true" PARSER="runconfig" IS_EXECUTABLE="false" />
+        <ENTRY IS_ENABLED="false" PARSER="env" IS_EXECUTABLE="false" PATH=".env" />
         <ENTRY IS_ENABLED="true" PARSER="env" IS_EXECUTABLE="false" PATH=".env" />
       </ENTRIES>
     </extension>
     <option name="MAIN_CLASS_NAME" value="" />
     <option name="METHOD_NAME" value="" />
     <option name="TEST_OBJECT" value="class" />
-    <envs>
-      <env name="TESTCONTAINERS_REUSE_ENABLE" value="true" />
-    </envs>
     <method v="2">
       <option name="Make" enabled="true" />
     </method>

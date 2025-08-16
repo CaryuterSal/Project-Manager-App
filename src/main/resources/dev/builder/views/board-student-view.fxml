@@ -73,7 +73,7 @@
             <Region HBox.hgrow="ALWAYS" />
          </HBox>
 
-               <Label fx:id="lblError" style="-fx-text-fill: red;" text="" />
+         <Label fx:id="lblError" style="-fx-text-fill: red;" text="" />
       </VBox>
       <VBox alignment="BOTTOM_LEFT" spacing="20.0" GridPane.columnIndex="1">
          <children>
@@ -122,8 +122,8 @@
       <VBox alignment="CENTER_RIGHT" maxHeight="1.7976931348623157E308" maxWidth="-Infinity" spacing="15.0" GridPane.columnIndex="3" GridPane.halignment="RIGHT" GridPane.valignment="BOTTOM">
          <children>
             <MenuButton fx:id="usernameMenu" mnemonicParsing="false" stylesheets="@../assets/styles/username-button.css" text="usuario@example.com">
-              <items>
-                <MenuItem fx:id="logoutBtn" mnemonicParsing="false" styleClass="logout" text="Cerrar sesión">
+               <items>
+                  <MenuItem fx:id="logoutBtn" mnemonicParsing="false" styleClass="logout" text="Cerrar sesión">
                      <graphic>
                         <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                            <image>
@@ -132,7 +132,7 @@
                         </ImageView>
                      </graphic>
                   </MenuItem>
-              </items>
+               </items>
                <font>
                   <Font size="18.0" />
                </font>
@@ -169,7 +169,7 @@
             </padding>
          </VBox>
 
-                        <!-- "En ejecución" column -->
+         <!-- "En ejecución" column -->
          <VBox fx:id="inProgressColumn" maxHeight="-Infinity" spacing="10" style="-fx-background-color: white; -fx-background-radius: 10;" styleClass="stage-container" HBox.hgrow="NEVER">
             <Label styleClass="column-title" text="En ejecución">
                <VBox.margin>
@@ -182,7 +182,7 @@
             <ListView fx:id="inProgressList" maxHeight="-Infinity" maxWidth="-Infinity" stylesheets="@../assets/styles/transparent-list-view.css" />
          </VBox>
 
-                        <!-- "Finalizadas" column -->
+         <!-- "Finalizadas" column -->
          <VBox fx:id="doneColumn" maxHeight="-Infinity" spacing="10" style="-fx-background-color: white; -fx-background-radius: 10;" styleClass="stage-container" HBox.hgrow="NEVER">
             <Label styleClass="column-title" text="Finalizadas">
                <font>

@@ -13,6 +13,10 @@
     -fx-background-color: transparent;
 }
 
+.clickable-pane:hover {
+    -fx-background-color: rgba(0,0,0,0.1);
+}
+
 .menu-button:hover {
     -fx-text-fill: #333;
     -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.6), 3, 0.1, 0, 2);

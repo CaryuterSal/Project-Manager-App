@@ -39,7 +39,6 @@ public class EditTaskController implements Initializable {
     private final ViewNavigation viewNavigation;
     private final ExecutorService executor = Executors.newSingleThreadExecutor();
     private TaskView createdTask;
-    private Stage dialogStage;
     private TaskView task;
 
     @Inject
@@ -52,7 +51,7 @@ public class EditTaskController implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        btnCancel.setOnAction(e -> dialogStage.close());
+        btnCancel.setOnAction(e -> close());
         btnSave.setOnAction(e -> onSaveTask());
     }
 
@@ -61,8 +60,8 @@ public class EditTaskController implements Initializable {
         if (task != null) {
             txtEditTitle.setText(task.title());
             descriptionEditorEdit.setHtmlText(task.description());
-            dpStartEdit.setValue(task.startedAt().orElse(null).toLocalDate());
-            dpEndEdit.setValue(task.deadline().toLocalDate());
+            task.startedAt().ifPresent(s -> dpStartEdit.setValue(s.toLocalDate()));
+            task.finishedAt().ifPresent(s -> dpEndEdit.setValue(s.toLocalDate()));
         }
     }
 
@@ -96,7 +95,7 @@ public class EditTaskController implements Initializable {
 
                 editTask.setOnSucceeded(e -> {
                     task = editTask.getValue();
-                    dialogStage.close();
+                    close();
                 });
 
                 editTask.setOnFailed(e -> {
@@ -108,5 +107,10 @@ public class EditTaskController implements Initializable {
                 lblError.setText("Error al guardar los cambios: " + e.getMessage());
             }
         });
+    }
+
+    private void close(){
+        Stage stage = (Stage) btnCancel.getScene().getWindow();
+        stage.close();
     }
 }

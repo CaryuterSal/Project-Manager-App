@@ -52,7 +52,7 @@ public record Deadline(LocalDateTime value) implements ValueObject<Deadline> {
      * @return {@code true} si la fecha es posterior a la actual, {@code false} en caso contrario.
      */
     public static boolean isValid(LocalDateTime value) {
-        return value != null && value.isAfter(LocalDateTime.now());
+        return value != null;
     }
 
     /**

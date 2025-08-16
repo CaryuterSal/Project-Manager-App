@@ -230,7 +230,7 @@ public class StudentDashboardController implements Initializable {
     }
 
     private void openManagerRegistration(ActionEvent aEv){
-        viewNavigation.openModal("add-student-form.fxml", StageStyle.TRANSPARENT);
+        viewNavigation.openModal("add-student-form.fxml", StageStyle.UTILITY);
         RegisterStudentController.RegistrationStatus status = registerStudentController.status();
         switch (status){
             case FAIL -> viewNavigation.openModal("add-student-error-modal.fxml", StageStyle.DECORATED);

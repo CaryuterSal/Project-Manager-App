@@ -55,6 +55,9 @@ public class Task extends LocalEntity<Task.Id> implements Comparable<Task> {
 
     @Contract("_,_, _, _,_, _, _ -> new")
     static @NotNull Task createNew(Task.Id id, Stage.Id stage, Title title, TaskDescription description, Color color, Deadline deadline, Order order) {
+        if(deadline == null || deadline.value().isAfter(LocalDateTime.now())) {
+            throw new IllegalArgumentException("Deadline must be after now");
+        }
         Task created = new Task(id, stage, title, description, color, deadline, order);
         if(!stage.state().equals(Stage.StageState.TO_DO)){
             created.start();

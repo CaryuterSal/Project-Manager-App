@@ -6,7 +6,7 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.*?>
 
-<StackPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="340.0" prefWidth="749.0" style="-fx-background-color: };" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1">
+<StackPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="340.0" prefWidth="749.0" style="-fx-background-color: white};" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="dev.builder.board.application.controller.InviteStudentFormController">
    <children>
       <BorderPane prefHeight="200.0" prefWidth="200.0">
          <top>
@@ -24,14 +24,15 @@
                         <Font size="22.0" />
                      </font>
                   </Label>
-                  <ComboBox editable="true" prefHeight="26.0" prefWidth="419.0" promptText="example@utez.edu.mx" />
+                  <ComboBox fx:id="studentSelector" prefHeight="26.0" prefWidth="419.0" promptText="example@utez.edu.mx" />
+                  <Label fx:id="errorLbl" text="Label" visible="false" />
                </children>
             </VBox>
          </center>
          <bottom>
             <ButtonBar buttonMinWidth="0.0" prefHeight="40.0" prefWidth="200.0" BorderPane.alignment="CENTER">
               <buttons>
-                <Button mnemonicParsing="false" style="-fx-background-color: transparent; -fx-border-color: #000000; -fx-border-width: 1px;" text="Cancelar">
+                <Button fx:id="cancelBtn" mnemonicParsing="false" style="-fx-background-color: transparent; -fx-border-color: #000000; -fx-border-width: 1px;" text="Cancelar">
                      <font>
                         <Font size="22.0" />
                      </font>
@@ -39,7 +40,7 @@
                         <Cursor fx:constant="HAND" />
                      </cursor>
                   </Button>
-                  <Button mnemonicParsing="false" style="-fx-background-color: #B3D0FF;" text="Invitar">
+                  <Button fx:id="inviteBtn" mnemonicParsing="false" style="-fx-background-color: #B3D0FF;" text="Invitar">
                      <font>
                         <Font size="22.0" />
                      </font>

@@ -52,7 +52,7 @@
                <String fx:value="menu-item" />
             </styleClass>
          </Button>
-         <Button fx:id="btnAccount" onAction="#onAccountClicked" style="-fx-background-color: #f7f7f7; -fx-border-color: #f7f7f7;" styleClass="menu-item" text="Cuentas" textFill="#919191">
+         <Button fx:id="btnAccount" style="-fx-background-color: #f7f7f7; -fx-border-color: #f7f7f7;" styleClass="menu-item" text="Cuentas" textFill="#919191">
             <font>
                <Font name="System Bold" size="20.0" />
             </font>
@@ -93,7 +93,7 @@
                <children>
                   <HBox maxHeight="-Infinity" maxWidth="-Infinity" styleClass="search-bar" stylesheets="@../assets/styles/search-bar.css">
                      <children>
-                        <Button mnemonicParsing="false">
+                        <Button fx:id="searchBtn" mnemonicParsing="false">
                            <graphic>
                               <ImageView fitHeight="24.0" fitWidth="24.0" pickOnBounds="true" preserveRatio="true">
                                  <image>
@@ -107,7 +107,7 @@
                               <Font size="14.0" />
                            </font>
                         </TextField>
-                        <Button mnemonicParsing="false">
+                        <Button fx:id="delSearchBtn" mnemonicParsing="false">
                            <graphic>
                               <ImageView fitHeight="24.0" fitWidth="24.0" pickOnBounds="true" preserveRatio="true">
                                  <image>
@@ -118,7 +118,7 @@
                         </Button>
                      </children>
                   </HBox>
-                  <ProgressIndicator minHeight="40.0" prefWidth="40.0" style="-fx-progress-color: black;" />
+                  <ProgressIndicator fx:id="searchProgressIndicator" minHeight="40.0" prefWidth="40.0" style="-fx-progress-color: black;" />
                </children>
             </HBox>
          </children>
@@ -130,7 +130,7 @@
          <children>
             <MenuButton mnemonicParsing="false" stylesheets="@../assets/styles/username-button.css" text="usuario@example.com">
               <items>
-                <MenuItem mnemonicParsing="false" styleClass="logout" text="Cerrar sesión">
+                <MenuItem fx:id="logoutBtn" mnemonicParsing="false" styleClass="logout" text="Cerrar sesión">
                      <graphic>
                         <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                            <image>
@@ -231,7 +231,6 @@
             </Label>
             <ListView fx:id="doneList" stylesheets="@../assets/styles/transparent-list-view.css" />
          </VBox>
-         <ProgressIndicator prefHeight="200.0" prefWidth="200.0" style="-fx-progress-color: black;" visible="false" />
          <GridPane.margin>
             <Insets bottom="15.0" left="15.0" right="15.0" />
          </GridPane.margin>
