@@ -10,5 +10,5 @@ import java.util.Set;
  * @param collaborators Conjunto de colaboradores que tienen acceso o participación en el tablero.
  * @param stages        Lista de etapas del tablero, cada una conteniendo tareas organizadas por estado.
  */
-public record BoardView(Set<CollaboratorView> collaborators, List<StageView> stages) {
+public record BoardView(String owner, Set<CollaboratorView> collaborators, List<StageView> stages) {
 }

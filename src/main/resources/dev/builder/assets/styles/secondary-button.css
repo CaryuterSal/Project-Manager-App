@@ -6,6 +6,7 @@
     -fx-background-radius: 999px;
     -fx-text-fill: #111111;
     -fx-background-color: transparent;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.15), 6, 0.2, 0, 2);
 }
 
 .button:hover {

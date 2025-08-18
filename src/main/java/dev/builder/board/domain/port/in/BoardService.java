@@ -5,13 +5,13 @@ import dev.builder.board.application.command.CreateTaskCommand;
 import dev.builder.board.application.command.DeleteTaskCommand;
 import dev.builder.board.application.command.MoveTaskCommand;
 import dev.builder.board.application.query.GetBoardQuery;
+import dev.builder.board.application.query.GetBoardsByCollaboratorCommand;
 import dev.builder.board.application.view.BoardView;
 import dev.builder.board.application.view.StageView;
-import dev.builder.board.domain.model.Board;
 import dev.builder.core.domain.ApplicationService;
-import dev.builder.usermanagement.domain.model.Student;
 
 import java.sql.Connection;
+import java.util.List;
 import java.util.Optional;
 
 public interface BoardService extends ApplicationService {
@@ -22,4 +22,5 @@ public interface BoardService extends ApplicationService {
     Optional<BoardView> getBoard(GetBoardQuery command);
     void createOwnBoard(Connection connection);
     void assignToInvitedBoard(Connection connection);
+    List<BoardView> findByCollaborator(GetBoardsByCollaboratorCommand command);
 }

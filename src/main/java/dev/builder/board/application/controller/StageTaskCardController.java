@@ -6,11 +6,9 @@ import dev.builder.board.application.view.TaskView;
 import dev.builder.core.application.ErrorHandler;
 import dev.builder.core.application.RequestDispatcher;
 import dev.builder.core.application.ViewNavigation;
-import dev.builder.core.application.validation.ValidationException;
 import dev.builder.core.infrastructure.di.annotation.Inject;
 import dev.builder.core.infrastructure.di.annotation.Prototype;
 import dev.builder.core.infrastructure.properties.MessageLocalizer;
-import dev.builder.usermanagement.application.command.DeleteUserCommand;
 import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
 import javafx.fxml.Initializable;
@@ -133,8 +131,8 @@ public class StageTaskCardController implements Initializable {
 
     private void onClick(ActionEvent actionEvent) {
         viewNavigation.openModal("edit-task-view.fxml", StageStyle.UTILITY,  controller -> {
-            EditTaskController editTaskController = (EditTaskController) controller;
-            editTaskController.setTask(data);
+            TaskFormController editTaskFormController = (TaskFormController) controller;
+            editTaskFormController.setTask(data);
         });
         Task<Optional<TaskView>> task = new Task<>() {
             @Override

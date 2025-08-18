@@ -4,17 +4,12 @@ import dev.builder.auth.application.service.UnauthorizedException;
 import dev.builder.auth.domain.port.out.SessionContext;
 import dev.builder.auth.infrastructure.Role;
 import dev.builder.board.application.command.*;
-import dev.builder.board.application.query.GetBoardQuery;
-import dev.builder.board.application.query.GetTaskQuery;
-import dev.builder.board.application.query.LoadAttachmentQuery;
-import dev.builder.board.application.query.LoadCoverImageQuery;
+import dev.builder.board.application.query.*;
 import dev.builder.board.application.view.BoardView;
 import dev.builder.board.application.view.FileView;
 import dev.builder.board.application.view.StageView;
 import dev.builder.board.application.view.TaskView;
-import dev.builder.board.domain.exception.BoardNotFoundException;
 import dev.builder.board.domain.exception.FileNotFoundException;
-import dev.builder.board.domain.exception.StageNotFoundException;
 import dev.builder.board.domain.exception.TaskNotFoundException;
 import dev.builder.board.domain.model.*;
 import dev.builder.board.domain.port.in.BoardService;
@@ -440,6 +435,24 @@ public class BoardApplicationService implements BoardService, TaskService, FileS
                         }
                     }
                     return Optional.of(getTaskInfo(task, conn));
+                }
+        );
+    }
+
+    @Override
+    public List<BoardView> findByCollaborator(GetBoardsByCollaboratorCommand command) {
+        sessionContext.requireRole(Role.STUDENT, "Se requiere ser estudiante para esta operación");
+        return runInTransaction(
+                connectionManager,
+                log,
+                conn -> {
+                    Student.Id id = new Student.Id(sessionContext.getCurrentUser());
+                    Student student = studentRepository.findById(id, conn)
+                            .orElseThrow(() -> new StudentNotFoundException(messageLocalizer, id));
+                    List<Board> boards = boardRepository.findAllByCollaborator(id, conn);
+                    return boards.stream()
+                            .map(b -> getBoardInfo(b, conn))
+                            .toList();
                 }
         );
     }

@@ -36,6 +36,7 @@ public class InviteStudentFormController implements Initializable {
 
     private final ObservableList<StudentView> studentSelectorData = FXCollections.observableArrayList();
 
+    public Button registerBtn;
     public Button cancelBtn;
     public ComboBox<StudentView> studentSelector;
     public Button inviteBtn;
@@ -76,6 +77,10 @@ public class InviteStudentFormController implements Initializable {
         });
         inviteBtn.setOnAction(this::onInvite);
         cancelBtn.setOnAction(this::onCancel);
+        cancelBtn.getScene().getWindow().setOnCloseRequest((event) -> {
+            event.consume();
+            close();
+        });
         fillInvitationOptions();
     }
 
@@ -120,6 +125,11 @@ public class InviteStudentFormController implements Initializable {
     }
     private void onCancel(ActionEvent e){
         status = InvitationStatus.CANCEL;
+        close();
+    }
+
+    private void onRegister(ActionEvent e){
+        status = InvitationStatus.REGISTER;
         close();
     }
 

@@ -6,6 +6,7 @@ import dev.builder.board.domain.port.out.BoardRepository;
 import dev.builder.core.infrastructure.di.annotation.Bean;
 import dev.builder.core.infrastructure.di.annotation.Inject;
 import dev.builder.core.infrastructure.persistence.*;
+import dev.builder.usermanagement.domain.model.Student;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -18,8 +19,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 
-import static dev.builder.core.infrastructure.persistence.CommonJdbcOperationWrappers.executeQuery;
-import static dev.builder.core.infrastructure.persistence.CommonJdbcOperationWrappers.runInTransaction;
+import static dev.builder.core.infrastructure.persistence.CommonJdbcOperationWrappers.*;
 
 @Bean
 public class JdbcBoardRepository extends TransactionalJdbcCrudRepository<Board, Board.Id> implements BoardRepository {
@@ -74,6 +74,30 @@ public class JdbcBoardRepository extends TransactionalJdbcCrudRepository<Board, 
                 JOIN app_user su ON su.email = s.email AND su.active = 1
                 JOIN student_board sb ON sb.sdt_email = su.email
             ) active_collaborators ON active_collaborators.bad_email = b.mnr_email
+            """, BoardJdbcMapper.BoardColumns.ID.columnName(),
+            BoardJdbcMapper.BoardColumns.TITLE.columnName(),
+            BoardJdbcMapper.BoardColumns.COLLABORATOR_ID.columnName(),
+            BoardJdbcMapper.BoardColumns.COLLABORATOR_ISSUED_AT.columnName());
+
+    private static final String SELECT_BY_COLLABORATOR = String.format("""
+            SELECT
+                b.mnr_email as %s,
+                b.title as %s,
+                active_collaborators.sdt_email as %s,
+                active_collaborators.issued_at as %s
+            FROM student s
+            JOIN app_user su ON su.email = s.email AND su.active = 1
+            JOIN student_board sb ON sb.sdt_email = su.email
+            JOIN board b ON b.mnr_email = sb.bad_email
+            JOIN manager m ON m.email = b.mnr_email
+            JOIN app_user u ON u.email = m.email AND u.active = 1
+            LEFT JOIN (
+                SELECT issued_at, sdt_email, bad_email
+                FROM student s
+                JOIN app_user su ON su.email = s.email AND su.active = 1
+                JOIN student_board sb ON sb.sdt_email = su.email
+            ) active_collaborators ON active_collaborators.bad_email = b.mnr_email
+            WHERE s.email = ?
             """, BoardJdbcMapper.BoardColumns.ID.columnName(),
             BoardJdbcMapper.BoardColumns.TITLE.columnName(),
             BoardJdbcMapper.BoardColumns.COLLABORATOR_ID.columnName(),
@@ -147,6 +171,27 @@ public class JdbcBoardRepository extends TransactionalJdbcCrudRepository<Board, 
     }
 
     @Override
+    public List<Board> findAllByCollaborator(Student.Id studentId) {
+        return wrapWithConnection(
+                connectionManager,
+                log,
+                this::findAllByCollaborator,
+                studentId
+        );
+    }
+
+    @Override
+    public List<Board> findAllByCollaborator(Student.Id studentId, Connection connection) {
+        return executeQuery(
+                SELECT_BY_COLLABORATOR,
+                ps -> ps.setString(1, studentId.value()),
+                rs -> rs.next() ? BoardJdbcMapper.rowToBoards(rs) : new ArrayList<>(),
+                log,
+                connection
+        );
+    }
+
+    @Override
     public Optional<Board> findById(Board.Id id, Connection connection) {
         return executeQuery(
                 SELECT,
@@ -168,152 +213,4 @@ public class JdbcBoardRepository extends TransactionalJdbcCrudRepository<Board, 
         );
     }
 
-    /*
-
-    // Este metodo es para buscar un tablero por Id
-    @Override
-    public Optional<Board> findById(Board.Id id) {
-        String query = "SELECT * FROM board WHERE mnr_email = ?";
-        try (Connection conn = DefaultConnectionManager.getConnection();
-        PreparedStatement ps = conn.prepareStatement(query)){
-
-            ps.setString(1, id.uuid().toString());
-            ResultSet rs = ps.executeQuery();
-
-            if (rs.next()){
-                Set<Stage .Id> stages = getStagesForBoard(id, conn);
-                return Optional.of(new Board(id, stages));
-            }
-        } catch (SQLException e){
-            e.printStackTrace();
-        }
-
-        return Optional.empty();
-    }
-
-    @Override
-    public List<Board> findAll() {
-
-        List<Board> boards = new ArrayList<>();
-        String query = "SELECT * FROM board";
-
-        try (Connection conn = DefaultConnectionManager.getConnection();
-             PreparedStatement ps = conn.prepareStatement(query);
-             ResultSet rs = ps.executeQuery()) {
-
-            while (rs.next()) {
-                Board.Id id = new Board.Id(UUID.fromString(rs.getString("mnr_email"))); // Ajusta si es necesario
-                Set<Stage.Id> stages = getStagesForBoard(id, conn);
-                boards.add(new Board(id, stages));
-            }
-
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return boards;
-
-    }
-
-    private Set<Stage.Id> getStagesForBoard(Board.Id id, Connection conn) throws SQLException {
-        Set<Stage.Id> stages = new HashSet<>();
-        String query = "SELECT sae_NAME FROM board_stage WHERE bad_email = ?";
-        try (PreparedStatement ps = conn.prepareStatement(query)) {
-            ps.setString(1, id.uuid().toString());
-            ResultSet rs = ps.executeQuery();
-            while (rs.next()) {
-                stages.add(new Stage.Id(rs.getString("sae_NAME")));
-            }
-        }
-        return stages;
-    }
-
-    // Este metodo elimina un tablero usando el ojeto
-    @Override
-    public void delete(Board aggregateRoot) {
-        deleteById(aggregateRoot.id());
-
-    }
-
-    // Este metodo elimina un tablero por id
-    @Override
-    public void deleteById(Board.Id id) {
-        String deleteStages = "DELETE FROM board_stage WHERE bad_email = ?";
-        String deleteBoard = "DELETE FROM board WHERE mnr_email = ?";
-
-        try (Connection conn = DefaultConnectionManager.getConnection()) {
-            conn.setAutoCommit(false);
-
-            try (PreparedStatement psStages = conn.prepareStatement(deleteStages);
-                 PreparedStatement psBoard = conn.prepareStatement(deleteBoard)) {
-
-                psStages.setString(1, id.uuid().toString());
-                psStages.executeUpdate();
-
-                psBoard.setString(1, id.uuid().toString());
-                psBoard.executeUpdate();
-
-                conn.commit();
-            } catch (SQLException e) {
-                conn.rollback();
-                e.printStackTrace();
-            } finally {
-                conn.setAutoCommit(true);
-            }
-
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-
-    }
-
-    // Este metodo crea o actualiza un tablero
-    @Override
-    public Board save(Board aggregateRoot) {
-        if (existsById(aggregateRoot.id())) {
-            return updateBoard(aggregateRoot);
-        } else {
-            return createBoard(aggregateRoot);
-        }
-    }
-
-    //TODO: insertar columnas nuevas tambien
-    private Board createBoard(Board aggregateRoot) {
-        String insertBoard = "INSERT INTO board (mnr_email) VALUES (?)";
-        try (Connection conn = DefaultConnectionManager.getConnection();
-             PreparedStatement ps = conn.prepareStatement(insertBoard)) {
-
-            ps.setString(1, aggregateRoot.id().uuid().toString());
-            ps.executeUpdate();
-            return aggregateRoot;
-
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-    }
-
-    //TODO: Crear logica de actualizacion
-    private Board updateBoard(Board aggregateRoot) {
-
-    }
-
-    // Este metodo verifica si existe un tablero con ese Id
-    @Override
-    public boolean existsById(Board.Id id) {
-
-        String query = "SELECT 1 FROM board WHERE mnr_email = ?";
-        try (Connection conn = DefaultConnectionManager.getConnection();
-             PreparedStatement ps = conn.prepareStatement(query)) {
-
-            ps.setString(1, id.uuid().toString());
-            try (ResultSet rs = ps.executeQuery()) {
-                return rs.next(); // true si encontró algo
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return false;
-
-    }
-
- */
 }

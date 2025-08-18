@@ -1,47 +1,161 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.geometry.*?>
-<?import javafx.scene.control.*?>
-<?import javafx.scene.layout.*?>
-<?import javafx.scene.text.*?>
-<?import javafx.scene.web.*?>
+<?import java.net.URL?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.Cursor?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ContextMenu?>
+<?import javafx.scene.control.DatePicker?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.MenuButton?>
+<?import javafx.scene.control.MenuItem?>
+<?import javafx.scene.control.Separator?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.effect.DropShadow?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.FlowPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.shape.Circle?>
+<?import javafx.scene.text.Font?>
+<?import javafx.scene.web.HTMLEditor?>
 
-<VBox alignment="TOP_CENTER" spacing="15" style="-fx-background-color: #fff; -fx-background-radius: 15;" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="dev.builder.board.application.controller.EditTaskController">
-   <Label fx:id="lblError" style="-fx-text-fill: red;" text="" />
-
-   <!-- Título del modal -->
-   <Label styleClass="modal-title" text="Información de la tarea">
-      <font>
-         <Font name="System Bold" size="29.0" />
-      </font></Label>
-
-   <!-- Campo de título con RadioButton indicativo -->
-   <HBox alignment="CENTER_LEFT" spacing="10">
-      <RadioButton fx:id="rbTitle" />
-      <TextField fx:id="txtEditTitle" prefHeight="21.0" prefWidth="773.0" promptText="Ingrese el título" style="-fx-background-color: #fff; -fx-border-color: #fff;" HBox.hgrow="ALWAYS">
-         <font>
-            <Font name="System Bold" size="23.0" />
-         </font></TextField>
-   </HBox>
-
-   <!-- Selección de miembros y fechas -->
-   <HBox spacing="10">
-      <Button fx:id="btnEditMembers" text="Miembros..." />
-      <DatePicker fx:id="dpStartEdit" promptText="Fecha inicio" />
-      <DatePicker fx:id="dpEndEdit" promptText="Fecha fin" />
-   </HBox>
-
-   <!-- Descripción con editor enriquecido -->
-   <HBox alignment="CENTER_LEFT" />
-   <HTMLEditor fx:id="descriptionEditorEdit" prefHeight="200" VBox.vgrow="ALWAYS" />
-
-   <!-- Botones de acción -->
-   <HBox alignment="CENTER_RIGHT" spacing="10">
-      <Button fx:id="btnCancel" text="Cancelar" />
-      <Button fx:id="btnSave" defaultButton="true" style="-fx-background-color: #0647F0;" text="Guardar" textFill="WHITE" />
-   </HBox>
-   <padding>
-      <Insets bottom="20" left="20" right="20" top="20" />
-   </padding>
-
+<VBox style="-fx-border-radius: 10px; -fx-background-radius: 10px;" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="dev.builder.board.application.controller.TaskController">
+   <children>
+      <StackPane maxHeight="-Infinity" maxWidth="1.7976931348623157E308" prefHeight="150.0" prefWidth="200.0" style="-fx-background-image: url(dev/builder/assets/images/task_background_placeholder.jpg);">
+         <children>
+            <Button mnemonicParsing="false" style="-fx-padding: 10 10 12 12; -fx-background-color: white;" stylesheets="@../assets/styles/primary-button.css" StackPane.alignment="TOP_LEFT">
+               <graphic>
+                  <ImageView fx:id="addCoverImageBtn" fitHeight="30.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@../assets/images/edit_icon.png" />
+                     </image>
+                  </ImageView>
+               </graphic>
+               <StackPane.margin>
+                  <Insets left="40.0" top="30.0" />
+               </StackPane.margin>
+               <cursor>
+                  <Cursor fx:constant="HAND" />
+               </cursor>
+            </Button>
+         </children>
+      </StackPane>
+      <VBox alignment="TOP_CENTER" spacing="15" style="-fx-background-color: #fff; -fx-background-radius: 15;">
+         <padding>
+            <Insets bottom="30.0" left="40.0" right="40.0" top="30.0" />
+         </padding>
+         <children>
+            <HBox alignment="CENTER_LEFT" spacing="10">
+               <children>
+                  <Button fx:id="colorSelector" mnemonicParsing="false" style="-fx-padding: 10;" stylesheets="@../assets/styles/secondary-button.css">
+                     <graphic>
+                        <Circle fill="DODGERBLUE" radius="20.0" stroke="BLACK" strokeType="INSIDE" />
+                     </graphic>
+                     <contextMenu>
+                        <ContextMenu fx:id="colorList">
+                           <items>
+                              <MenuItem mnemonicParsing="false" text="Unspecified Action" />
+                           </items>
+                        </ContextMenu>
+                     </contextMenu>
+                     <cursor>
+                        <Cursor fx:constant="HAND" />
+                     </cursor>
+                  </Button>
+                  <TextField fx:id="txtTitle" maxWidth="1.7976931348623157E308" promptText="Ingrese el título" style="-fx-background-color: #fff; -fx-border-color: #fff;" text="Tarea con Título" HBox.hgrow="ALWAYS">
+                     <font>
+                        <Font size="21.0" />
+                     </font>
+                  </TextField>
+               </children>
+            </HBox>
+            <HBox alignment="CENTER_LEFT" spacing="10">
+               <children>
+                  <VBox>
+                     <children>
+                        <MenuButton fx:id="btnMembers" mnemonicParsing="false" stylesheets="@../assets/styles/username-button.css" text="Añadir Miembros">
+                          <items>
+                            <MenuItem mnemonicParsing="false" text="Action 1" />
+                            <MenuItem mnemonicParsing="false" text="Action 2" />
+                          </items>
+                           <graphic>
+                              <ImageView fitHeight="30.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true">
+                                 <image>
+                                    <Image url="@../assets/images/add_manager_icon.png" />
+                                 </image>
+                              </ImageView>
+                           </graphic>
+                        </MenuButton>
+                        <FlowPane fx:id="collaboratorsPillContainer" maxHeight="-Infinity" maxWidth="-Infinity" />
+                     </children>
+                  </VBox>
+                  <VBox spacing="5.0">
+                     <children>
+                        <Label text="Fecha límite" />
+                        <DatePicker fx:id="dpEnd" promptText="mm/dd/YYY" />
+                     </children>
+                  </VBox>
+                  <Button fx:id="addAttachmentBtn" mnemonicParsing="false" stylesheets="@../assets/styles/secondary-text-button.css" text="Añadir archivo adjunto" wrapText="true">
+                     <graphic>
+                        <ImageView fitHeight="24.0" fitWidth="24.0" pickOnBounds="true" preserveRatio="true">
+                           <image>
+                              <Image url="@../assets/images/attach-file.png" />
+                           </image>
+                        </ImageView>
+                     </graphic>
+                  </Button>
+                  <FlowPane fx:id="attachmentPillContainer" />
+               </children>
+            </HBox>
+            <HBox fx:id="dateEditData" spacing="20.0">
+               <children>
+                  <HBox alignment="CENTER_LEFT" spacing="10.0">
+                     <children>
+                        <Label text="Iniciada En:" />
+                        <Label fx:id="startedAt" text="20 de Agosto de 2025" />
+                     </children>
+                  </HBox>
+                  <Separator orientation="VERTICAL" />
+                  <HBox alignment="CENTER_LEFT" spacing="10.0">
+                     <children>
+                        <Label text="Terminada En:" />
+                        <Label text="Aún no terminada" />
+                     </children>
+                  </HBox>
+                  <Separator orientation="VERTICAL" />
+                  <Label text="En Tiempo" textFill="#10ab18" />
+               </children>
+            </HBox>
+            <HBox alignment="CENTER_LEFT" />
+            <HTMLEditor fx:id="descriptionEditor" htmlText="&lt;html&gt;&lt;head&gt;&lt;/head&gt;&lt;body contenteditable=&quot;true&quot;&gt;Esta es una descripción&lt;/body&gt;&lt;/html&gt;" prefHeight="200" VBox.vgrow="ALWAYS" />
+            <HBox alignment="CENTER_RIGHT" spacing="10">
+               <children>
+                  <Button fx:id="btnCancel1" style="-fx-background-color: transparent; -fx-border-color: black; -fx-text-fill: black;" text="Cancelar">
+                     <effect>
+                        <DropShadow height="0.0" radius="0.0" width="0.0" />
+                     </effect>
+                     <padding>
+                        <Insets bottom="8.0" left="15.0" right="15.0" top="8.0" />
+                     </padding>
+                     <stylesheets>
+                        <URL value="@../assets/styles/secondary-button.css" />
+                        <URL value="@../assets/styles/primary-button.css" />
+                     </stylesheets>
+                     <font>
+                        <Font size="18.0" />
+                     </font>
+                  </Button>
+                  <Button fx:id="btnSave" defaultButton="true" stylesheets="@../assets/styles/primary-button.css" text="Agregar" textFill="WHITE">
+                     <font>
+                        <Font size="18.0" />
+                     </font>
+                  </Button>
+               </children>
+            </HBox>
+         </children>
+      </VBox>
+   </children>
 </VBox>

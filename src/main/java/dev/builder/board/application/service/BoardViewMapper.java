@@ -51,6 +51,7 @@ public class BoardViewMapper {
             ));
         }
         return new BoardView(
+                board.id().userId().value(),
                 collaboratorViews,
                 stageViews
         );
