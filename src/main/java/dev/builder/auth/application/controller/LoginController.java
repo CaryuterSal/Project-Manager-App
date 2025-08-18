@@ -239,8 +239,10 @@ public class LoginController implements Initializable {
         Stage stage = (Stage) labelError.getScene().getWindow();
         if(sessionContext.hasRole(Role.ADMIN)) {
             viewNavigation.navigate("admin-panel-view.fxml", stage);
-        }else{
+        }else if(sessionContext.hasRole(Role.MANAGER)){
             viewNavigation.navigate("board-main-view.fxml", stage);
+        } else {
+            viewNavigation.navigate("board-student-view.fxml", stage);
         }
     }
 
