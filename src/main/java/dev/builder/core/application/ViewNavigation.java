@@ -31,17 +31,11 @@ public class ViewNavigation {
 
     public void navigate(String viewName, Stage stage){
         try {
-            // Configura el FXMLLoader manualmente
             FXMLLoader loader = new FXMLLoader(MainApplication.class.getResource("/dev/builder/views/%s".formatted(viewName)));
             loader.setControllerFactory(dependencyContainer::getInstance);
-            // Si tu vista también tiene un controlador con dependencias, puedes hacer lo mismo que aquí.
-            // loader.setControllerFactory(param -> new OtroController(...));
-
             Scene nuevaEscena = new Scene(loader.load());
-
             stage.setScene(nuevaEscena);
             stage.show();
-
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -55,7 +49,7 @@ public class ViewNavigation {
             stage.initModality(Modality.APPLICATION_MODAL);
             stage.initStyle(initStyle);
             Parent root = loader.load();
-            stage.setScene(new Scene(root, root.prefWidth(-1), root.prefHeight(-1)));
+            stage.setScene(new Scene(root));
             stage.showAndWait();
         } catch (IOException e){
             e.printStackTrace();
