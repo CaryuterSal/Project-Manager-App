@@ -108,6 +108,7 @@ public class UserRegistrationTest extends ContainerizedTest {
         StageViewMapper stageViewMapper = new StageViewMapper(taskViewMapper);
         CollaboratorViewMapper collaboratorViewMapper = new CollaboratorViewMapper(userViewMapper);
         BoardViewMapper boardViewMapper = new BoardViewMapper(stageViewMapper, collaboratorViewMapper);
+        InputStreamBufferizer inputStreamBufferizer = new  InputStreamBufferizer();
         BoardApplicationService boardApplicationService = new BoardApplicationService(
                 boardRepository,
                 stageRepository,
@@ -116,6 +117,7 @@ public class UserRegistrationTest extends ContainerizedTest {
                 storedFileRepository,
                 studentRepository,
                 managerRepository,
+                inputStreamBufferizer,
                 boardCreationService,
                 messageLocalizer,
                 mimeTypeGenerator,

@@ -82,7 +82,7 @@ public class StudentDashboardController implements Initializable {
             search();
         });
 
-        viewStudents();
+        Platform.runLater(this::viewStudents);
 
     }
 
@@ -158,10 +158,6 @@ public class StudentDashboardController implements Initializable {
         reloadButton.setManaged(false);
     }
 
-    private void showDeleteConfirmAlert(){
-
-    }
-
     private void search(){
         String emailContaining = searchText.getText();
         javafx.concurrent.Task<List<StudentView>> task = new Task<>(){
@@ -202,14 +198,12 @@ public class StudentDashboardController implements Initializable {
         javafx.concurrent.Task<List<StudentView>> task = new Task<>(){
             @Override
             protected List<StudentView> call() throws Exception {
-                Platform.runLater(() -> addManagerBtn.getScene().setCursor(Cursor.WAIT));
                 return requestDispatcher.dispatch(FindAllStudentsQuery.builder()
                         .createdBy(sessionContext.getCurrentUser())
                         .build());
             }
         };
         task.setOnSucceeded(event -> {
-            Platform.runLater(() -> addManagerBtn.getScene().setCursor(Cursor.DEFAULT));
             searchButton.setDisable(false);
             noManagerAddBtn.setDisable(false);
             reloadButton.setDisable(false);

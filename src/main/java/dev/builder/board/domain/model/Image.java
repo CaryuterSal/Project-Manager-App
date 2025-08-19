@@ -26,8 +26,8 @@ public final class Image extends StoredFile<Image.Id> {
      * @param name Nombre del archivo de imagen (validado).
      * @param mimeType Tipo MIME correspondiente al archivo.
      */
-    public Image(Image.Id id, Task.Id attachedTo, Filename name, MimeType mimeType) {
-        super(id, attachedTo, name, mimeType);
+    public Image(Image.Id id, Task.Id attachedTo, Filename name, MimeType mimeType, long contentLength) {
+        super(id, attachedTo, name, mimeType, contentLength);
     }
 
     public static class Id extends StoredFile.Id<Id> {

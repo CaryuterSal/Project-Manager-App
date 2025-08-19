@@ -49,7 +49,8 @@ public class JdbcAttachmentRepository extends TransactionalJdbcCrudRepository<At
                 f.id AS %s,
                 f.name as %s,
                 f.mimetype as %s,
-                ta.tsk_id AS %s
+                ta.tsk_id AS %s,
+                f.content_length as %s
             FROM task_attachement ta
             JOIN "FILE" f ON f.id = ta.fle_id
             WHERE ta.fle_id = ?
@@ -57,20 +58,23 @@ public class JdbcAttachmentRepository extends TransactionalJdbcCrudRepository<At
             """, FileJdbcMapper.FileColumns.ID.columnName(),
             FileJdbcMapper.FileColumns.NAME.columnName(),
             FileJdbcMapper.FileColumns.MIME_TYPE.columnName(),
-            FileJdbcMapper.FileColumns.ATTACHED_TO);
+            FileJdbcMapper.FileColumns.ATTACHED_TO,
+            FileJdbcMapper.FileColumns.CONTENT_LENGTH.columnName());
     private static final String SELECT_ALL = String.format("""
             SELECT
                 f.id AS %s,
                 f.name as %s,
                 f.mimetype as %s,
-                ta.tsk_id AS %s
+                ta.tsk_id AS %s,
+                f.content_length as %s
             FROM task_attachement ta
             JOIN "FILE" f ON f.id = ta.fle_id
             AND f.active = 1
             """, FileJdbcMapper.FileColumns.ID.columnName(),
             FileJdbcMapper.FileColumns.NAME.columnName(),
             FileJdbcMapper.FileColumns.MIME_TYPE.columnName(),
-            FileJdbcMapper.FileColumns.ATTACHED_TO);
+            FileJdbcMapper.FileColumns.ATTACHED_TO,
+            FileJdbcMapper.FileColumns.CONTENT_LENGTH.columnName());
 
 
     private static final String SELECT_BY_TASK = String.format("""
@@ -78,7 +82,8 @@ public class JdbcAttachmentRepository extends TransactionalJdbcCrudRepository<At
                 f.id AS %s,
                 f.name as %s,
                 f.mimetype as %s,
-                ta.tsk_id AS %s
+                ta.tsk_id AS %s,
+                f.content_length as %s
             FROM task_attachement ta
             JOIN "FILE" f ON f.id = ta.fle_id
             JOIN task t ON t.id = ta.tsk_id AND t.active = 1
@@ -87,7 +92,8 @@ public class JdbcAttachmentRepository extends TransactionalJdbcCrudRepository<At
             """,FileJdbcMapper.FileColumns.ID.columnName(),
             FileJdbcMapper.FileColumns.NAME.columnName(),
             FileJdbcMapper.FileColumns.MIME_TYPE.columnName(),
-            FileJdbcMapper.FileColumns.ATTACHED_TO.columnName());
+            FileJdbcMapper.FileColumns.ATTACHED_TO.columnName(),
+            FileJdbcMapper.FileColumns.CONTENT_LENGTH.columnName());
 
     private static final Logger log = LoggerFactory.getLogger(JdbcAttachmentRepository.class);
 

@@ -11,5 +11,5 @@ import java.sql.SQLException;
  */
 @FunctionalInterface
 public interface SimpleTransactionalOperation<V> {
-    V execute(Connection connection) throws SQLException;
+    V execute(Connection connection) throws Exception;
 }

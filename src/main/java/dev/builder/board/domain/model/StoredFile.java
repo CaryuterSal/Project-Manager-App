@@ -32,6 +32,8 @@ public abstract class StoredFile<ID extends StoredFile.Id<?>> extends AggregateR
      */
     protected final MimeType mimeType;
 
+    protected final long contentLength;
+
     /**
      * Crea un StoredFile con ID, nombre y tipo MIME especificados.
      *
@@ -40,11 +42,12 @@ public abstract class StoredFile<ID extends StoredFile.Id<?>> extends AggregateR
      * @param mimeType Tipo MIME del archivo
      * @throws NullPointerException si alguno de los parámetros son nulos
      */
-    public StoredFile(ID id, Task.Id attachedTo, Filename filename, MimeType mimeType) {
+    public StoredFile(ID id, Task.Id attachedTo, Filename filename, MimeType mimeType, long contentLength) {
         super(id);
         this.attachedTo = Objects.requireNonNull(attachedTo);
         this.filename = Objects.requireNonNull(filename, "filename must not be null");
         this.mimeType = Objects.requireNonNull(mimeType, "mimeType must not be null");
+        this.contentLength = contentLength;
     }
 
     /**
@@ -67,6 +70,10 @@ public abstract class StoredFile<ID extends StoredFile.Id<?>> extends AggregateR
 
     public Task.Id attachedTo() {
         return attachedTo;
+    }
+
+    public long contentLength() {
+        return contentLength;
     }
 
     /**

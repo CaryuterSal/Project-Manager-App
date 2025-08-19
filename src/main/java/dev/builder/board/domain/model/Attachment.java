@@ -10,8 +10,8 @@ import java.util.UUID;
  */
 public class Attachment extends StoredFile<Attachment.Id> {
 
-    public Attachment(Id id, Task.Id attachedTo, Filename filename, MimeType mimeType) {
-        super(id, attachedTo, filename, mimeType);
+    public Attachment(Id id, Task.Id attachedTo, Filename filename, MimeType mimeType, long contentLength) {
+        super(id, attachedTo, filename, mimeType, contentLength);
     }
 
     public static class Id extends StoredFile.Id<Id> {

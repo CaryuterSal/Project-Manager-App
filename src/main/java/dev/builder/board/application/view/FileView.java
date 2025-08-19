@@ -11,5 +11,5 @@ import java.util.UUID;
  * @param name     Nombre original del archivo.
  * @param mimeType Tipo MIME del archivo, que indica su formato (por ejemplo, image/png, application/pdf).
  */
-public record FileView(UUID id, String name, StoredFile.MimeType mimeType) {
+public record FileView(UUID id, String name, StoredFile.MimeType mimeType, long contentLength) {
 }

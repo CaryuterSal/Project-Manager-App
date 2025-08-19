@@ -18,6 +18,7 @@ import dev.builder.board.domain.port.in.TaskService;
 import dev.builder.board.domain.port.out.*;
 import dev.builder.board.domain.service.BoardCreationService;
 import dev.builder.board.domain.service.TaskStageChangerService;
+import dev.builder.board.infrastructure.InputStreamBufferizer;
 import dev.builder.core.infrastructure.di.annotation.Bean;
 import dev.builder.core.infrastructure.di.annotation.Inject;
 import dev.builder.core.infrastructure.persistence.*;
@@ -32,6 +33,9 @@ import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.sql.Connection;
 import java.util.*;
@@ -52,6 +56,7 @@ public class BoardApplicationService implements BoardService, TaskService, FileS
     private final StoredFileRepository storedFileRepository;
     private final StudentRepository studentRepository;
     private final ManagerRepository managerRepository;
+    private final InputStreamBufferizer inputStreamBufferizer;
 
     private final BoardCreationService boardCreationService;
     private final MessageLocalizer messageLocalizer;
@@ -65,7 +70,7 @@ public class BoardApplicationService implements BoardService, TaskService, FileS
     private final  FileViewMapper fileViewMapper;
 
     @Inject
-    public BoardApplicationService(BoardRepository boardRepository, StageRepository stageRepository, AttachmentRepository attachmentRepository, ImageRepository imageRepository, StoredFileRepository storedFileRepository, StudentRepository studentRepository, ManagerRepository managerRepository, BoardCreationService boardCreationService, MessageLocalizer messageLocalizer, MimeTypeGenerator mimeTypeGenerator, SessionContext sessionContext, ConnectionManager connectionManager, BoardViewMapper boardViewMapper, StageViewMapper stageViewMapper, TaskViewMapper taskViewMapper, FileViewMapper fileViewMapper) {
+    public BoardApplicationService(BoardRepository boardRepository, StageRepository stageRepository, AttachmentRepository attachmentRepository, ImageRepository imageRepository, StoredFileRepository storedFileRepository, StudentRepository studentRepository, ManagerRepository managerRepository, InputStreamBufferizer inputStreamBufferizer, BoardCreationService boardCreationService, MessageLocalizer messageLocalizer, MimeTypeGenerator mimeTypeGenerator, SessionContext sessionContext, ConnectionManager connectionManager, BoardViewMapper boardViewMapper, StageViewMapper stageViewMapper, TaskViewMapper taskViewMapper, FileViewMapper fileViewMapper) {
         this.boardRepository = boardRepository;
         this.stageRepository = stageRepository;
         this.attachmentRepository = attachmentRepository;
@@ -73,6 +78,7 @@ public class BoardApplicationService implements BoardService, TaskService, FileS
         this.storedFileRepository = storedFileRepository;
         this.studentRepository = studentRepository;
         this.managerRepository = managerRepository;
+        this.inputStreamBufferizer = inputStreamBufferizer;
         this.boardCreationService = boardCreationService;
         this.messageLocalizer = messageLocalizer;
         this.mimeTypeGenerator = mimeTypeGenerator;
@@ -480,25 +486,36 @@ public class BoardApplicationService implements BoardService, TaskService, FileS
         return containingStage;
     }
 
-    private Attachment createAttachment(Attachment.Filename filename, Task.Id forTask, InputStream data, Connection connection) {
-        Attachment attachment = new Attachment(
-                new Attachment.Id(UUIDGenerator.generateUUID()),
-                forTask,
-                filename,
-                StoredFile.MimeType.fromValue(messageLocalizer, mimeTypeGenerator.generateMimeType(data))
-        );
-        return attachmentRepository.save(attachment, data, connection);
+    private Attachment createAttachment(Attachment.Filename filename, Task.Id forTask, InputStream data, Connection connection) throws IOException {
+        byte[] inputBytes = inputStreamBufferizer.toByteArray(data);
+        long length = inputBytes.length;
+        try (InputStream buffer = new ByteArrayInputStream(inputBytes)) {
+            Attachment attachment = new Attachment(
+                    new Attachment.Id(UUIDGenerator.generateUUID()),
+                    forTask,
+                    filename,
+                    StoredFile.MimeType.fromValue(messageLocalizer, mimeTypeGenerator.generateMimeType(buffer)),
+                    length
+            );
+            return attachmentRepository.save(attachment, data, connection);
+        }
     }
 
-    private Image createImage(Image.Filename filename, Task.Id forTask, InputStream data, Connection connection) {
-        StoredFile.MimeType mimeType = StoredFile.MimeType.fromValue(messageLocalizer, mimeTypeGenerator.generateMimeType(data));
-        Image image = new Image(
-                new Image.Id(UUIDGenerator.generateUUID()),
-                forTask,
-                filename,
-                mimeType
-        );
-        return imageRepository.save(image, data, connection);
+    private Image createImage(Image.Filename filename, Task.Id forTask, InputStream data, Connection connection) throws IOException {
+        byte[] inputBytes = inputStreamBufferizer.toByteArray(data);
+        long length = inputBytes.length;
+
+        try (InputStream buffer = new ByteArrayInputStream(inputBytes)) {
+            StoredFile.MimeType mimeType = StoredFile.MimeType.fromValue(messageLocalizer, mimeTypeGenerator.generateMimeType(buffer));
+            Image image = new Image(
+                    new Image.Id(UUIDGenerator.generateUUID()),
+                    forTask,
+                    filename,
+                    mimeType,
+                    length
+            );
+            return imageRepository.save(image, data, connection);
+        }
     }
 
     private <T> T findTaskInOwnBoardAndDo(Task.Id taskId, TransactionalOperation<Task, Boolean> operation, TransactionalOperation<Stage, T> resultMapper) {

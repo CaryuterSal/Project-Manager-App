@@ -39,7 +39,7 @@ public class CommonJdbcOperationWrappers {
     public static <IN, V> V wrapWithConnection(ConnectionManager connectionManager, Logger logger,@NotNull TransactionalOperation<IN, V> operation, IN inParam){
         try(Connection conn = connectionManager.getConnection()){
             return operation.execute(inParam, conn);
-        } catch (SQLException e) {
+        } catch (Exception e) {
             logger.error(e.getMessage(), e);
             throw new RepositoryException(e.getMessage(), e);
         }
@@ -48,7 +48,7 @@ public class CommonJdbcOperationWrappers {
     public static <V> V wrapWithConnection(ConnectionManager connectionManager, Logger logger, @NotNull SimpleTransactionalOperation<V> operation){
         try(Connection conn = connectionManager.getConnection()){
             return operation.execute(conn);
-        } catch (SQLException e) {
+        } catch (Exception e) {
             logger.error(e.getMessage(), e);
             throw new RepositoryException(e.getMessage(), e);
         }
@@ -64,12 +64,9 @@ public class CommonJdbcOperationWrappers {
             connection.commit();
             return result;
 
-        } catch (SQLException ex) {
+        } catch (Exception ex) {
             rollBackIfNeeded(connection, logger);
             throw new RepositoryException(ex.getMessage(), ex);
-        } catch (RepositoryException ex){
-            rollBackIfNeeded(connection, logger);
-            throw ex;
         } finally {
            closeConnectionIfNeeded(connection, logger);
         }
@@ -86,12 +83,9 @@ public class CommonJdbcOperationWrappers {
             connection.commit();
             return result;
 
-        } catch (SQLException ex) {
+        } catch (Exception ex) {
            rollBackIfNeeded(connection, logger);
            throw new RepositoryException(ex.getMessage(), ex);
-        } catch (RepositoryException ex){
-            rollBackIfNeeded(connection, logger);
-            throw ex;
         } finally {
             closeConnectionIfNeeded(connection, logger);
         }

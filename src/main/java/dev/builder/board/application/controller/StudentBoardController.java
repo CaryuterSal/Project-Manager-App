@@ -62,9 +62,6 @@ public class StudentBoardController extends BaseBoardContainerController impleme
             return;
         }
         loadCollaboratingInBoards();
-        for(String owner : boardOwners) {
-            loadBoardView(owner);
-        }
         boardsList.setCellFactory(lv ->new ListCell<String>() {
             @Override
             protected void updateItem(String item, boolean empty) {
@@ -85,6 +82,7 @@ public class StudentBoardController extends BaseBoardContainerController impleme
                 }
             }
         });
+        boardsList.setItems(boardOwners);
     }
 
     private void loadCollaboratingInBoards(){
@@ -98,6 +96,11 @@ public class StudentBoardController extends BaseBoardContainerController impleme
             boardOwners.setAll(task.getValue().stream()
                     .map(BoardView::owner)
                     .toList());
+
+            for(String owner : boardOwners) {
+                loadBoardView(owner);
+            }
+            navigateToBoardView(boardOwners.getFirst());
         });
         new Thread(task).start();
     }
@@ -117,13 +120,14 @@ public class StudentBoardController extends BaseBoardContainerController impleme
 
     private void loadBoardView(String email){
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/dev/builder/views/board-view.fxml"));
+        loader.setControllerFactory(dependencyContainer::getInstance);
         try {
             Parent root = loader.load();
             BoardController controller = loader.getController();
             controller.setOwnerEmail(email);
             boardsByManager.put(email, root);
         } catch (IOException e) {
-            log.error(e.getMessage());
+            log.error(e.getMessage(), e);
         }
     }
 

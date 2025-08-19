@@ -7,7 +7,7 @@
 <?import javafx.scene.control.DatePicker?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.MenuButton?>
-<?import javafx.scene.control.MenuItem?>
+<?import javafx.scene.control.ProgressBar?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.effect.DropShadow?>
 <?import javafx.scene.image.Image?>
@@ -20,13 +20,13 @@
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.web.HTMLEditor?>
 
-<VBox style="-fx-border-radius: 10px; -fx-background-radius: 10px;" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="dev.builder.board.application.controller.TaskController">
+<VBox style="-fx-border-radius: 10px; -fx-background-radius: 10px;" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="dev.builder.board.application.controller.TaskFormController">
    <children>
-      <StackPane maxHeight="-Infinity" maxWidth="1.7976931348623157E308" prefHeight="150.0" prefWidth="200.0" style="-fx-background-image: url(dev/builder/assets/images/task_background_placeholder.jpg);">
+      <StackPane fx:id="coverImageContainer" maxHeight="-Infinity" maxWidth="1.7976931348623157E308" minHeight="150.0" prefHeight="150.0" prefWidth="200.0" style="-fx-background-image: url(dev/builder/assets/images/task_background_placeholder.jpg);">
          <children>
-            <Button mnemonicParsing="false" style="-fx-padding: 10; -fx-background-color: white;" stylesheets="@../assets/styles/primary-button.css" StackPane.alignment="TOP_LEFT">
+            <Button fx:id="addCoverImageBtn" mnemonicParsing="false" style="-fx-padding: 10; -fx-background-color: white;" stylesheets="@../assets/styles/primary-button.css" StackPane.alignment="TOP_LEFT">
                <graphic>
-                  <ImageView fx:id="addCoverImageBtn" fitHeight="35.0" fitWidth="35.0" pickOnBounds="true" preserveRatio="true">
+                  <ImageView fitHeight="35.0" fitWidth="35.0" pickOnBounds="true" preserveRatio="true">
                      <image>
                         <Image url="@../assets/images/add_image_icon.png" />
                      </image>
@@ -41,105 +41,102 @@
             </Button>
          </children>
       </StackPane>
-      <VBox alignment="TOP_CENTER" spacing="15" style="-fx-background-color: #fff; -fx-background-radius: 15;">
-         <padding>
-            <Insets bottom="30.0" left="40.0" right="40.0" top="30.0" />
-         </padding>
-      
-         <!-- Título del modal -->
-         <Label text="Agregar tarea">
-            <font>
-               <Font name="System Bold" size="29.0" />
-            </font>
-         </Label>
-      
-         <!-- Campo de título con RadioButton indicativo -->
-         <HBox alignment="CENTER_LEFT" spacing="10">
-            <MenuButton fx:id="colorSelector" mnemonicParsing="false" styleClass="button" stylesheets="@../assets/styles/secondary-text-button.css">
-              <items>
-                <MenuItem fx:id="colorSelector" mnemonicParsing="false" text="Action 1" />
-                <MenuItem mnemonicParsing="false" text="Action 2" />
-              </items>
-               <graphic>
-                  <Circle fill="DODGERBLUE" radius="20.0" stroke="BLACK" strokeType="INSIDE" />
-               </graphic>
-               <cursor>
-                  <Cursor fx:constant="HAND" />
-               </cursor>
-            </MenuButton>
-            <TextField fx:id="txtTitle" maxWidth="1.7976931348623157E308" promptText="Ingrese el título" style="-fx-background-color: #fff; -fx-border-color: #fff;" HBox.hgrow="ALWAYS">
-               <font>
-                  <Font size="21.0" />
-               </font>
-            </TextField>
-         </HBox>
-      
-         <!-- Selección de miembros y fechas -->
-         <HBox alignment="CENTER_LEFT" spacing="10">
-            <VBox>
-               <children>
-                  <MenuButton fx:id="btnMembers1" mnemonicParsing="false" stylesheets="@../assets/styles/username-button.css" text="Añadir Miembros">
-                     <items>
-                        <MenuItem mnemonicParsing="false" text="Action 1" />
-                        <MenuItem mnemonicParsing="false" text="Action 2" />
-                     </items>
+      <StackPane>
+         <children>
+            <VBox alignment="TOP_CENTER" spacing="15" style="-fx-background-color: #fff; -fx-background-radius: 15;">
+               <padding>
+                  <Insets bottom="30.0" left="40.0" right="40.0" top="30.0" />
+               </padding>
+            
+               <!-- Título del modal -->
+               <Label text="Agregar tarea">
+                  <font>
+                     <Font name="System Bold" size="29.0" />
+                  </font>
+               </Label>
+            
+               <!-- Campo de título con RadioButton indicativo -->
+               <HBox alignment="CENTER_LEFT" spacing="10">
+                  <MenuButton fx:id="colorSelector" mnemonicParsing="false" styleClass="button" stylesheets="@../assets/styles/secondary-text-button.css">
                      <graphic>
-                        <ImageView fitHeight="30.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true">
+                        <Circle fx:id="colorCircle" fill="DODGERBLUE" radius="20.0" stroke="BLACK" strokeType="INSIDE" />
+                     </graphic>
+                     <cursor>
+                        <Cursor fx:constant="HAND" />
+                     </cursor>
+                  </MenuButton>
+                  <TextField fx:id="txtTitle" maxWidth="1.7976931348623157E308" promptText="Ingrese el título" style="-fx-background-color: #fff; -fx-border-color: #fff;" HBox.hgrow="ALWAYS">
+                     <font>
+                        <Font size="21.0" />
+                     </font>
+                  </TextField>
+               </HBox>
+            
+               <!-- Selección de miembros y fechas -->
+               <HBox alignment="CENTER_LEFT" spacing="10">
+                  <VBox>
+                     <children>
+                        <MenuButton fx:id="btnMembers1" mnemonicParsing="false" stylesheets="@../assets/styles/username-button.css" text="Añadir Miembros">
+                           <graphic>
+                              <ImageView fitHeight="30.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true">
+                                 <image>
+                                    <Image url="@../assets/images/add_manager_icon.png" />
+                                 </image>
+                              </ImageView>
+                           </graphic>
+                        </MenuButton>
+                        <FlowPane fx:id="collaboratorsPillContainer" maxHeight="-Infinity" maxWidth="-Infinity" />
+                     </children>
+                  </VBox>
+                  <VBox spacing="5.0">
+                     <children>
+                        <Label text="Fecha límite" />
+                        <DatePicker fx:id="dpEnd" promptText="mm/dd/YYY" />
+                     </children>
+                  </VBox>
+                  <Button fx:id="addAttachmentBtn" mnemonicParsing="false" stylesheets="@../assets/styles/secondary-text-button.css" text="Añadir archivo adjunto" wrapText="true">
+                     <graphic>
+                        <ImageView fitHeight="24.0" fitWidth="24.0" pickOnBounds="true" preserveRatio="true">
                            <image>
-                              <Image url="@../assets/images/add_manager_icon.png" />
+                              <Image url="@../assets/images/upload.png" />
                            </image>
                         </ImageView>
                      </graphic>
-                  </MenuButton>
-                  <FlowPane fx:id="collaboratorsPillContainer" maxHeight="-Infinity" maxWidth="-Infinity" />
-               </children>
+                  </Button>
+                  <FlowPane fx:id="attachmentPillContainer" />
+               </HBox>
+            
+               <!-- Descripción con editor enriquecido -->
+               <HBox alignment="CENTER_LEFT" />
+               <HTMLEditor fx:id="descriptionEditor" prefHeight="200" VBox.vgrow="ALWAYS" />
+            
+               <!-- Botones de acción -->
+               <HBox alignment="CENTER_RIGHT" spacing="10">
+                  <Button fx:id="btnCancel" style="-fx-background-color: transparent; -fx-border-color: black; -fx-text-fill: black;" text="Cancelar">
+                     <effect>
+                        <DropShadow height="0.0" radius="0.0" width="0.0" />
+                     </effect>
+                     <padding>
+                        <Insets bottom="8.0" left="15.0" right="15.0" top="8.0" />
+                     </padding>
+                     <stylesheets>
+                        <URL value="@../assets/styles/secondary-button.css" />
+                        <URL value="@../assets/styles/primary-button.css" />
+                     </stylesheets>
+                     <font>
+                        <Font size="18.0" />
+                     </font>
+                  </Button>
+                  <Button fx:id="btnSave" defaultButton="true" stylesheets="@../assets/styles/primary-button.css" text="Agregar" textFill="WHITE">
+                     <font>
+                        <Font size="18.0" />
+                     </font>
+                  </Button>
+               </HBox>
+            
             </VBox>
-            <VBox spacing="5.0">
-               <children>
-                  <Label text="Fecha límite" />
-                  <DatePicker fx:id="dpEnd" promptText="mm/dd/YYY" />
-               </children>
-            </VBox>
-            <Button fx:id="addAttachmentBtn" mnemonicParsing="false" stylesheets="@../assets/styles/secondary-text-button.css" text="Añadir archivo adjunto" wrapText="true">
-               <graphic>
-                  <ImageView fitHeight="24.0" fitWidth="24.0" pickOnBounds="true" preserveRatio="true">
-                     <image>
-                        <Image url="@../assets/images/attach-file.png" />
-                     </image>
-                  </ImageView>
-               </graphic>
-            </Button>
-            <FlowPane fx:id="attachmentPillContainer" />
-         </HBox>
-      
-         <!-- Descripción con editor enriquecido -->
-         <HBox alignment="CENTER_LEFT" />
-         <HTMLEditor fx:id="descriptionEditor" prefHeight="200" VBox.vgrow="ALWAYS" />
-      
-         <!-- Botones de acción -->
-         <HBox alignment="CENTER_RIGHT" spacing="10">
-            <Button fx:id="btnCancel" style="-fx-background-color: transparent; -fx-border-color: black; -fx-text-fill: black;" text="Cancelar">
-               <effect>
-                  <DropShadow height="0.0" radius="0.0" width="0.0" />
-               </effect>
-               <padding>
-                  <Insets bottom="8.0" left="15.0" right="15.0" top="8.0" />
-               </padding>
-               <stylesheets>
-                  <URL value="@../assets/styles/secondary-button.css" />
-                  <URL value="@../assets/styles/primary-button.css" />
-               </stylesheets>
-               <font>
-                  <Font size="18.0" />
-               </font>
-            </Button>
-            <Button fx:id="btnAdd" defaultButton="true" stylesheets="@../assets/styles/primary-button.css" text="Agregar" textFill="WHITE">
-               <font>
-                  <Font size="18.0" />
-               </font>
-            </Button>
-         </HBox>
-      
-      </VBox>
+            <ProgressBar fx:id="loadIndicator" maxWidth="1.7976931348623157E308" stylesheets="@../assets/styles/progress-bar.css" StackPane.alignment="TOP_CENTER" />
+         </children>
+      </StackPane>
    </children>
 </VBox>

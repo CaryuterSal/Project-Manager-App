@@ -25,20 +25,20 @@
 }
 
 #btnBoard.active {
-    -fx-graphic: url("dev/builder/assets/images/board_white_icon.png");
+    -fx-graphic: url("/dev/builder/assets/images/board_white_icon.png");
 }
 
 
 #btnBoard:not(.active) {
-    -fx-graphic: url("dev/builder/assets/images/board_grey_icon.png");
+    -fx-graphic: url("/dev/builder/assets/images/board_grey_icon.png");
 }
 
 
 #btnAccount.active {
-    -fx-graphic: url("dev/builder/assets/images/add_icon_white.png");
+    -fx-graphic: url("/dev/builder/assets/images/add_icon_white.png");
 }
 
 
 #btnAccount:not(.active) {
-    -fx-graphic: url("dev/builder/assets/images/add_icon_grey.png");
+    -fx-graphic: url("/dev/builder/assets/images/add_icon_grey.png");
 }

@@ -29,6 +29,8 @@ import javafx.scene.input.TransferMode;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import org.jetbrains.annotations.NotNull;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.net.URL;
 import java.util.*;
@@ -38,27 +40,19 @@ import java.util.stream.Collectors;
 public class BoardController implements Initializable {
 
 
-    @FXML
-    private MenuItem logoutBtn;
-    @FXML
-    private ProgressIndicator searchProgressIndicator;
-    @FXML
-    private Button delSearchBtn;
-    @FXML
-    private Button searchBtn;
-    @FXML
-    private TextField txtSearch;
-    @FXML
-    private Button btnInvite;
-    @FXML
-    private ListView<TaskView> todoList;
-    @FXML
-    private ListView<TaskView> inProgressList;
+    private static final Logger log = LoggerFactory.getLogger(BoardController.class);
+    public MenuItem logoutBtn;
+    public ProgressIndicator searchProgressIndicator;
+    public Button delSearchBtn;
+    public Button searchBtn;
+    public TextField txtSearch;
+    public Button btnInvite;
+    public ListView<TaskView> todoList;
+    public ListView<TaskView> inProgressList;
 
-    @FXML private ListView<TaskView> doneList;
-    @FXML private Button btnAddTask;
-    @FXML private Label lblError;
-    @FXML private MenuButton collaborators;
+    public ListView<TaskView> doneList;
+    public Button btnAddTask;
+    public MenuButton collaborators;
 
     private String ownerEmail;
     private Runnable onClickRegisterStudent;
@@ -146,6 +140,9 @@ public class BoardController implements Initializable {
                 MenuItem item = new MenuItem(collab.student().email());
                 collaborators.getItems().add(item);
             }
+        });
+        task.setOnFailed(ev -> {
+            log.error("Failed to load collaborators", task.getException());
         });
     }
 
@@ -289,7 +286,7 @@ public class BoardController implements Initializable {
             }
         };
         task.setOnSucceeded(ev -> {
-            viewNavigation.navigate("hello-view.fxml", (Stage) lblError.getScene().getWindow());
+            viewNavigation.navigate("hello-view.fxml", (Stage) btnAddTask.getScene().getWindow());
         });
         new Thread(task).start();
     }
@@ -327,7 +324,7 @@ public class BoardController implements Initializable {
         handleInvitationStatus(inviteStudentFormController.status());
     }
 
-    private void handleInvitationStatus(InviteStudentFormController.@NotNull InvitationStatus status) {
+    private void handleInvitationStatus(InviteStudentFormController.InvitationStatus status) {
         switch (status) {
             case FAIL:
                 ErrorHandler.showError("Hubo un error, intenta de nuevo");

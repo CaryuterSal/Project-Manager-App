@@ -29,10 +29,8 @@ import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.Node;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.PasswordField;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
+import javafx.scene.input.KeyCode;
 import javafx.stage.Stage;
 
 import java.io.IOException;
@@ -53,6 +51,7 @@ public class LoginController implements Initializable {
     private Button btnLogin,btnCancel;
     @FXML
     private Label labelError,labelTitle;
+    @FXML private ProgressIndicator loadIndicator;
 
     private final SessionContext sessionContext;
     private final RequestDispatcher requestDispatcher;
@@ -71,7 +70,12 @@ public class LoginController implements Initializable {
     public void initialize(URL url, ResourceBundle resourceBundle) {
         btnLogin.setOnAction(this::validarCorreo);
         btnCancel.setOnAction(this::cancel);
-        //btnLogin.setOnAction(this::navigate);
+        loadIndicator.setVisible(false);
+        txtCorreo.setOnKeyPressed(event -> {
+            if (event.getCode() == KeyCode.ENTER) {
+                validarCorreo(null);
+            }
+        });
     }
 
     private void cancel(ActionEvent event){
@@ -109,14 +113,17 @@ public class LoginController implements Initializable {
 
         javafx.concurrent.Task<Void> task = new javafx.concurrent.Task<>(){
             protected Void call() throws Exception{
+                loadIndicator.setVisible(true);
                 requestDispatcher.dispatch(loginCommand);
                 return null;
             }
         };
         task.setOnSucceeded(e -> {
+            loadIndicator.setVisible(false);
             loginAndRedirect();
         });
         task.setOnFailed(e -> {
+            loadIndicator.setVisible(false);
             Throwable ex = task.getException();
             //Stage stage = (Stage) labelError.getScene().getWindow();
             //viewNavigation.navigate("admin-panel-view.fxml", stage);
@@ -139,10 +146,12 @@ public class LoginController implements Initializable {
         }
         javafx.concurrent.Task<Optional<UserView>> task = new javafx.concurrent.Task<>(){
             protected Optional<UserView> call() throws Exception {
+                loadIndicator.setVisible(true);
                 return requestDispatcher.dispatch(FindUserQuery.generic((correo)));
             }
         };
         task.setOnSucceeded(e -> {
+            loadIndicator.setVisible(false);
             Optional<UserView> resultado = task.getValue();
             if(resultado.isEmpty()){
                 labelError.setText("El correo no existe");
@@ -154,10 +163,21 @@ public class LoginController implements Initializable {
             if(user.verified()){
                 mostrarCampo();
                 btnLogin.setOnAction(this::validarContra);
+
+                txtContra.setOnKeyPressed(ev -> {
+                    if(ev.getCode() == KeyCode.ENTER){
+                        validarContra(null);
+                    }
+                });
                 txtCorreo.setStyle("-fx-background-color: #f7f7f7;");
             }else{
                 btnLogin.setText("Registrarse");
                 btnLogin.setOnAction(this::createPassword);
+                txtContra2.setOnKeyPressed(ev -> {
+                    if(ev.getCode() == KeyCode.ENTER){
+                        createPassword(null);
+                    }
+                });
                 labelTitle.setText("Crea una contraseña");
                 txtCorreo.setStyle("-fx-background-color: #f7f7f7;");
                 cleanErrors();
@@ -169,6 +189,7 @@ public class LoginController implements Initializable {
             }
         });
         task.setOnFailed(workerStateEvent -> {
+            loadIndicator.setVisible(false);
             Throwable e = task.getException();
             if (e instanceof ValidationException) {
                 labelError.setText("El correo no es válido");
@@ -189,7 +210,6 @@ public class LoginController implements Initializable {
         txtContra.setDisable(false);
         txtCorreo.setEditable(false);
         btnLogin.setDisable(false);
-        //txtCorreo.setDisable(true);
     }
     private void cleanErrors(){
         labelError.setText(" ");
@@ -217,13 +237,16 @@ public class LoginController implements Initializable {
         }
         javafx.concurrent.Task<UserView> task = new javafx.concurrent.Task<>(){
             protected UserView call() throws Exception {
+                loadIndicator.setVisible(true);
                 return requestDispatcher.dispatch(new CompleteRegistrationCommand(correo,pass1));
             }
         };
         task.setOnSucceeded(e -> {
+            loadIndicator.setVisible(false);
             loginAndRedirect();
         });
         task.setOnFailed(e -> {
+            loadIndicator.setVisible(false);
             Throwable ex = task.getException();
             if(ex instanceof ValidationException ex2){
                 ex2.getMessageFor("password");
@@ -235,29 +258,14 @@ public class LoginController implements Initializable {
 
 
     }
-    private void loginAndRedirect(){
+    private void loginAndRedirect() {
         Stage stage = (Stage) labelError.getScene().getWindow();
-        if(sessionContext.hasRole(Role.ADMIN)) {
+        if (sessionContext.hasRole(Role.ADMIN)) {
             viewNavigation.navigate("admin-panel-view.fxml", stage);
-        }else if(sessionContext.hasRole(Role.MANAGER)){
+        } else if (sessionContext.hasRole(Role.MANAGER)) {
             viewNavigation.navigate("board-main-view.fxml", stage);
         } else {
             viewNavigation.navigate("board-student-view.fxml", stage);
         }
     }
-
-    /*public void clickButton() {
-        try {
-            TaskView response = requestDispatcher.dispatch(new CreateTaskCommand(Stage.StageState.IN_PROGRESS, "tasdf", "fsdffsfd", "Pink", LocalDateTime.now().plusDays(10)));
-            requestDispatcher.dispatch(MoveTaskCommand.builder()
-                            .task(response.id())
-                            .toStage(Stage.StageState.DONE)
-                            .placeAtStart()
-                    );
-        } catch (ValidationException e) {
-
-        }
-    }*/
-
-
 }

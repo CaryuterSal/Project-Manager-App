@@ -54,6 +54,7 @@ public class ViewNavigation {
             stage.initModality(Modality.APPLICATION_MODAL);
             stage.initStyle(initStyle);
             stage.setScene(new Scene(loader.load()));
+            stage.sizeToScene();
             stage.showAndWait();
         } catch (IOException e){
             e.printStackTrace();

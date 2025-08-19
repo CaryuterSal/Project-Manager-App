@@ -12,15 +12,13 @@ import dev.builder.usermanagement.application.query.FindAllStudentsQuery;
 import dev.builder.usermanagement.application.query.FindStudentQuery;
 import dev.builder.usermanagement.application.view.StudentView;
 import dev.builder.usermanagement.application.view.UserView;
+import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
 import javafx.fxml.Initializable;
-import javafx.scene.control.Button;
-import javafx.scene.control.ComboBox;
-import javafx.scene.control.Label;
-import javafx.scene.control.ListCell;
+import javafx.scene.control.*;
 import javafx.stage.Stage;
 import javafx.util.StringConverter;
 
@@ -40,6 +38,7 @@ public class InviteStudentFormController implements Initializable {
     public Button cancelBtn;
     public ComboBox<StudentView> studentSelector;
     public Button inviteBtn;
+    public ProgressIndicator loadIndicator;
     public Label errorLbl;
 
     private InvitationStatus status;
@@ -63,6 +62,7 @@ public class InviteStudentFormController implements Initializable {
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
+        loadIndicator.setVisible(false);
         studentSelector.setItems(studentSelectorData);
         studentSelector.setConverter(new StringConverter<>() {
             @Override
@@ -75,12 +75,16 @@ public class InviteStudentFormController implements Initializable {
                return null;
             }
         });
+        inviteBtn.disableProperty().bind(studentSelector.valueProperty().isNotNull());
         inviteBtn.setOnAction(this::onInvite);
         cancelBtn.setOnAction(this::onCancel);
-        cancelBtn.getScene().getWindow().setOnCloseRequest((event) -> {
-            event.consume();
-            close();
+        Platform.runLater(() -> {
+            cancelBtn.getScene().getWindow().setOnCloseRequest((event) -> {
+                event.consume();
+                close();
+            });
         });
+        registerBtn.setOnAction(this::onRegister);
         fillInvitationOptions();
     }
 
@@ -119,9 +123,9 @@ public class InviteStudentFormController implements Initializable {
     }
 
     private void toggleWait(boolean wait){
-        cancelBtn.setDisable(wait);
         inviteBtn.setDisable(wait);
         studentSelector.setDisable(wait);
+        loadIndicator.setVisible(wait);
     }
     private void onCancel(ActionEvent e){
         status = InvitationStatus.CANCEL;
@@ -153,6 +157,7 @@ public class InviteStudentFormController implements Initializable {
             close();
         });
         task.setOnFailed(event -> {
+            toggleWait(false);
             status = InvitationStatus.FAIL;
             close();
         });

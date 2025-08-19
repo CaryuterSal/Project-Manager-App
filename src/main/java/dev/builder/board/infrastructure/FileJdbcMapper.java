@@ -22,7 +22,8 @@ public class FileJdbcMapper {
         NAME("name"),
         MIME_TYPE("mimetype"),
         PURPOSE("purpose"),
-        SOURCE("source");
+        SOURCE("source"),
+        CONTENT_LENGTH("content_length");
 
         private final String columnName;
 
@@ -35,14 +36,15 @@ public class FileJdbcMapper {
         }
     }
 
-    private record BaseFileInfo(UUID id, Task.Id attachedTo, String name, StoredFile.MimeType mimetype){
+    private record BaseFileInfo(UUID id, Task.Id attachedTo, String name, StoredFile.MimeType mimetype, long contentLength) {
 
         private static @NotNull BaseFileInfo fromResultSet(MessageLocalizer messageLocalizer,  @NotNull ResultSet rs) throws SQLException {
             UUID id = UUIDMapper.byteArrayToUUID(rs.getBytes(FileColumns.ID.columnName));
             Task.Id attachedTo = new Task.Id(UUIDMapper.byteArrayToUUID(rs.getBytes(FileColumns.ATTACHED_TO.columnName)));
             String name = rs.getString(FileColumns.NAME.columnName);
             StoredFile.MimeType mimeType = StoredFile.MimeType.fromValue(messageLocalizer, rs.getString(FileColumns.MIME_TYPE.columnName));
-            return new  BaseFileInfo(id, attachedTo, name, mimeType);
+            long contentLength = rs.getLong(FileColumns.CONTENT_LENGTH.columnName);
+            return new  BaseFileInfo(id, attachedTo, name, mimeType, contentLength);
         }
     }
 
@@ -52,7 +54,8 @@ public class FileJdbcMapper {
                 new Image.Id(baseFileInfo.id()),
                 baseFileInfo.attachedTo,
                 new Image.Filename(baseFileInfo.name()),
-                baseFileInfo.mimetype()
+                baseFileInfo.mimetype(),
+                baseFileInfo.contentLength()
         );
     }
 
@@ -62,7 +65,8 @@ public class FileJdbcMapper {
                 new Attachment.Id(baseFileInfo.id()),
                 baseFileInfo.attachedTo,
                 new Attachment.Filename(baseFileInfo.name()),
-                baseFileInfo.mimetype()
+                baseFileInfo.mimetype(),
+                baseFileInfo.contentLength()
         );
     }
 

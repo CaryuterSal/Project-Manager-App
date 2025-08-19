@@ -10,5 +10,5 @@ import java.sql.Connection;
 @FunctionalInterface
 public interface TransactionalOperation<T, V> {
 
-    V execute(T inputParam, Connection connection);
+    V execute(T inputParam, Connection connection)  throws Exception;
 }

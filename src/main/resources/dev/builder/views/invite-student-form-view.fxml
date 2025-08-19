@@ -89,7 +89,7 @@
             <Insets bottom="40.0" left="40.0" right="40.0" top="40.0" />
          </StackPane.margin>
       </BorderPane>
-      <ProgressBar maxWidth="1.7976931348623157E308" stylesheets="@../assets/styles/progress-bar.css" StackPane.alignment="TOP_CENTER">
+      <ProgressBar fx:id="loadIndicator" maxWidth="1.7976931348623157E308" stylesheets="@../assets/styles/progress-bar.css" StackPane.alignment="TOP_CENTER">
          <StackPane.margin>
             <Insets />
          </StackPane.margin>

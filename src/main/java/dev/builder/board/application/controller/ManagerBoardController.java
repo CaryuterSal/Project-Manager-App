@@ -58,26 +58,29 @@ public class ManagerBoardController extends BaseBoardContainerController impleme
         btnBoard.setOnAction(this::navigateToBoardView);
         loadBoardController();
         loadStudentDashboardController();
+        navigateToBoardView(null);
     }
 
     private void loadBoardController(){
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/dev/builder/views/board-view.fxml"));
+        loader.setControllerFactory(dependencyContainer::getInstance);
         try {
             boardNodeRoot = loader.load();
             boardController = loader.getController();
             boardController.setOnClickRegisterStudent(() -> navigateToBoardView(null));
         } catch (IOException e) {
-            log.error(e.getMessage());
+            log.error(e.getMessage(), e);
         }
     }
 
     private void loadStudentDashboardController(){
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/dev/builder/views/manager-account-view.fxml"));
+        loader.setControllerFactory(dependencyContainer::getInstance);
         try {
             studentDashboardNodeRoot = loader.load();
             studentDashboardController = loader.getController();
         } catch (IOException e) {
-            log.error(e.getMessage());
+            log.error(e.getMessage(), e);
         }
     }
 
@@ -85,12 +88,16 @@ public class ManagerBoardController extends BaseBoardContainerController impleme
     private void navigateToBoardView(ActionEvent actionEvent) {
         btnAccount.getStyleClass().remove("active");
         btnBoard.getStyleClass().add("active");
+        btnAccount.setDisable(false);
+        btnBoard.setDisable(true);
         switchMainContent(boardNodeRoot);
     }
 
     private void navigateToStudentDashboard(ActionEvent actionEvent) {
         btnAccount.getStyleClass().add("active");
         btnBoard.getStyleClass().remove("active");
+        btnBoard.setDisable(false);
+        btnAccount.setDisable(true);
         switchMainContent(studentDashboardNodeRoot);
     }
 
