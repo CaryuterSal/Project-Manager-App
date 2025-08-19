@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ButtonBar?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ProgressBar?>
+<?import javafx.scene.control.Spinner?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+
+<StackPane prefHeight="364.0" prefWidth="561.0" style="-fx-background-color: white; -fx-background-radius: 8; -fx-border-radius: 8;" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="dev.builder.board.application.controller.RegisterStudentController">
+   <children>
+      <GridPane hgap="30.0" maxHeight="-Infinity" minHeight="-Infinity" minWidth="-Infinity" vgap="20.0">
+        <columnConstraints>
+          <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" />
+          <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" />
+        </columnConstraints>
+        <rowConstraints>
+          <RowConstraints maxHeight="-Infinity" vgrow="SOMETIMES" />
+          <RowConstraints maxHeight="-Infinity" vgrow="SOMETIMES" />
+            <RowConstraints maxHeight="-Infinity" vgrow="SOMETIMES" />
+          <RowConstraints maxHeight="-Infinity" vgrow="SOMETIMES" />
+        </rowConstraints>
+         <children>
+            <VBox alignment="CENTER_LEFT" spacing="5.0" GridPane.rowIndex="1">
+               <children>
+                  <Label text="Nombre(s)">
+                     <font>
+                        <Font size="15.0" />
+                     </font>
+                  </Label>
+                  <TextField fx:id="nameTxt" style="-fx-background-radius: 8; -fx-background-radius: 8;" />
+                  <Label fx:id="nameErrLbl" wrapText="true" />
+               </children>
+            </VBox>
+            <ButtonBar maxHeight="-Infinity" maxWidth="1.7976931348623157E308" GridPane.columnSpan="2" GridPane.rowIndex="3">
+              <buttons>
+                <Button fx:id="cancelBtn" mnemonicParsing="false" style="-fx-border-color: black;" stylesheets="@../assets/styles/secondary-button.css" text="Cancelar">
+                     <font>
+                        <Font size="16.0" />
+                     </font>
+                  </Button>
+                  <Button fx:id="registerBtn" mnemonicParsing="false" stylesheets="@../assets/styles/primary-button.css" text="Registrar">
+                     <font>
+                        <Font size="16.0" />
+                     </font>
+                  </Button>
+              </buttons>
+            </ButtonBar>
+            <VBox alignment="CENTER_LEFT" spacing="5.0" GridPane.columnIndex="1" GridPane.rowIndex="1">
+               <children>
+                  <Label text="Apellidos">
+                     <font>
+                        <Font size="15.0" />
+                     </font>
+                  </Label>
+                  <TextField fx:id="lastNameTxt" style="-fx-background-radius: 8; -fx-background-radius: 8;" />
+                  <Label fx:id="lastNameErrLbl" wrapText="true" />
+               </children>
+            </VBox>
+            <VBox alignment="CENTER_LEFT" spacing="5.0">
+               <children>
+                  <Label text="Email">
+                     <font>
+                        <Font size="15.0" />
+                     </font>
+                  </Label>
+                  <TextField fx:id="emailTxt" style="-fx-background-radius: 8; -fx-background-radius: 8;" />
+                  <Label fx:id="emailErrLbl" wrapText="true" />
+               </children>
+            </VBox>
+            <Label text="Registrar Alumno" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.valignment="CENTER">
+               <font>
+                  <Font name="System Bold" size="31.0" />
+               </font>
+            </Label>
+            <VBox alignment="CENTER_LEFT" spacing="5.0" GridPane.rowIndex="2">
+               <children>
+                  <Label text="Cuatrimestre">
+                     <font>
+                        <Font size="15.0" />
+                     </font>
+                  </Label>
+                  <Spinner fx:id="quarterSpinner" prefHeight="26.0" prefWidth="71.0" style="-fx-background-color: white;" />
+                  <Label fx:id="quarterErrLbl" wrapText="true" />
+               </children>
+            </VBox>
+            <VBox alignment="CENTER_LEFT" spacing="5.0" GridPane.columnIndex="1" GridPane.rowIndex="2">
+               <children>
+                  <Label text="Grupo">
+                     <font>
+                        <Font size="15.0" />
+                     </font>
+                  </Label>
+                  <TextField fx:id="groupTxt" maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="26.0" prefWidth="77.0" style="-fx-background-radius: 8; -fx-background-radius: 8;" />
+                  <Label fx:id="groupErrLbl" wrapText="true" />
+               </children>
+            </VBox>
+         </children>
+         <StackPane.margin>
+            <Insets bottom="40.0" left="40.0" right="40.0" top="40.0" />
+         </StackPane.margin>
+      </GridPane>
+      <ProgressBar fx:id="loadIndicator" maxWidth="1.7976931348623157E308" stylesheets="@../assets/styles/progress-bar.css" StackPane.alignment="TOP_CENTER" />
+   </children>
+</StackPane>

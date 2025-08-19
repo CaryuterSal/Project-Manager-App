@@ -19,8 +19,9 @@
 <?import javafx.scene.shape.Circle?>
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.web.HTMLEditor?>
+<?import javafx.scene.web.WebView?>
 
-<VBox style="-fx-border-radius: 10px; -fx-background-radius: 10px;" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="dev.builder.board.application.controller.TaskFormController">
+<VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="664.0" prefWidth="1285.0" style="-fx-border-radius: 10px; -fx-background-radius: 10px;" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="dev.builder.board.application.controller.TaskFormController">
    <children>
       <StackPane fx:id="coverImageContainer" maxHeight="-Infinity" maxWidth="1.7976931348623157E308" minHeight="150.0" prefHeight="150.0" prefWidth="200.0" style="-fx-background-image: url(dev/builder/assets/images/task_background_placeholder.jpg);">
          <children>
@@ -41,9 +42,9 @@
             </Button>
          </children>
       </StackPane>
-      <StackPane>
+      <StackPane maxHeight="1.7976931348623157E308">
          <children>
-            <VBox alignment="TOP_CENTER" spacing="15" style="-fx-background-color: #fff; -fx-background-radius: 15;">
+            <VBox alignment="TOP_CENTER" maxHeight="1.7976931348623157E308" spacing="15" style="-fx-background-color: #fff; -fx-background-radius: 15;">
                <padding>
                   <Insets bottom="30.0" left="40.0" right="40.0" top="30.0" />
                </padding>
@@ -59,7 +60,7 @@
                <HBox alignment="CENTER_LEFT" spacing="10">
                   <MenuButton fx:id="colorSelector" mnemonicParsing="false" styleClass="button" stylesheets="@../assets/styles/secondary-text-button.css">
                      <graphic>
-                        <Circle fx:id="colorCircle" fill="DODGERBLUE" radius="20.0" stroke="BLACK" strokeType="INSIDE" />
+                        <Circle fx:id="colorCircle" fill="WHITE" radius="20.0" stroke="BLACK" strokeType="INSIDE" />
                      </graphic>
                      <cursor>
                         <Cursor fx:constant="HAND" />
@@ -76,7 +77,7 @@
                <HBox alignment="CENTER_LEFT" spacing="10">
                   <VBox>
                      <children>
-                        <MenuButton fx:id="btnMembers1" mnemonicParsing="false" stylesheets="@../assets/styles/username-button.css" text="Añadir Miembros">
+                        <MenuButton fx:id="btnMembers" mnemonicParsing="false" stylesheets="@../assets/styles/username-button.css" text="Añadir Miembros">
                            <graphic>
                               <ImageView fitHeight="30.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true">
                                  <image>
@@ -85,7 +86,7 @@
                               </ImageView>
                            </graphic>
                         </MenuButton>
-                        <FlowPane fx:id="collaboratorsPillContainer" maxHeight="-Infinity" maxWidth="-Infinity" />
+                        <FlowPane fx:id="collaboratorsPillContainer" hgap="10.0" maxHeight="-Infinity" maxWidth="-Infinity" vgap="10.0" />
                      </children>
                   </VBox>
                   <VBox spacing="5.0">
@@ -103,11 +104,21 @@
                         </ImageView>
                      </graphic>
                   </Button>
-                  <FlowPane fx:id="attachmentPillContainer" />
+                  <FlowPane fx:id="attachmentPillContainer" hgap="10.0" vgap="10.0" />
                </HBox>
             
                <!-- Descripción con editor enriquecido -->
                <HBox alignment="CENTER_LEFT" />
+               <VBox fx:id="descriptionVisualizerContainer" prefHeight="200.0" prefWidth="100.0">
+                  <children>
+                     <Label text="Descripción">
+                        <font>
+                           <Font size="15.0" />
+                        </font>
+                     </Label>
+                     <WebView fx:id="descriptionVisualizer" prefHeight="200.0" prefWidth="200.0" />
+                  </children>
+               </VBox>
                <HTMLEditor fx:id="descriptionEditor" prefHeight="200" VBox.vgrow="ALWAYS" />
             
                <!-- Botones de acción -->

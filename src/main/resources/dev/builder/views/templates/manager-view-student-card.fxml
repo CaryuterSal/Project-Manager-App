@@ -8,12 +8,24 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.text.Font?>
 
-<HBox alignment="CENTER" spacing="50.0" style="-fx-border-radius: 20; -fx-background-radius: 20; -fx-background-color: white;" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="dev.builder.usermanagement.application.controller.ManagerCardController">
+<HBox alignment="CENTER" spacing="50.0" style="-fx-border-radius: 20; -fx-background-radius: 20; -fx-background-color: white;" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="dev.builder.board.application.controller.StudentCardController">
    <children>
-      <Label fx:id="email" maxWidth="1.7976931348623157E308" text="correo" HBox.hgrow="ALWAYS">
+      <Label fx:id="emailLbl" maxWidth="1.7976931348623157E308" text="correo" HBox.hgrow="ALWAYS">
          <font>
             <Font size="19.0" />
          </font></Label>
+      <Separator orientation="VERTICAL" />
+      <Label fx:id="nameLbl" maxWidth="1.7976931348623157E308" text="Jhon Doe">
+         <font>
+            <Font size="19.0" />
+         </font>
+      </Label>
+      <Separator orientation="VERTICAL" />
+      <Label fx:id="academicInfoLbl" maxWidth="1.7976931348623157E308" text="4 - F">
+         <font>
+            <Font size="19.0" />
+         </font>
+      </Label>
       <Separator orientation="VERTICAL" />
       <Button fx:id="disableButton" mnemonicParsing="false" stylesheets="@../../assets/styles/delete-button.css" text="Deshabilitar" textFill="WHITE">
          <cursor>

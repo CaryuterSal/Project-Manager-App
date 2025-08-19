@@ -30,12 +30,14 @@ public class AttachmentPillController implements Initializable {
     @FXML private HBox clickableField;
 
     private File file;
+    private String originalName;
     private Runnable onDelete;
 
-    void setData(File file, Runnable onDelete) {
+    void setData(File file, String originalName, Runnable onDelete) {
         this.file = file;
         this.onDelete = onDelete;
-        filenameLbl.setText(file.getName());
+        this.originalName = originalName;
+        filenameLbl.setText(originalName);
         setSizeLabel();
     }
 
@@ -72,7 +74,7 @@ public class AttachmentPillController implements Initializable {
                     new FileChooser.ExtensionFilter("PDF", "*.pdf"),
                     new FileChooser.ExtensionFilter("Todos los archivos", "*.*")
             );
-            fileChooser.setInitialFileName(file.getName());
+            fileChooser.setInitialFileName(originalName);
             File file = fileChooser.showSaveDialog(stage);
 
             if (file != null) {

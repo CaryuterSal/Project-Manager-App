@@ -37,7 +37,7 @@ public class StudentCardCell extends ListCell<StudentView> {
             setGraphic(null);
         } else {
             try {
-                FXMLLoader loader = new FXMLLoader(getClass().getResource("/dev/builder/views/templates/admin-view-manager-card.fxml"));
+                FXMLLoader loader = new FXMLLoader(getClass().getResource("/dev/builder/views/templates/manager-view-student-card.fxml"));
                 loader.setControllerFactory(container::getInstance);
                 HBox root = loader.load();
                 StudentCardController controller = loader.getController();

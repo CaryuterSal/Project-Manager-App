@@ -17,7 +17,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<GridPane prefHeight="1024.0" prefWidth="1440.0" style="-fx-background-color: #FFFFFF;" vgap="20.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="dev.builder.usermanagement.application.controller.AdminDashboardController">
+<GridPane prefHeight="900.0" prefWidth="1450.0" style="-fx-background-color: #FFFFFF;" vgap="20.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="dev.builder.usermanagement.application.controller.AdminDashboardController">
   <columnConstraints>
     <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" percentWidth="30.0" prefWidth="100.0" />
       <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />

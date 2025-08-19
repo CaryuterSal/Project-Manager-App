@@ -14,6 +14,7 @@ import dev.builder.core.application.RequestDispatcher;
 import dev.builder.core.application.ViewNavigation;
 import dev.builder.core.infrastructure.di.annotation.Prototype;
 import dev.builder.core.infrastructure.di.runtime.DependencyContainer;
+import dev.builder.usermanagement.application.view.StudentView;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.concurrent.Task;
@@ -49,6 +50,7 @@ public class BoardController implements Initializable {
     public Button btnInvite;
     public ListView<TaskView> todoList;
     public ListView<TaskView> inProgressList;
+    public MenuButton userMenu;
 
     public ListView<TaskView> doneList;
     public Button btnAddTask;
@@ -117,8 +119,11 @@ public class BoardController implements Initializable {
         doneList.setOnDragDropped(ev -> onDragDroppedStage(doneList, ev));
         logoutBtn.setOnAction(this::onClickLogout);
 
-        loadBoardCollaborators();
-        updateBoard();
+        userMenu.setText(sessionContext.getCurrentUser());
+
+        if(sessionContext.hasRole(Role.MANAGER)) {
+            setOwnerEmail(sessionContext.getCurrentUser());
+        }
     }
 
     private void showManagerView(boolean show){
@@ -132,7 +137,13 @@ public class BoardController implements Initializable {
         Task<BoardView> task = new Task<BoardView>() {
             @Override
             protected BoardView call() throws Exception {
-                return requestDispatcher.dispatch(GetBoardQuery.forOwner(ownerEmail)).orElseThrow();
+                GetBoardQuery command;
+                if(sessionContext.hasRole(Role.STUDENT)){
+                    command = GetBoardQuery.forOwner(ownerEmail);
+                } else {
+                    command = GetBoardQuery.own();
+                }
+                return requestDispatcher.dispatch(command).orElseThrow();
             }
         };
         task.setOnSucceeded(event -> {
@@ -144,10 +155,14 @@ public class BoardController implements Initializable {
         task.setOnFailed(ev -> {
             log.error("Failed to load collaborators", task.getException());
         });
+        new Thread(task).start();
     }
 
     void setOwnerEmail(String ownerEmail) {
         this.ownerEmail = ownerEmail;
+        loadBoardCollaborators();
+        Task<Optional<BoardView>> task = updateBoard();
+        new Thread(task).start();
     }
 
     void setOnClickRegisterStudent(Runnable onClickRegisterStudent) {
@@ -242,7 +257,7 @@ public class BoardController implements Initializable {
         doneList.setDisable(wait);
     }
 
-    private void updateBoard() {
+    private Task<Optional<BoardView>> updateBoard() {
         Task<Optional<BoardView>> task = new Task<>() {
             @Override
             protected Optional<BoardView> call() throws Exception {
@@ -265,16 +280,35 @@ public class BoardController implements Initializable {
             ErrorHandler.showError("Esta cuenta no existe");
             onClickLogout(null);
         });
-        new Thread(task).start();
+        return task;
     }
 
     private void updateWithData(BoardView boardView) {
         List<StageView> stages = boardView.stages();
         Map<dev.builder.board.domain.model.Stage.StageState, List<TaskView>> tasksByStage = boardView.stages().stream()
                 .collect(Collectors.toMap(StageView::state, StageView::tasks));
-        toDoTasks.setAll(tasksByStage.get(dev.builder.board.domain.model.Stage.StageState.TO_DO));
-        inProgressTasks.setAll(tasksByStage.get(dev.builder.board.domain.model.Stage.StageState.IN_PROGRESS));
-        doneTasks.setAll(tasksByStage.get(dev.builder.board.domain.model.Stage.StageState.DONE));
+        toDoTasks.setAll(tasksByStage.get(dev.builder.board.domain.model.Stage.StageState.TO_DO)
+                .stream().filter(ta -> sessionContext.hasRole(Role.MANAGER) ||
+                        ta.assignees().stream()
+                                .map(StudentView::email)
+                                .toList()
+                                .contains(sessionContext.getCurrentUser()))
+                                .collect(Collectors.toList())
+        );
+        inProgressTasks.setAll(tasksByStage.get(dev.builder.board.domain.model.Stage.StageState.IN_PROGRESS)
+                .stream().filter(ta -> sessionContext.hasRole(Role.MANAGER) ||
+                        ta.assignees().stream()
+                                .map(StudentView::email)
+                                .toList()
+                                .contains(sessionContext.getCurrentUser()))
+                .collect(Collectors.toList()));
+        doneTasks.setAll(tasksByStage.get(dev.builder.board.domain.model.Stage.StageState.DONE)
+                .stream().filter(ta -> sessionContext.hasRole(Role.MANAGER) ||
+                        ta.assignees().stream()
+                                .map(StudentView::email)
+                                .toList()
+                                .contains(sessionContext.getCurrentUser()))
+                .collect(Collectors.toList()));
     }
 
     private void onClickLogout(ActionEvent e) {
@@ -293,10 +327,20 @@ public class BoardController implements Initializable {
 
     private void onSearch(ActionEvent actionEvent) {
         String searchInput = txtSearch.getText();
-        updateBoard();
-        filterTasksBy(toDoTasks, searchInput);
-        filterTasksBy(inProgressTasks, searchInput);
-        filterTasksBy(doneTasks, searchInput);
+        Task<Optional<BoardView>> task = updateBoard();
+        task.setOnSucceeded(event -> {
+            if (task.getValue().isPresent()) {
+                toggleWaitForAction(false);
+                updateWithData(task.getValue().get());
+                filterTasksBy(toDoTasks, searchInput);
+                filterTasksBy(inProgressTasks, searchInput);
+                filterTasksBy(doneTasks, searchInput);
+            } else {
+                ErrorHandler.showError("Esta cuenta no existe");
+                onClickLogout(null);
+            }
+        });
+        new Thread(task).start();
     }
 
     private void filterTasksBy(@NotNull ObservableList<TaskView> container, String input) {
@@ -306,7 +350,12 @@ public class BoardController implements Initializable {
     }
 
     private void onAddTaskClicked() {
-        viewNavigation.openModal("create-task-view.fxml", StageStyle.UTILITY);
+        viewNavigation.openModal("create-task-view.fxml",
+                StageStyle.DECORATED,
+                controller -> {
+                    TaskFormController formController = (TaskFormController) controller;
+                    formController.setBoardController(this);
+                });
     }
 
     public void onTaskCreated(StageView stage) {
@@ -320,7 +369,7 @@ public class BoardController implements Initializable {
     }
 
     private void onInviteStudentClicked(ActionEvent actionEvent) {
-        viewNavigation.openModal("invite-student-form-view.fxml", StageStyle.UTILITY);
+        viewNavigation.openModal("invite-student-form-view.fxml", StageStyle.DECORATED);
         handleInvitationStatus(inviteStudentFormController.status());
     }
 

@@ -26,10 +26,12 @@ import java.util.ResourceBundle;
 
 @Prototype
 public class StudentCardController implements Initializable {
-    @FXML private Label email;
+    @FXML private Label emailLbl;
+    @FXML private Label nameLbl;
+    @FXML private Label academicInfoLbl;
     @FXML private Button disableButton;
 
-    private StudentView manager;
+    private StudentView student;
     private final StudentDashboardController parent;
 
     @Inject
@@ -39,12 +41,14 @@ public class StudentCardController implements Initializable {
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
-        disableButton.setOnAction(ev -> parent.onDeleteManager(manager));
+        disableButton.setOnAction(ev -> parent.onDeleteManager(student));
     }
 
-    public void setData(StudentView manager) {
-        this.manager = manager;
-        this.email.setText(manager.email());
+    public void setData(StudentView student) {
+        this.student = student;
+        this.emailLbl.setText(student.email());
+        nameLbl.setText(student.firstName() +  " " + student.lastName());
+        academicInfoLbl.setText(student.quarter() + " - " + student.group());
     }
 
     public void disableButton() {

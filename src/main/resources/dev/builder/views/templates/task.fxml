@@ -15,7 +15,7 @@
 <?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.text.Font?>
 
-<StackPane fx:id="backgroundColor" fx:controller="dev.builder.board.application.controller.StageTaskCardController" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" style="-fx-background-color: #fe845e;" stylesheets="@../../assets/styles/task.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1">
+<StackPane fx:id="backgroundColor" maxHeight="-Infinity" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" style="-fx-background-color: #fe845e;" stylesheets="@../../assets/styles/task.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="dev.builder.board.application.controller.StageTaskCardController">
    <children>
       <GridPane style="-fx-background-color: #f7f7f7;" vgap="10.0">
         <columnConstraints>
@@ -31,7 +31,7 @@
             <Insets left="15.0" />
          </StackPane.margin>
          <children>
-            <Label fx:id="titleLbl" maxWidth="1.7976931348623157E308" text="Título">
+            <Label fx:id="titleLbl" maxWidth="1.7976931348623157E308" text="2sssssssssssssssssssssssssss">
                <font>
                   <Font size="18.0" />
                </font></Label>

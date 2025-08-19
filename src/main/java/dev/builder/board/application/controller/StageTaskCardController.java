@@ -130,9 +130,10 @@ public class StageTaskCardController implements Initializable {
     }
 
     private void onClick(ActionEvent actionEvent) {
-        viewNavigation.openModal("edit-task-view.fxml", StageStyle.UTILITY,  controller -> {
+        viewNavigation.openModal("edit-task-view.fxml", StageStyle.DECORATED,  controller -> {
             TaskFormController editTaskFormController = (TaskFormController) controller;
             editTaskFormController.setTask(data);
+            editTaskFormController.setBoardController(boardController);
         });
         Task<Optional<TaskView>> task = new Task<>() {
             @Override

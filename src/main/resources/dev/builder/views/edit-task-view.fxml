@@ -20,8 +20,9 @@
 <?import javafx.scene.shape.Circle?>
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.web.HTMLEditor?>
+<?import javafx.scene.web.WebView?>
 
-<VBox style="-fx-border-radius: 10px; -fx-background-radius: 10px;" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="dev.builder.board.application.controller.TaskFormController">
+<VBox prefHeight="641.0" prefWidth="1279.0" style="-fx-border-radius: 10px; -fx-background-radius: 10px;" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="dev.builder.board.application.controller.TaskFormController">
    <children>
       <StackPane fx:id="coverImageContainer" maxHeight="-Infinity" maxWidth="1.7976931348623157E308" minHeight="150.0" prefHeight="150.0" prefWidth="200.0" style="-fx-background-image: url(dev/builder/assets/images/task_background_placeholder.jpg);">
          <children>
@@ -44,7 +45,7 @@
       </StackPane>
       <StackPane>
          <children>
-            <VBox alignment="TOP_CENTER" spacing="15" style="-fx-background-color: #fff; -fx-background-radius: 15;">
+            <VBox alignment="TOP_CENTER" maxHeight="1.7976931348623157E308" spacing="15" style="-fx-background-color: #fff; -fx-background-radius: 15;">
                <padding>
                   <Insets bottom="30.0" left="40.0" right="40.0" top="30.0" />
                </padding>
@@ -53,7 +54,7 @@
                      <children>
                         <MenuButton fx:id="colorSelector" mnemonicParsing="false" styleClass="button" stylesheets="@../assets/styles/secondary-text-button.css">
                            <graphic>
-                              <Circle fx:id="colorCircle" fill="DODGERBLUE" radius="20.0" stroke="BLACK" strokeType="INSIDE" />
+                              <Circle fx:id="colorCircle" fill="WHITE" radius="20.0" stroke="BLACK" strokeType="INSIDE" />
                            </graphic>
                            <cursor>
                               <Cursor fx:constant="HAND" />
@@ -79,7 +80,7 @@
                                     </ImageView>
                                  </graphic>
                               </MenuButton>
-                              <FlowPane fx:id="collaboratorsPillContainer" maxHeight="-Infinity" maxWidth="-Infinity" />
+                              <FlowPane fx:id="collaboratorsPillContainer" hgap="10.0" maxHeight="-Infinity" maxWidth="-Infinity" vgap="10.0" />
                            </children>
                         </VBox>
                         <VBox spacing="5.0">
@@ -97,7 +98,7 @@
                               </ImageView>
                            </graphic>
                         </Button>
-                        <FlowPane fx:id="attachmentPillContainer" />
+                        <FlowPane fx:id="attachmentPillContainer" hgap="10.0" vgap="10.0" />
                      </children>
                   </HBox>
                   <HBox fx:id="dateEditData" spacing="20.0">
@@ -118,8 +119,21 @@
                         <Separator orientation="VERTICAL" />
                         <Label fx:id="dueDateStatus" text="En Tiempo" textFill="#10ab18" />
                      </children>
+                     <VBox.margin>
+                        <Insets top="15.0" />
+                     </VBox.margin>
                   </HBox>
                   <HBox alignment="CENTER_LEFT" />
+                  <VBox fx:id="descriptionVisualizerContainer" prefHeight="200.0" prefWidth="100.0">
+                     <children>
+                        <Label text="Descripción">
+                           <font>
+                              <Font size="15.0" />
+                           </font>
+                        </Label>
+                        <WebView fx:id="descriptionVisualizer" prefHeight="200.0" prefWidth="200.0" />
+                     </children>
+                  </VBox>
                   <HTMLEditor fx:id="descriptionEditor" htmlText="&lt;html&gt;&lt;head&gt;&lt;/head&gt;&lt;body contenteditable=&quot;true&quot;&gt;Esta es una descripción&lt;/body&gt;&lt;/html&gt;" prefHeight="200" VBox.vgrow="ALWAYS" />
                   <HBox alignment="CENTER_RIGHT" spacing="10">
                      <children>
@@ -138,7 +152,7 @@
                               <Font size="18.0" />
                            </font>
                         </Button>
-                        <Button fx:id="btnSave" defaultButton="true" stylesheets="@../assets/styles/primary-button.css" text="Agregar" textFill="WHITE">
+                        <Button fx:id="btnSave" defaultButton="true" stylesheets="@../assets/styles/primary-button.css" text="Guardar" textFill="WHITE">
                            <font>
                               <Font size="18.0" />
                            </font>

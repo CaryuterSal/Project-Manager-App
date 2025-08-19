@@ -13,16 +13,17 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<GridPane fx:id="baseGrid" prefHeight="819.0" prefWidth="1152.0" style="-fx-background-color: white;" vgap="30.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="dev.builder.board.application.controller.StudentBoardController">
+<GridPane fx:id="baseGrid" prefHeight="900.0" prefWidth="1450.0" style="-fx-background-color: white;" vgap="30.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="dev.builder.board.application.controller.StudentBoardController">
    <columnConstraints>
-      <ColumnConstraints hgrow="SOMETIMES" />
+      <ColumnConstraints hgrow="SOMETIMES" percentWidth="20.0" />
       <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" />
    </columnConstraints>
    <rowConstraints>
       <RowConstraints maxHeight="1.7976931348623157E308" vgrow="SOMETIMES" />
+      <RowConstraints />
    </rowConstraints>
    <children>
-      <VBox maxHeight="1.7976931348623157E308" maxWidth="-Infinity" spacing="20" style="-fx-background-color: #f7f7f7;" stylesheets="@../assets/styles/board-side-menu.css" GridPane.rowSpan="2">
+      <VBox maxHeight="1.7976931348623157E308" spacing="20" style="-fx-background-color: #f7f7f7;" stylesheets="@../assets/styles/board-side-menu.css" GridPane.rowSpan="2">
          <Label graphicTextGap="20.0" text="Kedu">
             <graphic>
                <ImageView fx:id="logoImageView" fitHeight="50.0" fitWidth="34.0" preserveRatio="true">

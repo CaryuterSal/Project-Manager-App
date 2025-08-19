@@ -497,7 +497,7 @@ public class BoardApplicationService implements BoardService, TaskService, FileS
                     StoredFile.MimeType.fromValue(messageLocalizer, mimeTypeGenerator.generateMimeType(buffer)),
                     length
             );
-            return attachmentRepository.save(attachment, data, connection);
+            return attachmentRepository.save(attachment, new ByteArrayInputStream(inputBytes), connection);
         }
     }
 
@@ -514,7 +514,7 @@ public class BoardApplicationService implements BoardService, TaskService, FileS
                     mimeType,
                     length
             );
-            return imageRepository.save(image, data, connection);
+            return imageRepository.save(image, new ByteArrayInputStream(inputBytes), connection);
         }
     }
 

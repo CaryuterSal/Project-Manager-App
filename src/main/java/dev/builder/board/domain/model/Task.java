@@ -5,6 +5,7 @@ import dev.builder.usermanagement.domain.model.Student;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.*;
 
@@ -55,7 +56,7 @@ public class Task extends LocalEntity<Task.Id> implements Comparable<Task> {
 
     @Contract("_,_, _, _,_, _, _ -> new")
     static @NotNull Task createNew(Task.Id id, Stage.Id stage, Title title, TaskDescription description, Color color, Deadline deadline, Order order) {
-        if(deadline == null || deadline.value().isAfter(LocalDateTime.now())) {
+        if(deadline == null || deadline.value().toLocalDate().isBefore(LocalDate.now())) {
             throw new IllegalArgumentException("Deadline must be after now");
         }
         Task created = new Task(id, stage, title, description, color, deadline, order);

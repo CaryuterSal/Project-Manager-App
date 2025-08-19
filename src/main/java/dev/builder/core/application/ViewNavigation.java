@@ -5,6 +5,7 @@ import dev.builder.core.infrastructure.di.annotation.Bean;
 import dev.builder.core.infrastructure.di.runtime.DependencyContainer;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
+import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonBar;
@@ -53,8 +54,8 @@ public class ViewNavigation {
             Stage stage = new Stage();
             stage.initModality(Modality.APPLICATION_MODAL);
             stage.initStyle(initStyle);
-            stage.setScene(new Scene(loader.load()));
-            stage.sizeToScene();
+            Parent root = loader.load();
+            stage.setScene(new Scene(root, root.prefWidth(-1), root.prefHeight(-1)));
             stage.showAndWait();
         } catch (IOException e){
             e.printStackTrace();

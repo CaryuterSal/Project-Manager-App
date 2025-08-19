@@ -16,6 +16,10 @@
     -fx-background-color: black !important;
 }
 
+.menu-item:disabled {
+    -fx-background-color: black !important;
+    -fx-effect: none !important;
+}
 
 .menu-item.active {
     -fx-cursor: default;
@@ -35,10 +39,10 @@
 
 
 #btnAccount.active {
-    -fx-graphic: url("/dev/builder/assets/images/add_icon_white.png");
+    -fx-graphic: url("/dev/builder/assets/images/add_manager_white_icon.png");
 }
 
 
 #btnAccount:not(.active) {
-    -fx-graphic: url("/dev/builder/assets/images/add_icon_grey.png");
+    -fx-graphic: url("/dev/builder/assets/images/add_manager_icon.png");
 }

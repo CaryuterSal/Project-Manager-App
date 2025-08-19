@@ -14,6 +14,7 @@ import dev.builder.core.infrastructure.properties.MessageLocalizer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 /**
@@ -72,7 +73,7 @@ public record CreateTaskCommand(Stage.StageState stage, String title, String des
             validate(() -> requiredObjectValidator.validate(Fields.COLOR.value, value.color));
             validate(() -> requiredObjectValidator.validate(Fields.DEADLINE.value, value.deadline));
             validate(() ->{
-               if(!value.deadline.isAfter(LocalDateTime.now())){
+               if(value.deadline.toLocalDate().isBefore(LocalDate.now())){
                    throw new DateFutureViolation(messageLocalizer, Fields.DEADLINE.value);
                }
             });

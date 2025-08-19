@@ -1,8 +1,11 @@
 package dev.builder.board.application.controller;
 
 import dev.builder.auth.domain.port.out.SessionContext;
+import dev.builder.auth.infrastructure.Role;
 import dev.builder.board.application.command.*;
 import dev.builder.board.application.query.GetBoardQuery;
+import dev.builder.board.application.query.LoadAttachmentQuery;
+import dev.builder.board.application.query.LoadCoverImageQuery;
 import dev.builder.board.application.view.*;
 import dev.builder.board.domain.model.Color;
 import dev.builder.core.application.ErrorHandler;
@@ -14,8 +17,9 @@ import dev.builder.core.infrastructure.di.annotation.Inject;
 import dev.builder.core.infrastructure.di.runtime.DependencyContainer;
 import dev.builder.core.infrastructure.properties.MessageLocalizer;
 import dev.builder.usermanagement.application.view.StudentView;
-import dev.builder.usermanagement.domain.model.Student;
 import javafx.application.Platform;
+import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.SimpleObjectProperty;
 import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXMLLoader;
@@ -24,11 +28,11 @@ import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
-import javafx.scene.paint.Paint;
 import javafx.scene.shape.Circle;
 import javafx.scene.web.HTMLEditor;
+import javafx.scene.web.WebEngine;
+import javafx.scene.web.WebView;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import org.slf4j.Logger;
@@ -50,9 +54,12 @@ public class TaskFormController implements Initializable {
 
     private static final Logger log = LoggerFactory.getLogger(TaskFormController.class);
     private final RequestDispatcher requestDispatcher;
+    public VBox descriptionVisualizerContainer;
+    public WebView descriptionVisualizer;
     private  BoardController boardController;
     private final MessageLocalizer messageLocalizer;
     private final DependencyContainer dependencyContainer;
+    private final SessionContext sessionContext;
 
     public Button addCoverImageBtn;
     public MenuButton colorSelector;
@@ -74,7 +81,7 @@ public class TaskFormController implements Initializable {
     public Circle colorCircle;
 
     private TaskView task;
-    private Color selectedColor;
+    private ObjectProperty<Color> selectedColor = new SimpleObjectProperty<>();
     private File selectedCover;
     private final List<IdentifiableFile> selectedAttachments = new ArrayList<>();
     private final Map<UUID, Node> selectedAttachmentsPills = new HashMap<>();
@@ -84,10 +91,11 @@ public class TaskFormController implements Initializable {
     }
 
     @Inject
-    public TaskFormController(RequestDispatcher requestDispatcher, MessageLocalizer messageLocalizer, DependencyContainer dependencyContainer) {
+    public TaskFormController(RequestDispatcher requestDispatcher, MessageLocalizer messageLocalizer, DependencyContainer dependencyContainer, SessionContext sessionContext) {
         this.requestDispatcher = requestDispatcher;
         this.messageLocalizer = messageLocalizer;
         this.dependencyContainer = dependencyContainer;
+        this.sessionContext = sessionContext;
     }
 
     @Override
@@ -96,8 +104,9 @@ public class TaskFormController implements Initializable {
         btnCancel.setOnAction(e -> close());
         btnSave.setOnAction(e -> onAddTask());
         btnSave.disableProperty().bind(
-                txtTitle.textProperty().isNotEmpty()
-                        .and(dpEnd.valueProperty().isNotNull())
+                txtTitle.textProperty().isEmpty()
+                        .or(dpEnd.valueProperty().isNull())
+                        .or(selectedColor.isNull())
         );
         loadMembers();
         loadColors();
@@ -106,6 +115,26 @@ public class TaskFormController implements Initializable {
         txtTitle.setOnKeyTyped(ev -> txtTitle.setStyle(""));
         descriptionEditor.setOnKeyTyped(ev -> descriptionEditor.setStyle(""));
         dpEnd.setOnAction(ev -> dpEnd.setStyle(""));
+        if(sessionContext.hasRole(Role.STUDENT)){
+            descriptionEditor.setVisible(false);
+            descriptionEditor.setManaged(false);
+            txtTitle.setEditable(false);
+            dpEnd.setEditable(false);
+            colorSelector.setDisable(true);
+            addAttachmentBtn.setVisible(false);
+            addAttachmentBtn.setManaged(false);
+            addCoverImageBtn.setVisible(false);
+            addCoverImageBtn.setManaged(false);
+            btnMembers.setVisible(false);
+            btnMembers.setManaged(false);
+            btnSave.setVisible(false);
+            btnSave.setManaged(false);
+        } else {
+            descriptionEditor.setVisible(true);
+            descriptionEditor.setManaged(true);
+            descriptionVisualizerContainer.setVisible(false);
+            descriptionVisualizerContainer.setManaged(false);
+        }
     }
 
 
@@ -113,11 +142,21 @@ public class TaskFormController implements Initializable {
         this.task = task;
         if (task != null) {
             txtTitle.setText(task.title());
-            descriptionEditor.setHtmlText(task.description());
+            if(sessionContext.hasRole(Role.MANAGER)) {
+                descriptionEditor.setHtmlText(task.description());
+            } else {
+                WebEngine engine =  descriptionVisualizer.getEngine();
+                engine.loadContent(task.description(), "text/html");
+            }
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("d MMMM yyyy");
             task.startedAt().ifPresent(s -> startedAt.setText(s.toLocalDate().format(formatter)));
             task.finishedAt().ifPresent(s -> finishedAt.setText(s.toLocalDate().format(formatter)));
             dpEnd.setValue(task.deadline().toLocalDate());
+            colorCircle.setFill(javafx.scene.paint.Color.web(task.color().hexCode().value()));
+            selectedColor.set(task.color());
+            task.coverImage().ifPresent(coverImage -> openCoverImage(coverImage.id()));
+            loadAttachments();
+            loadAssignees();
             if(task.deadline().isBefore(LocalDateTime.now())) {
                 dueDateStatus.setText("Con Retraso");
                 dueDateStatus.setStyle("-fx-text-fill: #9b1b1b;");
@@ -128,9 +167,47 @@ public class TaskFormController implements Initializable {
         }
         btnSave.setOnAction(e -> onEditTask());
     }
+    
+    private void loadAttachments(){
+        try(ExecutorService executorService = Executors.newFixedThreadPool(4)) {
+            for (FileView attachment : task.attachments()) {
+                Task<Optional<InputStream>> task = new Task<Optional<InputStream>>() {
+                    @Override
+                    protected Optional<InputStream> call() throws Exception {
+                        return requestDispatcher.dispatch(new LoadAttachmentQuery(attachment.id()));
+                    }
+                };
+                task.setOnSucceeded(e -> {
+                    if(task.getValue().isPresent()) {
+                        try {
+                            addAttachmentPill(inputStreamToTempFile(task.getValue().get(), attachment.name()), attachment.name());
+                        } catch (IOException ex) {
+                            log.warn(ex.getMessage(), ex);
+                        }
+                    }
+                });
+                executorService.submit(task);
+            }
+        }
+    }
+    
+    private void loadAssignees(){
+        for(StudentView assignee : task.assignees()) {
+            addCollaboratorPill(assignee.email());
+        }
+    }
 
     private void waitAndLoad(boolean wait){
-        btnSave.setDisable(wait);
+        if(wait){
+            btnSave.disableProperty().unbind();
+            btnSave.setDisable(true);
+        } else {
+            btnSave.disableProperty().bind(
+                    txtTitle.textProperty().isEmpty()
+                            .or(dpEnd.valueProperty().isNull())
+                            .or(selectedColor.isNull())
+            );
+        }
         btnMembers.setDisable(wait);
         addAttachmentBtn.setDisable(wait);
         addCoverImageBtn.setDisable(wait);
@@ -155,26 +232,27 @@ public class TaskFormController implements Initializable {
         task.setOnFailed(ev -> {
             ErrorHandler.showError("Hubo un error al cargar la información");
         });
+        new Thread(task).start();
     }
 
     private void loadColors(){
         for(Color color : Color.values()) {
             MenuItem menuItem = new MenuItem(messageLocalizer.getMessage("color.%s".formatted(color.toString().toLowerCase())));
             menuItem.setOnAction(ev -> {
-                selectedColor = color;
+                selectedColor.set(color);
                 colorCircle.setFill(javafx.scene.paint.Color.web(color.hexCode().value()));
             });
             colorSelector.getItems().add(menuItem);
         }
     }
 
-    private void onSaveAllAttachments(CountDownLatch latch){
+    private void onSaveAllAttachments(CountDownLatch latch, UUID taskId){
         try (ExecutorService executorService = Executors.newFixedThreadPool(4)) {
 
             int total = selectedAttachments.size();
             CountDownLatch internalLatch = new CountDownLatch(total);
             for(File attachment : selectedAttachments.stream().map(IdentifiableFile::file).toList()) {
-               Task<FileView> addTask = onSaveAttachment(attachment);
+               Task<FileView> addTask = onSaveAttachment(attachment, taskId);
                addTask.setOnSucceeded(event -> internalLatch.countDown());
                addTask.setOnFailed(event -> internalLatch.countDown());
                executorService.submit(addTask);
@@ -198,22 +276,43 @@ public class TaskFormController implements Initializable {
                 new FileChooser.ExtensionFilter("Todos los archivos", "*.*")
         );
         File file = fileChooser.showOpenDialog(btnSave.getScene().getWindow());
-        addAttachmentPill(file);
+        addAttachmentPill(file, file.getName());
     }
 
-    private Task<FileView> onSaveAttachment(File attachment){
+    private Task<FileView> onSaveAttachment(File attachment, UUID taskId){
         Task<FileView> addTask = new Task<>() {
             @Override
             protected FileView call() throws Exception {
                 try(InputStream stream = new FileInputStream(attachment)){
-                    return requestDispatcher.dispatch(new AddAttachmentToTaskCommand(task.id(),attachment.getName(),stream));
+                    return requestDispatcher.dispatch(new AddAttachmentToTaskCommand(taskId,attachment.getName(),stream));
                 }
             }
         };
         return addTask;
     }
 
-    private void addAttachmentPill(File attachment){
+    private File inputStreamToTempFile(InputStream inputStream, String originalName) throws IOException {
+        String suffix = "";
+        int dot = originalName.lastIndexOf('.');
+        if (dot > 0) {
+            suffix = originalName.substring(dot);
+        }
+
+        File tempFile = File.createTempFile(UUID.randomUUID().toString(), suffix);
+        tempFile.deleteOnExit();
+
+        try (OutputStream out = new FileOutputStream(tempFile)) {
+            byte[] buffer = new byte[4096];
+            int bytesRead;
+            while ((bytesRead = inputStream.read(buffer)) != -1) {
+                out.write(buffer, 0, bytesRead);
+            }
+        }
+
+        return tempFile;
+    }
+
+    private void addAttachmentPill(File attachment, String originalFilename){
         try {
 
             UUID tempId = UUID.randomUUID();
@@ -222,7 +321,7 @@ public class TaskFormController implements Initializable {
             Parent root = loader.load();
 
             AttachmentPillController controller = loader.getController();
-            controller.setData(attachment, () -> onDeleteAttachment(tempId));
+            controller.setData(attachment, originalFilename, () -> onDeleteAttachment(tempId));
             attachmentPillContainer.getChildren().add(root);
             selectedAttachmentsPills.put(tempId, root);
             selectedAttachments.add(new IdentifiableFile(tempId, attachment));
@@ -259,7 +358,7 @@ public class TaskFormController implements Initializable {
             CountDownLatch internalLatch = new CountDownLatch(total);
 
             for (IdentifiableFile attachment : missingAttachments) {
-                Task<FileView> saveTask = onSaveAttachment(attachment.file);
+                Task<FileView> saveTask = onSaveAttachment(attachment.file, task.id());
                 saveTask.setOnSucceeded(event -> internalLatch.countDown());
                 saveTask.setOnFailed(event -> internalLatch.countDown());
                 executorService.submit(saveTask);
@@ -283,12 +382,12 @@ public class TaskFormController implements Initializable {
         }
     }
 
-    private void onSaveCollaborators(CountDownLatch latch){
+    private void onSaveCollaborators(CountDownLatch latch, UUID taskId){
         try (ExecutorService executorService = Executors.newFixedThreadPool(4)) {
             int total = selectedAssigneesPills.size();
             CountDownLatch internalLatch = new CountDownLatch(total);
             for(String assignees : selectedAssigneesPills.keySet()) {
-                Task<Void> saveTask = onSaveCollaborator(assignees);
+                Task<Void> saveTask = onSaveCollaborator(assignees, taskId);
                 saveTask.setOnSucceeded(event -> internalLatch.countDown());
                 saveTask.setOnFailed(event -> internalLatch.countDown());
                 executorService.submit(saveTask);
@@ -306,6 +405,7 @@ public class TaskFormController implements Initializable {
     }
 
     private void onAddCollaborator(String email){
+        btnMembers.getItems().removeIf(i -> i.getText().equals(email));
         addCollaboratorPill(email);
     }
 
@@ -329,11 +429,11 @@ public class TaskFormController implements Initializable {
         collaboratorsPillContainer.getChildren().remove(selectedAssigneesPills.get(email));
     }
 
-    private Task<Void> onSaveCollaborator(String email){
+    private Task<Void> onSaveCollaborator(String email, UUID taskId){
         Task<Void> assignTask = new Task<Void>() {
             @Override
             protected Void call() throws Exception {
-                requestDispatcher.dispatch(new AssignStudentToTaskCommand(task.id(),email));
+                requestDispatcher.dispatch(new AssignStudentToTaskCommand(taskId,email));
                 return null;
             }
         };
@@ -370,7 +470,7 @@ public class TaskFormController implements Initializable {
             }
 
             for (String email : missingAssignees) {
-                Task<Void> saveTask = onSaveCollaborator(email);
+                Task<Void> saveTask = onSaveCollaborator(email, task.id());
 
                 saveTask.setOnFailed(event -> internalLatch.countDown());
                 saveTask.setOnSucceeded(event -> internalLatch.countDown());
@@ -415,17 +515,35 @@ public class TaskFormController implements Initializable {
         changeCoverImage(image);
     }
 
-    private void setCoverImage(InputStream stream){
-        changeCoverImage(new Image(stream));
+    private void openCoverImage(UUID imageId){
+        Task<Optional<InputStream>> task = new Task<>() {
+            @Override
+            protected Optional<InputStream> call() throws Exception {
+                return  requestDispatcher.dispatch(new LoadCoverImageQuery(imageId));
+            }
+        };
+
+        task.setOnSucceeded(event -> {
+            if(task.getValue().isPresent()){
+                try(InputStream stream = task.getValue().get()){
+                    changeCoverImage(new Image(stream));
+                } catch (IOException e) {
+                    log.warn(e.getMessage(), e);
+                    ErrorHandler.showError("No se pudo cargar la imagen de carátula");
+                }
+            }
+        });
+
+        new Thread(task).start();
     }
 
-    private void onPersistCoverImage(CountDownLatch latch){
+    private void onPersistCoverImage(CountDownLatch latch, UUID taskId){
 
         Task<Void> attachTask = new  Task<Void>() {
             @Override
             protected Void call() throws Exception {
                 try(InputStream stream = new FileInputStream(selectedCover)){
-                    requestDispatcher.dispatch(new AttachCoverImageToTaskCommand(task.id(), selectedCover.getName(), stream));
+                    requestDispatcher.dispatch(new AttachCoverImageToTaskCommand(taskId, selectedCover.getName(), stream));
                 }
                 return null;
             }
@@ -444,10 +562,10 @@ public class TaskFormController implements Initializable {
                     return null;
                 }
             };
-            deleteCoverTask.setOnSucceeded(e -> onPersistCoverImage(latch));
+            deleteCoverTask.setOnSucceeded(e -> onPersistCoverImage(latch, task.id()));
             new Thread(deleteCoverTask).start();
         } else {
-            onPersistCoverImage(latch);
+            onPersistCoverImage(latch, task.id());
         }
     }
 
@@ -465,31 +583,35 @@ public class TaskFormController implements Initializable {
                         dev.builder.board.domain.model.Stage.StageState.TO_DO,
                         title,
                         desc,
-                        selectedColor,
+                        selectedColor.get(),
                         due
                 );
-                return requestDispatcher.dispatch(cmd);
+                return requestDispatcher. dispatch(cmd);
             }
         };
 
         creationTask.setOnSucceeded(e -> {
             StageView updatedStage = creationTask.getValue();
+            TaskView createdTask = updatedStage.tasks().getLast();
             CountDownLatch latch = new CountDownLatch(3);
-            onSaveAllAttachments(latch);
-            onSaveCollaborators(latch);
-            onPersistCoverImage(latch);
+            onSaveAllAttachments(latch, createdTask.id());
+            onSaveCollaborators(latch, createdTask.id());
+            onPersistCoverImage(latch, createdTask.id());
             new Thread(() -> {
                 try{
                     latch.await();
-                    boardController.onTaskCreated(updatedStage);
-                    waitAndLoad(false);
-                    close();
+                    Platform.runLater(() -> {
+                        boardController.onTaskCreated(updatedStage);
+                        waitAndLoad(false);
+                        close();
+                    });
                 } catch (InterruptedException ex) {
                     log.info(ex.getMessage(), ex);
                 }
-            });
+            }).start();
         });
         creationTask.setOnFailed(e -> {
+            waitAndLoad(false);
             Throwable thrown = creationTask.getException();
             if(thrown instanceof ValidationException validationException) {
                 for(FieldViolationException fieldViolationException : validationException.getViolations()) {
@@ -518,9 +640,9 @@ public class TaskFormController implements Initializable {
 
                 EditTaskCommand cmd = new EditTaskCommand(
                         task.id(),
-                        task.title(),
+                        title,
                         desc,
-                        selectedColor,
+                        selectedColor.get(),
                         due
                 );
 
@@ -537,12 +659,14 @@ public class TaskFormController implements Initializable {
             new Thread(() -> {
                 try{
                     latch.await();
-                    waitAndLoad(false);
-                    close();
+                    Platform.runLater(() -> {
+                        waitAndLoad(false);
+                        close();
+                    });
                 } catch (InterruptedException ex) {
                     log.info(ex.getMessage(), ex);
                 }
-            });
+            }).start();
         });
         editTask.setOnFailed(e -> {
             Throwable thrown = editTask.getException();

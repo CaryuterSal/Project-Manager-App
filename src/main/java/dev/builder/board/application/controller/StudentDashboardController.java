@@ -117,7 +117,7 @@ public class StudentDashboardController implements Initializable {
         reloadButton.setManaged(false);
         loadListIndicator.setVisible(false);
         loadListIndicator.setManaged(false);
-        noManagerLabel.setText("Aún no hay maestros aquí");
+        noManagerLabel.setText("Aún no hay estudiantes aquí");
 
         studentsList.setVisible(visualize);
         studentsList.setManaged(visualize);
@@ -224,7 +224,7 @@ public class StudentDashboardController implements Initializable {
     }
 
     private void openManagerRegistration(ActionEvent aEv){
-        viewNavigation.openModal("add-student-form.fxml", StageStyle.UTILITY);
+        viewNavigation.openModal("register-student-view.fxml", StageStyle.DECORATED);
         RegisterStudentController.RegistrationStatus status = registerStudentController.status();
         switch (status){
             case FAIL -> viewNavigation.openModal("add-student-error-modal.fxml", StageStyle.DECORATED);
@@ -271,7 +271,7 @@ public class StudentDashboardController implements Initializable {
                 students.remove(student);
             });
             task.setOnFailed(event -> {
-                ErrorHandler.showError("Hubo un error al eliminar el maestro");
+                ErrorHandler.showError("Hubo un error al eliminar el estudiante");
             });
             new Thread(task).start();
         }
