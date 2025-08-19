@@ -259,6 +259,7 @@ public class BoardApplicationService implements BoardService, TaskService, FileS
         sessionContext.requireRole(Role.MANAGER, "Se requiere ser Manager para crear el tablero");
         Board board = boardCreationService.createBoardForOwner(new  Manager.Id(sessionContext.getCurrentUser()));
         boardRepository.save(board, connection);
+
     }
 
     @Override

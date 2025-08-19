@@ -78,12 +78,6 @@ public class InviteStudentFormController implements Initializable {
         inviteBtn.disableProperty().bind(studentSelector.valueProperty().isNotNull());
         inviteBtn.setOnAction(this::onInvite);
         cancelBtn.setOnAction(this::onCancel);
-        Platform.runLater(() -> {
-            cancelBtn.getScene().getWindow().setOnCloseRequest((event) -> {
-                event.consume();
-                close();
-            });
-        });
         registerBtn.setOnAction(this::onRegister);
         fillInvitationOptions();
     }
@@ -101,10 +95,11 @@ public class InviteStudentFormController implements Initializable {
     }
 
     public void fillInvitationOptions(){
+
+        toggleWait(true);
         Task<Set<StudentView>> task = new Task<>() {
             @Override
             protected Set<StudentView> call() throws Exception {
-                toggleWait(true);
                 Set<StudentView> allStudents = requestDispatcher.dispatch(FindAllStudentsQuery.builder().build())
                         .stream().filter(UserView::verified)
                         .collect(Collectors.toSet());
@@ -116,14 +111,21 @@ public class InviteStudentFormController implements Initializable {
             }
         };
         task.setOnSucceeded(event -> {
-            toggleWait(false);
+            Platform.runLater(() -> {
+                toggleWait(false);
+            });
             studentSelectorData.setAll(task.getValue());
         });
         new Thread(task).start();
     }
 
     private void toggleWait(boolean wait){
-        inviteBtn.setDisable(wait);
+        if(wait){
+            inviteBtn.disableProperty().unbind();
+            inviteBtn.setDisable(true);
+        } else {
+            inviteBtn.disableProperty().bind(studentSelector.valueProperty().isNotNull());
+        }
         studentSelector.setDisable(wait);
         loadIndicator.setVisible(wait);
     }
